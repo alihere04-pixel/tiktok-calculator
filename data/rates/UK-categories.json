@@ -1,0 +1,51 @@
+{
+  "market": "UK",
+  "currency": "GBP",
+  "sourceUrl": "https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897",
+  "sourceDate": "2025-09-18",
+  "lastVerified": "2026-09-26",
+  "extractionStatus": "partial",
+  "coverage": "policy-level-only",
+  "missingData": "full category table in Excel download",
+  "categories": [
+    {
+      "id": "uk-standard",
+      "name": "Standard Rate (most categories)",
+      "parentCategory": "All Other Categories",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "Default 9% commission rate inclusive of VAT"
+    },
+    {
+      "id": "uk-electronics",
+      "name": "Electronics",
+      "parentCategory": "Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "Category-level reduction: 4% reduction from standard 9% = 5% effective rate"
+    },
+    {
+      "id": "uk-beauty-personal-care",
+      "name": "Beauty & Personal Care (select categories)",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "Category-level reduction: 4% reduction from standard 9% = 5% effective rate for specified sub-categories"
+    },
+    {
+      "id": "uk-new-seller-promo",
+      "name": "New Seller Promotional Rate",
+      "parentCategory": "All Categories (eligible new sellers)",
+      "rate": 0.0,
+      "confidence": "medium",
+      "notes": "0% commission after completing required Seller Missions within 45 days of onboarding. Exact rate not published on Seller University."
+    }
+  ],
+  "defaultRate": 0.09,
+  "excelFile": {
+    "name": "TikTok Shop UK - Commission Rates by Product Category V2.xlsx",
+    "size": "18.5 KB",
+    "downloadUrl": "https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897 (Excel download link on page)",
+    "needsManualDownload": true
+  }
+}

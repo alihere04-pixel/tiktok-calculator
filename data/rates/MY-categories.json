@@ -1,0 +1,102 @@
+{
+  "market": "MY",
+  "currency": "MYR",
+  "sourceUrl": "https://seller-my.tiktok.com/university/essay?knowledge_id=6907739532281602",
+  "sourceDate": "2025-09-13",
+  "lastVerified": "2026-09-26",
+  "extractionStatus": "partial",
+  "coverage": "ranges-and-examples-only",
+  "missingData": "full sub-category table",
+  "categories": [
+    {
+      "id": "my-electronics-bxp-mp",
+      "name": "Electronics (example: Guitar)",
+      "parentCategory": "Electronics",
+      "tier": "BXP Marketplace",
+      "rate": 0.0702,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    },
+    {
+      "id": "my-electronics-bxp-mall",
+      "name": "Electronics (example: Guitar)",
+      "parentCategory": "Electronics",
+      "tier": "BXP Mall",
+      "rate": 0.1026,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    },
+    {
+      "id": "my-electronics-nonbxp-mp",
+      "name": "Electronics (example: Guitar)",
+      "parentCategory": "Electronics",
+      "tier": "Non-BXP Marketplace",
+      "rate": 0.1134,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    },
+    {
+      "id": "my-electronics-nonbxp-mall",
+      "name": "Electronics (example: Guitar)",
+      "parentCategory": "Electronics",
+      "tier": "Non-BXP Mall",
+      "rate": 0.1459,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    },
+    {
+      "id": "my-toys-nonbxp-mp",
+      "name": "Toys (example: Remote control car)",
+      "parentCategory": "Toys",
+      "tier": "Non-BXP Marketplace",
+      "rate": 0.1458,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    },
+    {
+      "id": "my-toys-nonbxp-mall",
+      "name": "Toys (example: Remote control car)",
+      "parentCategory": "Toys",
+      "tier": "Non-BXP Mall",
+      "rate": 0.1782,
+      "confidence": "high",
+      "notes": "Example rate from Seller University page. SST inclusive."
+    }
+  ],
+  "knownRanges": {
+    "bxpMarketplace": "4.86% - 9.18%",
+    "nonBxpMarketplace": "11.34% - 17.82%",
+    "bxpMall": "8.91% - 12.42%",
+    "nonBxpMall": "14.58% - 18.90%"
+  },
+  "additionalFees": {
+    "transactionFee": {
+      "rate": 0.0378,
+      "base": "Customer Payment",
+      "taxInclusive": true,
+      "confidence": "high"
+    },
+    "platformSupportFee": {
+      "rate": 0.54,
+      "currency": "MYR",
+      "perOrder": true,
+      "taxInclusive": true,
+      "effectiveFrom": "2026-02-15",
+      "confidence": "high"
+    },
+    "dynamicCommission": {
+      "rateRange": "4.00% - 6.00%",
+      "capPerItem": 650000,
+      "currency": "MYR",
+      "effectiveFrom": "2025-06-10",
+      "confidence": "medium",
+      "notes": "Exact sub-category rates not published in accessible docs"
+    },
+    "preOrderFee": {
+      "rate": 0.02,
+      "taxInclusive": true,
+      "effectiveFrom": "2025-11-24",
+      "confidence": "high"
+    }
+  }
+}

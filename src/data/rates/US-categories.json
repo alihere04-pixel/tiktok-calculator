@@ -1,0 +1,749 @@
+{
+  "market": "US",
+  "currency": "USD",
+  "sourceUrl": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+  "sourceDate": "2024-10-31",
+  "lastVerified": "2026-09-26",
+  "extractionStatus": "partial",
+  "coverage": "partial",
+  "missingCategories": "~20-30 sub-categories not visible due to pagination",
+  "missingData": "Search results truncated; full table may have additional categories. Need to access full page for complete extraction.",
+  "categories": [
+    {
+      "id": "us-auto-car-electronics",
+      "name": "Car Electronics",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-car-exterior-accessories",
+      "name": "Car Exterior Accessories",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-car-interior-accessories",
+      "name": "Car Interior Accessories",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-car-lights",
+      "name": "Car Lights",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-car-repair-tools",
+      "name": "Car Repair Tools",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-car-washing-maintenance",
+      "name": "Car Washing & Maintenance",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-motorcycle-accessories",
+      "name": "Motorcycle Accessories",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-motorcycles",
+      "name": "Motorcycles",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-auto-quads-motorhomes-boats",
+      "name": "Quads, Motorhomes & Boats",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-care-health",
+      "name": "Baby Care & Health",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-clothing-shoes",
+      "name": "Baby Clothing & Shoes",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-fashion-accessories",
+      "name": "Baby Fashion Accessories",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-furniture",
+      "name": "Baby Furniture",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-safety",
+      "name": "Baby Safety",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-toys",
+      "name": "Baby Toys",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-baby-travel-gear",
+      "name": "Baby Travel Gear",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-maternity-supplies",
+      "name": "Maternity Supplies",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-baby-nursing-feeding",
+      "name": "Nursing & Feeding",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-bath-body-care",
+      "name": "Bath & Body Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-eye-ear-care",
+      "name": "Eye & Ear Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-feminine-care",
+      "name": "Feminine Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-haircare-styling",
+      "name": "Haircare & Styling",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-hand-foot-nail-care",
+      "name": "Hand, Foot & Nail Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-nasal-oral-care",
+      "name": "Nasal & Oral Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-fragrance",
+      "name": "Fragrance",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-beauty-special-personal-care",
+      "name": "Special Personal Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-books-children-infants-books",
+      "name": "Children's & Infants' Books",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-books-economics-management",
+      "name": "Economics & Management",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-books-schooling",
+      "name": "Schooling",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-books-magazines-newspapers",
+      "name": "Magazines & Newspapers",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-books-science-technology",
+      "name": "Science & Technology",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-collectibles-cultural-items",
+      "name": "Cultural Items",
+      "parentCategory": "Collectibles",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-collectibles-entertainment",
+      "name": "Entertainment",
+      "parentCategory": "Collectibles",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-collectibles-sports-collectibles",
+      "name": "Sports Collectibles",
+      "parentCategory": "Collectibles",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-collectibles-trading-cards-accessories",
+      "name": "Trading Cards & Accessories",
+      "parentCategory": "Collectibles",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-computers-computer-accessories",
+      "name": "Computer Accessories",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-computers-data-storage-software",
+      "name": "Data Storage & Software",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-computers-office-equipment",
+      "name": "Office Equipment",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-fashion-accessories-clothes-accessories",
+      "name": "Clothes Accessories",
+      "parentCategory": "Fashion Accessories",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-household-appliances-commercial",
+      "name": "Commercial Appliances",
+      "parentCategory": "Household Appliances",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-diamond",
+      "name": "Diamond",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-gold",
+      "name": "Gold",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-jade",
+      "name": "Jade",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-platinum-carat-gold",
+      "name": "Platinum, Carat Gold",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-ruby-sapphire-emerald",
+      "name": "Ruby, Sapphire & Emerald",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-amber",
+      "name": "Amber",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-artificial-gemstones",
+      "name": "Artificial Gemstones",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-mellite",
+      "name": "Mellite",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-crystal",
+      "name": "Crystal",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-non-natural-crystal",
+      "name": "Non-natural Crystal",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-pearl",
+      "name": "Pearl",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-semiprecious-stones",
+      "name": "Semiprecious Stones",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-jewelry-silver",
+      "name": "Silver",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-phones-audio-video",
+      "name": "Audio & Video",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-preowned-bags",
+      "name": "Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-collectible-trading-cards",
+      "name": "Collectible Trading Cards",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-luggage-travel",
+      "name": "Luggage & Travel",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-watches",
+      "name": "Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-footwear",
+      "name": "Footwear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-refurbished-phones-electronics",
+      "name": "Refurbished Phones & Electronics",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-fashion-accessories",
+      "name": "Fashion Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-menswear",
+      "name": "Menswear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-womenswear",
+      "name": "Womenswear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-collectible-coins-paper-money",
+      "name": "Collectible Coins and Paper Money",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-collectible-figures",
+      "name": "Collectible Figures",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-preowned-collectible-comic-books",
+      "name": "Collectible Comic Books",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "specialRules": [
+        {
+          "type": "tieredThreshold",
+          "threshold": 10000,
+          "rateAboveThreshold": 0.03,
+          "description": "Any portion of the sale over $10K, 3%"
+        }
+      ]
+    },
+    {
+      "id": "us-shoes-mens-shoes",
+      "name": "Men's Shoes",
+      "parentCategory": "Shoes",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-shoes-womens-shoes",
+      "name": "Women's Shoes",
+      "parentCategory": "Shoes",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-shoes-shoe-accessories",
+      "name": "Shoe Accessories",
+      "parentCategory": "Shoes",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-textiles-bedding-linens",
+      "name": "Bedding and Linens",
+      "parentCategory": "Textiles & Soft Furnishings",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-tools-garden-tools",
+      "name": "Garden Tools",
+      "parentCategory": "Tools & Hardware",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-bottoms",
+      "name": "Women's Bottoms",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-dresses",
+      "name": "Women's Dresses",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-sleepwear-loungewear",
+      "name": "Women's Sleepwear & Loungewear",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-special-clothing",
+      "name": "Women's Special Clothing",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-suits-sets",
+      "name": "Women's Suits & Sets",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-tops",
+      "name": "Women's Tops",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    },
+    {
+      "id": "us-womenswear-womens-underwear",
+      "name": "Women's Underwear",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.06,
+      "confidence": "high",
+      "specialRules": []
+    }
+  ]
+}

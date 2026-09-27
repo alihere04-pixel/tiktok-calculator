@@ -1,0 +1,119 @@
+/**
+ * Monitoring and analytics configuration.
+ *
+ * Everything here is OFF unless an environment variable turns it on. That is not
+ * timidity, it is a legal requirement for part of this audience: the site serves
+ * the UK, Singapore, Malaysia, the Philippines and the United States, so loading
+ * an analytics or advertising tracker without prior consent engages UK GDPR and
+ * the equivalent regimes. A tracker that ships on by default is a compliance
+ * bug, not a missing feature.
+ *
+ * Enabling analytics therefore takes three deliberate steps, in this order:
+ *
+ *   1. Choose a consent-respecting provider. Do not use a tracker that reads
+ *      anything before consent.
+ *   2. Add a consent banner and block the script until the visitor opts in.
+ *   3. Set the env var.
+ *
+ * Error monitoring is different and much lighter: it is a first-party request to
+ * our own endpoint carrying a digest and a stack, with no cookies, no
+ * identifiers and no cross-site tracking. It is still off by default, because
+ * even that should be a decision rather than an accident.
+ *
+ * `monitoringSummary()` is read by the launch checklist and the test suite, so
+ * what is on and what is off is never a guess.
+ */
+
+export type AnalyticsProvider = 'none' | 'plausible' | 'umami' | 'ga4';
+
+export interface MonitoringConfig {
+  analytics: {
+    enabled: boolean;
+    provider: AnalyticsProvider;
+    domain: string | null;
+    /** Set only once a consent banner is actually gating the script. */
+    consentGated: boolean;
+  };
+  errorMonitoring: {
+    enabled: boolean;
+    dsn: string | null;
+  };
+}
+
+function readEnv(name: string): string | undefined {
+  const value = process.env[name];
+  return value && value.trim() !== '' ? value.trim() : undefined;
+}
+
+/** Providers that set their own cookie before consent. Not for an EU/UK launch. */
+const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
+
+export function monitoringConfig(): MonitoringConfig {
+  const rawProvider = (readEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER') ?? 'none').toLowerCase();
+  const provider = (
+    ['none', 'plausible', 'umami', 'ga4'] as const
+  ).includes(rawProvider as AnalyticsProvider)
+    ? (rawProvider as AnalyticsProvider)
+    : 'none';
+
+  const dsn = readEnv('NEXT_PUBLIC_ERROR_DSN') ?? null;
+  const domain = readEnv('NEXT_PUBLIC_ANALYTICS_DOMAIN') ?? null;
+
+  return {
+    analytics: {
+      // Analytics is opt-in through the provider choice alone, then further
+      // gated on a consent banner actually existing.
+      enabled: provider !== 'none' && domain !== null && readEnv('NEXT_PUBLIC_CONSENT_GATE') === 'true',
+      provider,
+      domain,
+      consentGated: readEnv('NEXT_PUBLIC_CONSENT_GATE') === 'true',
+    },
+    errorMonitoring: {
+      enabled: dsn !== null,
+      dsn,
+    },
+  };
+}
+
+/**
+ * Problems that must be resolved before enabling analytics.
+ *
+ * Returned rather than thrown so a test can assert on the exact list, and so
+ * the launch checklist can print it.
+ */
+export function analyticsBlockers(config: MonitoringConfig = monitoringConfig()): string[] {
+  const blockers: string[] = [];
+  const { analytics } = config;
+
+  if (analytics.provider === 'none') {
+    blockers.push('No analytics provider selected.');
+  }
+
+  if (analytics.enabled && !analytics.consentGated) {
+    blockers.push(
+      'Analytics is enabled but NEXT_PUBLIC_CONSENT_GATE is not true. A tracker must not load before consent.'
+    );
+  }
+
+  if (analytics.enabled && CONSENT_HOSTILE_PROVIDERS.includes(analytics.provider)) {
+    blockers.push(
+      `${analytics.provider} sets cookies before consent. Do not use it for the UK/EU audience without a consent-management platform.`
+    );
+  }
+
+  if (analytics.provider !== 'none' && analytics.domain === null) {
+    blockers.push('NEXT_PUBLIC_ANALYTICS_DOMAIN is not set, so events would have no destination.');
+  }
+
+  return blockers;
+}
+
+/** Human-readable state, for the launch checklist. */
+export function monitoringSummary(config: MonitoringConfig = monitoringConfig()): string[] {
+  const { analytics, errorMonitoring } = config;
+  return [
+    `Analytics: ${analytics.enabled ? `ON (${analytics.provider}, consent-gated)` : 'off'}`,
+    `Error monitoring: ${errorMonitoring.enabled ? 'on' : 'off'}`,
+    ...analyticsBlockers(config).map((blocker) => `  blocker: ${blocker}`),
+  ];
+}
