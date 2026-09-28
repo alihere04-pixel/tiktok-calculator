@@ -150,9 +150,9 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     slug: 'privacy',
     title: 'Privacy Policy',
     metaDescription:
-      'How this TikTok Shop fee calculator handles your data: no cookies, no accounts, no analytics, and the one category of server log data it does receive.',
+      'How this TikTok Shop fee calculator handles your data: no cookies, no accounts, and the one category of server log data it does receive; plus Vercel Web Analytics for traffic measurement.',
     summary:
-      'The short version: no cookies, no accounts, no analytics, and the only personal data we receive is the ordinary server log entry our host records for every request.',
+      'The short version: no cookies, no accounts, and the only personal data we receive is the ordinary server log entry our host records for every request; plus cookieless Vercel Web Analytics for traffic measurement.',
     updated: LAST_REVIEWED,
     sections: [
       {
@@ -174,7 +174,7 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
         ],
         bullets: [
           'No cookies are set by this site.',
-          'No analytics or tracking scripts run by default.',
+          'We use Vercel Web Analytics to measure site traffic; it is cookieless and does not identify individual visitors.',
           'No advertising or cross-site tracking pixels are served.',
           'No personal data is entered into any form on this site. The fee estimator asks for a price and a category, and both are used in a single calculation.',
           'We do not sell personal data, and we do not share it for anyone else\'s marketing.',
@@ -234,8 +234,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
         id: 'analytics-and-cookies',
         heading: 'Analytics and cookies',
         paragraphs: [
-          'This site runs no analytics by default. If that ever changes, this page and a consent prompt will both be updated first, and no non-essential analytics will load before you opt in.',
-          'Because the site also serves the United Kingdom, Singapore, Malaysia, the Philippines and the United States, it falls under UK and EU privacy rules. Loading advertising or analytics cookies without consent would breach those rules, which is why the default is off.',
+          'We use Vercel Web Analytics to measure site traffic. It is cookieless and does not collect personal information or identify individual visitors. Vercel\'s privacy policy: https://vercel.com/legal/privacy-policy.',
+          'Because the site also serves the United Kingdom, Singapore, Malaysia, the Philippines and the United States, it falls under UK and EU privacy rules. If we ever enable advertising or analytics cookies, this page and a consent prompt will both be updated first, and no such cookies will load before you opt in.',
         ],
       },
       {

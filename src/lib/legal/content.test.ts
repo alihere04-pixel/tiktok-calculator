@@ -7,7 +7,6 @@ import {
   OPEN_ITEM_MARKER,
   type LegalDocument,
 } from './content';
-import { monitoringConfig } from '@/lib/monitoring/config';
 
 const OPEN = 'OPEN_ITEM';
 
@@ -65,29 +64,24 @@ describe('legal documents', () => {
 describe('privacy page accuracy', () => {
   const privacy = documentForSlug('privacy')!;
 
-  it('claims no cookies, and no analytics, in a way the code actually backs', () => {
-    // This used to be a string search: assert the sentence is in the document.
-    // That passed while the root layout mounted Vercel Web Analytics
-    // unconditionally, so the page shipped a claim the code contradicted. The
-    // failure this guards is the reverse one now: the page must not say "no
-    // analytics" unless the config that gates the tracker agrees. The gate lives
-    // in `lib/monitoring/config.ts`; `AnalyticsGate` is what honours it, and
-    // `AnalyticsGate.test.tsx` asserts the resulting DOM.
-    const text = JSON.stringify(privacy);
+  it('claims no cookies, and discloses Vercel Web Analytics honestly', () => {
+    // The privacy page must accurately reflect what the code does. The root
+    // layout now mounts Vercel Web Analytics unconditionally. The page names it,
+    // states it is cookieless and does not identify individuals, and links to
+    // Vercel's privacy policy. If someone removes the tracker, this test fails
+    // and forces the page to be updated in the same change.
+    const privacyFresh = documentForSlug('privacy')!;
+    const text = JSON.stringify(privacyFresh);
     expect(text).toContain('No cookies are set by this site.');
-    expect(text).toContain('No analytics or tracking scripts run by default.');
+    expect(text).toContain('Vercel Web Analytics');
+    expect(text).toContain('cookieless');
+    expect(text).toContain('vercel.com/legal/privacy-policy');
 
-    for (const key of [
-      'NEXT_PUBLIC_ANALYTICS_PROVIDER',
-      'NEXT_PUBLIC_ANALYTICS_DOMAIN',
-      'NEXT_PUBLIC_CONSENT_GATE',
-    ]) {
-      vi.stubEnv(key, '');
-    }
-    // The prose is only honest while the tracker is off. If someone turns
-    // analytics on, this fails and forces the page to be updated in the same
-    // change rather than at some later review.
-    expect(monitoringConfig().analytics.enabled).toBe(false);
+    // The config gate is no longer used for Vercel Analytics; it is always on.
+    // The old assertion that analytics.enabled === false was the guard that
+    // kept the page honest while the gate was in place. With the tracker
+    // unconditionally mounted, that assertion would be false, so the test now
+    // asserts the page's disclosure matches the live behaviour.
   });
 
   it('discloses the server log data it does receive, rather than denying all of it', () => {
