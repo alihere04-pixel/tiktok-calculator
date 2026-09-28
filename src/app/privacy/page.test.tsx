@@ -18,7 +18,12 @@ describe('/privacy', () => {
   it('exports metadata with a canonical URL', () => {
     const meta = privacyMeta();
     expect(meta.title).toContain('Privacy Policy');
-    expect(meta.description).toMatch(/does not use cookies/i);
+    // The description must not overclaim. "Does not use cookies" was true but
+    // incomplete, because the host does log an IP address on every request. The
+    // page now says what is actually collected.
+    expect(meta.description).toMatch(/no cookies/i);
+    expect(meta.description).toMatch(/server log/i);
+    expect(meta.description).not.toMatch(/store nothing about you/i);
     expect(meta.alternates?.canonical).toBe('/privacy');
   });
 });

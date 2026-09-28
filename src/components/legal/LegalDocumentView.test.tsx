@@ -1,7 +1,10 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { LegalDocumentView } from './LegalDocumentView';
-import { LEGAL_DOCUMENTS, documentForSlug } from '@/lib/legal/content';
+import { LEGAL_DOCUMENTS, LAST_REVIEWED, documentForSlug } from '@/lib/legal/content';
+import { formatIsoDate } from '@/lib/seo/format';
+
+const LEGAL_REVIEW_DATE = LAST_REVIEWED;
 
 afterEach(cleanup);
 
@@ -49,8 +52,15 @@ describe.each(['disclaimer', 'privacy', 'terms'] as const)('LegalDocumentView: %
     renderDoc(slug);
     expect(screen.getByText(documentForSlug(slug)!.summary)).toBeTruthy();
     // Rendered through formatIsoDate, so the reader sees a written date
-    // ("September 27, 2026") rather than a raw ISO string.
-    expect(screen.getByText(/Last reviewed: September 27, 2026/)).toBeTruthy();
+    // ("September 28, 2026") rather than a raw ISO string. Derived from
+    // LAST_REVIEWED so bumping the date does not silently break this.
+    expect(
+      screen.getByText(
+        new RegExp(
+          `Last reviewed: ${formatIsoDate(LEGAL_REVIEW_DATE).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`
+        )
+      )
+    ).toBeTruthy();
   });
 
   it('carries the draft-for-review notice, so it cannot be mistaken for final', () => {
@@ -126,10 +136,17 @@ describe('LegalDocumentView accessibility', () => {
     expect(screen.getByRole('navigation', { name: 'Legal pages' })).toBeTruthy();
   });
 
-  it('renders the placeholder marker as visible text rather than hiding it', () => {
-    // The alternative is a blank gap in the document, which is worse: it looks
-    // finished but is not.
-    renderDoc('privacy');
-    expect(screen.getByText(/OPEN_ITEM/)).toBeTruthy();
+  it('reports zero placeholders on every page, now that all values are supplied', () => {
+    // Inverted on 2026-09-28. This used to assert that the marker was visible on
+    // /privacy, which meant it would have failed the moment the last placeholder
+    // was filled. The property that actually matters is the one the banner
+    // states: no page claims a value is missing when it is not, and the banner
+    // still says the wording needs a lawyer either way.
+    for (const doc of LEGAL_DOCUMENTS) {
+      cleanup();
+      render(<LegalDocumentView document={doc} allDocuments={LEGAL_DOCUMENTS} />);
+      expect(screen.getByText(/No values on this page are placeholders/)).toBeTruthy();
+      expect(screen.queryByText(/OPEN_ITEM/)).toBeNull();
+    }
   });
 });

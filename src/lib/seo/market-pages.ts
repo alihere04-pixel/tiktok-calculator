@@ -42,6 +42,15 @@ export interface CategoryRateRow {
   rateLabel: string;
   secondaryRateLabel?: string;
   tier?: string;
+  /**
+   * The parent category, carried for search and for markets that publish
+   * sub-categories. UK lists 116 sub-categories under Beauty & Personal Care,
+   * where a bare name like "Accessories" is ambiguous without it.
+   *
+   * Only rendered when a page asks for it, so the other four market tables stay
+   * byte-identical.
+   */
+  parentLabel?: string;
   confidence: ConfidenceLevel;
 }
 
@@ -195,6 +204,10 @@ function toCategoryRow(category: CategoryRate): CategoryRateRow {
     row.secondaryRateLabel = `Mall ${formatRate(category.mallRate)}`;
   }
   if (category.tier) row.tier = category.tier;
+  // Carried on every row so `CategoryTableFilter` can match a parent category
+  // as well as a sub-category name. Whether it is displayed is decided by the
+  // table, which keeps the other four market pages unchanged.
+  row.parentLabel = category.parentCategory;
   return row;
 }
 
@@ -245,12 +258,43 @@ function buildRateRangeNote(categories: CategoryRate[]): string {
  * that restated the Mall rate already shown in the category table. It is
  * rendered inline in the table's secondary rate cell instead.
  *
+ * The same reasoning applies to a rate that *many* categories share. UK
+ * publishes a full 343-row Excel table in which 127 categories sit at 5% and
+ * the other 216 at the 9% default, so listing every 5% row produced 130 cards
+ * that restated the category table. Once a single off-default rate covers more
+ * than a handful of categories it is summarised as one row: at that point it
+ * is the market's second rate, not a list of exceptions. The individual
+ * categories stay in the table, so nothing is hidden by the collapse.
+ *
  * A market with no recorded rule set (SG, MY) gets an empty list and the page
  * says so, rather than a padded one.
  */
+const DEVIATION_COLLAPSE_THRESHOLD = 4;
+
+/** Weakest confidence in the group, so a summary never overstates certainty. */
+const CONFIDENCE_RANK: ConfidenceLevel[] = [
+  'high',
+  'medium',
+  'low',
+  'needs-verification',
+];
+
+function weakestConfidence(categories: CategoryRate[]): ConfidenceLevel {
+  return categories.reduce<ConfidenceLevel>(
+    (weakest, category) =>
+      CONFIDENCE_RANK.indexOf(category.confidence) > CONFIDENCE_RANK.indexOf(weakest)
+        ? category.confidence
+        : weakest,
+    'high'
+  );
+}
+
 function buildExceptions(data: MarketRateData): CategoryExceptionRow[] {
   const rows: CategoryExceptionRow[] = [];
   const defaultRate = data.defaultRate;
+
+  // Deviations from the market default, bucketed by their own rate.
+  const deviations = new Map<number, CategoryRate[]>();
 
   for (const category of data.categories) {
     for (const rule of category.specialRules ?? []) {
@@ -280,9 +324,26 @@ function buildExceptions(data: MarketRateData): CategoryExceptionRow[] {
     // Only meaningful where the market actually publishes a default to differ
     // from. Without one, "differs from the standard rate" has no referent.
     if (defaultRate !== undefined && category.rate !== defaultRate) {
+      const bucket = deviations.get(category.rate);
+      if (bucket) bucket.push(category);
+      else deviations.set(category.rate, [category]);
+    }
+  }
+
+  for (const [rate, categories] of deviations) {
+    const standard = formatRate(defaultRate as number);
+    if (categories.length > DEVIATION_COLLAPSE_THRESHOLD) {
+      rows.push({
+        category: `${categories.length} categories at ${formatRate(rate)}`,
+        detail: `Charged ${formatRate(rate)} instead of the ${standard} standard rate. Each one is listed in the category table below.`,
+        confidence: weakestConfidence(categories),
+      });
+      continue;
+    }
+    for (const category of categories) {
       rows.push({
         category: category.name,
-        detail: `${formatRate(category.rate)} instead of the ${formatRate(defaultRate)} standard rate.`,
+        detail: `${formatRate(rate)} instead of the ${standard} standard rate.`,
         confidence: category.confidence,
       });
     }
@@ -515,12 +576,13 @@ function buildFaq(data: MarketRateData, rangeNote: string, sourceUrl: string): F
     },
   ];
 
-  if (data.missingData) {
-    items.push({
-      question: `Is anything missing from this page?`,
-      answer: `Yes. ${data.missingData} Anything not listed here should be treated as unverified.`,
-    });
-  }
+  const gap = missingDataNote(data);
+  items.push({
+    question: `Is anything missing from this page?`,
+    answer: gap
+      ? `Yes. ${gap} Anything not listed here should be treated as unverified.`
+      : 'No. Every category rate in our dataset came from official documentation. Anything not listed here should still be treated as unverified.',
+  });
 
   items.push({
     question: 'How do I confirm these numbers for my own account?',
@@ -530,6 +592,21 @@ function buildFaq(data: MarketRateData, rangeNote: string, sourceUrl: string): F
   return items;
 }
 
+/**
+ * The published `missingData` gap note, or null when nothing is missing.
+ *
+ * UK records the string "none" rather than leaving the field out, and a bare
+ * truthiness check read that as a real gap: the FAQ rendered "Yes. none" and
+ * the coverage note said "none". A genuine gap is always descriptive prose
+ * (see US, SG and MY), so only an explicit negation counts as "nothing missing".
+ */
+function missingDataNote(data: MarketRateData): string | null {
+  const note = data.missingData?.trim();
+  if (!note) return null;
+  if (/^(none|n\/a|not applicable|nothing|nil|null)$/i.test(note)) return null;
+  return note;
+}
+
 /** Builds the full page model for one market from its rate file. */
 export function buildMarketPageModel(data: MarketRateData, meta: MarketPageMeta): MarketPageModel {
   const transactionFees = buildTransactionFees(data);
@@ -537,9 +614,9 @@ export function buildMarketPageModel(data: MarketRateData, meta: MarketPageMeta)
   const exceptions = buildExceptions(data);
   const rateRangeNote = buildRateRangeNote(data.categories);
 
-  const coverageNote = data.missingData
-    ? data.missingData
-    : 'All category rates in our dataset came from official documentation.';
+  const coverageNote =
+    missingDataNote(data) ??
+    'All category rates in our dataset came from official documentation.';
 
   return {
     meta,

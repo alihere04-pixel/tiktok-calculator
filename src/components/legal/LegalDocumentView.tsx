@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { LegalDocument, LegalSlug } from '@/lib/legal/content';
+import { OPEN_ITEM_MARKER } from '@/lib/legal/content';
 import { formatIsoDate } from '@/lib/seo/format';
 
 /**
@@ -21,6 +22,10 @@ export function LegalDocumentView({
   document: LegalDocument;
   allDocuments: LegalDocument[];
 }) {
+  const openItemsHere = document.sections.filter((section) =>
+    section.paragraphs.some((p) => p.includes(OPEN_ITEM_MARKER))
+  );
+
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
       <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
@@ -38,8 +43,11 @@ export function LegalDocumentView({
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-8 px-4 py-8 sm:px-6">
         <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
           <strong>Draft for review.</strong> This page was written by a developer, not by a
-          lawyer, and has not been reviewed by one. Values that identify the operating entity
-          are still placeholders. Do not treat this as a final legal document.
+          lawyer, and has not been reviewed by one.{' '}
+          {openItemsHere.length > 0
+            ? `${openItemsHere.length === 1 ? 'One value on this page is' : `${openItemsHere.length} values on this page are`} still a placeholder and must be filled before launch.`
+            : 'No values on this page are placeholders, but the wording still needs legal review.'}{' '}
+          Do not treat this as a final legal document.
         </p>
 
         <nav aria-label="Legal pages">

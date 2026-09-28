@@ -150,10 +150,34 @@ describe('category exceptions', () => {
     expect(us.exceptions[0].detail).toBe('Any portion of the sale over $10K, 3%');
   });
 
-  it('flags UK categories that differ from its published 9% default', () => {
+  it('summarises the UK 5% tier instead of listing every 5% category', () => {
+    // UK's Excel puts 127 categories at 5% and 216 at the 9% default, so a card
+    // per off-default row produced 130 cards that restated the category table.
     const uk = modelFor('uk');
-    const electronics = uk.exceptions.find((e) => e.category === 'Electronics');
-    expect(electronics?.detail).toBe('5% instead of the 9% standard rate.');
+    const summary = uk.exceptions.find((e) => /categories at 5%$/.test(e.category));
+
+    expect(summary).toBeDefined();
+    expect(summary?.detail).toBe(
+      'Charged 5% instead of the 9% standard rate. Each one is listed in the category table below.'
+    );
+
+    // Collapsing the cards must not drop the rows themselves.
+    expect(uk.categoryRates.filter((r) => r.rateLabel === '5%').length).toBeGreaterThan(100);
+  });
+
+  it('keeps a small number of off-default categories as individually named cards', () => {
+    // Same rule below the collapse threshold, so a genuine one-off exception is
+    // still named rather than summarised.
+    const uk = loadMarketRatesSync('UK');
+    const trimmed = buildMarketPageModel(
+      { ...uk, categories: uk.categories.filter((c) => c.rate === 0.05).slice(0, 2) },
+      metaForSlug('uk')!
+    );
+
+    expect(trimmed.exceptions).toHaveLength(2);
+    for (const row of trimmed.exceptions) {
+      expect(row.detail).toBe('5% instead of the 9% standard rate.');
+    }
   });
 
   it('flags the UK new seller promotion as a zero-rate exception', () => {
@@ -266,5 +290,50 @@ describe('affiliate commission', () => {
       // A percentage in the disclosure copy would be an invented rate.
       expect(model.affiliate.reason).not.toMatch(/\d/);
     }
+  });
+});
+
+describe('data coverage disclosure', () => {
+  function missingFaq(model: ReturnType<typeof modelFor>) {
+    return model.faq.find((f) => /anything missing/i.test(f.question))?.answer;
+  }
+
+  it('does not read the UK "none" sentinel as a real gap', () => {
+    // UK records missingData: "none". A bare truthiness check rendered the FAQ
+    // as "Yes. none" and the coverage note as "none".
+    const uk = modelFor('uk');
+
+    expect(missingFaq(uk)).toMatch(/^No\./);
+    expect(missingFaq(uk)).not.toMatch(/yes/i);
+    expect(uk.coverageNote).toMatch(/official documentation/i);
+    expect(uk.coverageNote).not.toBe('none');
+  });
+
+  it('still discloses the real gaps on the partial markets', () => {
+    // US is no longer in this list: its table was fully extracted on
+    // 2026-09-28, so it now reports no missing data like UK and PH do. See the
+    // "marks the US table complete" test in lib/rates/loader.test.ts.
+    for (const slug of ['sg', 'my']) {
+      const model = modelFor(slug);
+      expect(missingFaq(model)).toMatch(/^Yes\./);
+      expect(model.coverageNote).not.toMatch(/official documentation/i);
+    }
+  });
+
+  it('reports no missing data on the US page now the table is complete', () => {
+    // This is the visible consequence of closing the US gap. The page must not
+    // still claim its commission table is truncated, or a reader would take a
+    // disclosure card as current.
+    const us = modelFor('us');
+    expect(missingFaq(us)).toMatch(/^No\./);
+    expect(us.coverageNote).toMatch(/official documentation/i);
+    expect(us.coverageNote).not.toMatch(/truncat|partial|pagination/i);
+  });
+
+  it('treats an absent missingData as no gap', () => {
+    // PH omits the field entirely rather than negating it.
+    const ph = modelFor('ph');
+    expect(missingFaq(ph)).toMatch(/^No\./);
+    expect(ph.coverageNote).toMatch(/official documentation/i);
   });
 });

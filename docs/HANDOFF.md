@@ -130,34 +130,110 @@ shows your domain, and `curl https://yourdomain/robots.txt` contains a
 ### 2. Legal review — yours and your lawyer's
 
 **Current state.** Three pages are written as drafts. Each says on its face that
-it was written by a developer and has not been reviewed by a lawyer. Three values
-are marked `OPEN_ITEM` because this repository does not contain them:
+it was written by a developer and has not been reviewed by a lawyer, and says
+how many of *its own* values are still placeholders. As of 2026-09-28 all three
+values the repository previously lacked are supplied, so `legalOpenItems()`
+returns `[]` and every page reports zero placeholders:
 
-| Page | Missing |
-| --- | --- |
-| `/terms` | Name of the legal entity operating the site |
-| `/terms` | Governing jurisdiction |
-| `/privacy` | A monitored contact address |
+| Page | Value | Now |
+| --- | --- | --- |
+| `/terms` | Name of the operating entity | Fynza, described as a trading name |
+| `/terms` | Governing jurisdiction | Pakistan |
+| `/privacy` | Server log retention | 90 days |
+
+Fynza is named as a **trading name**, not a registered company. The terms page
+was written to avoid claiming otherwise: it says the site is "operated from
+Pakistan" rather than asserting an operating entity "established" in a
+jurisdiction. Whether a real person or company sits behind the name, and
+whether a UK or EU representative is now required (UK GDPR Art. 27), is a
+question for the lawyer.
+
+The privacy contact address is filled in as of 2026-09-28. It is a personal
+mailbox, `alihere04@gmail.com`, not a role address on a domain. That works, but
+it is a single point of failure: if access is lost, the page advertises a dead
+contact, and a privacy notice nobody can reach is unenforceable in practice.
+Move it to an address on a domain you control before relying on it commercially.
+The intended replacement is `contact@fynza.store`, deliberately not yet
+published. When you switch it, two things must change in the same commit or the
+suite goes red: the `PRIVACY_CONTACT_EMAIL` constant and the exact-set email
+assertion in `content.test.ts`, which currently matches
+`{alihere04@gmail.com}` and fails on any second address.
+
+The privacy page was restructured on 2026-09-28 into the standard ICO sequence —
+contact details, what is collected, lawful bases, the seven data subject rights,
+how to make a request, where data comes from, retention, how to complain. Two
+corrections came out of that rewrite, and both matter more than the restructure:
+
+- The page used to say "we collect nothing about you" while a later section
+  admitted the host records your IP address. It now names the log data
+  explicitly and gives it a lawful basis (legitimate interests) rather than
+  denying it exists.
+- The old page had no rights section and no complaints route at all, so a reader
+  who wanted to act had nothing to act on. The ICO's published address is given
+  so a complaint is actually actionable.
+
+**A third false claim was live, and it is the one to understand.** The root
+layout mounted Vercel Web Analytics unconditionally, so the site's own privacy
+page — which said "No analytics or tracking scripts run by default" — was wrong
+while the whole suite stayed green. The test that appeared to cover this only
+asserted the sentence was present in the content file; it never checked whether
+a tracker was mounted. A string check cannot catch the thing it was standing in
+for. The tracker is now behind `AnalyticsGate`, which reads the consent gate in
+`lib/monitoring/config.ts` and withholds the script unless a provider, a
+destination domain and `NEXT_PUBLIC_CONSENT_GATE=true` are all present. None of
+those are set, so analytics is off.
+
+Do not set `NEXT_PUBLIC_CONSENT_GATE=true` until a real consent banner exists.
+That flag asserts a banner is implemented; it does not implement one. Until
+then it stays unset, which is what keeps the "no analytics" claim true.
 
 **What to do.**
 
 1. Send the three pages to your lawyer.
 2. When they return corrections, apply them in `src/lib/legal/content.ts`.
-3. Replace each `OPEN_ITEM` with the real value.
+3. Confirm the Vercel project's log retention really is 90 days. The page states
+   it as fact and the code cannot check it; if the project says 30, fix the
+   page rather than the project.
 4. Update `LAST_REVIEWED` to the date the lawyer signed off.
-5. Delete the draft notice block in
+5. Only then delete the draft notice block in
    `src/components/legal/LegalDocumentView.tsx` (the paragraph starting
-   "Draft for review").
-6. Run the tests. `src/lib/legal/content.test.ts` fails if any `OPEN_ITEM`
-   survives, and also fails if you introduce a stray `{{placeholder}}` or an
-   invented company number or email.
+   "Draft for review"). It counts placeholders per page, so it reads "One value
+   on this page is still a placeholder" until the last one is gone, then "No
+   values on this page are placeholders". Deleting it before a lawyer has seen
+   the page is how a draft gets mistaken for a final document.
+6. Run the tests.
 
-**How to confirm it worked.** `legalOpenItems()` returns an empty list, and the
-word "Draft" no longer appears on any of the three pages.
+**Two guards worth knowing about, because both used to be false reassurance.**
 
-**One caution.** The privacy page states the site sets no cookies and runs no
-analytics. That is true today. If you enable analytics later, update that page
-in the same change, or it becomes inaccurate.
+- `legalOpenItems()` takes an optional `docs` argument precisely so the detector
+  can be tested against a document that *does* carry a marker. It used to have
+  no argument, and the only test compared the marker count against the open-item
+  count — self-consistency, which passes whether or not a placeholder exists.
+  `HANDOFF.md` previously claimed the suite "fails if any `OPEN_ITEM` survives".
+  That was false and is now true.
+- `AnalyticsGate.test.tsx` asserts on `document.head`, because
+  `@vercel/analytics/next` renders `null` and injects its script imperatively.
+  It also matches the SDK's debug URL as well as `/_vercel/insights/script.js`,
+  because Vitest sets `NODE_ENV=test` and the SDK serves a different script in
+  that mode. A selector pinned to the production URL would have been null in
+  every test and could never have failed.
+
+**How to confirm it worked.** `legalOpenItems()` returns an empty list,
+`document.head` contains no analytics script, and the word "Draft" still
+appears on all three pages until a lawyer signs off.
+
+**Two cautions.** The privacy page states the site sets no cookies and runs no
+analytics. The first is true today. The second is true only because the gate is
+closed — if you enable analytics later, update the page in the same change. And
+if you add a CDN, a rate limiter or anything else that logs more than a request,
+`/privacy` needs updating in the same commit.
+
+**A second caution, and it cuts the other way.** The privacy page now describes
+server log data, because the host really does record an IP address on every
+request. If you add logging, a CDN, a security service or a rate limiter that
+captures more than a request log, this page becomes wrong in the same way the
+old one was. The honesty of this document depends on it being updated whenever
+the deployment changes, not only when the data files do.
 
 ### 3. Affiliate URLs — yours, when you have a contract
 
@@ -551,8 +627,12 @@ value is.
 
 ## G. Fixing the UK and US data gaps
 
-Both markets are marked `extractionStatus: "partial"`. This section is the manual
-procedure for closing them. It is Phase 2 work and is **not** part of launch.
+UK is done: its Excel was downloaded and fully extracted on 2026-09-28, and
+`UK-categories.json` now carries all 343 published rows. See G1.
+
+US is done too, and was closed on 2026-09-28: `US-categories.json` went from 78
+to 202 categories and is marked `extractionStatus: "complete"`. See G2, which
+also records why the section's original "pagination gap" premise was wrong.
 
 ### Read this first: the duplicated rate directory
 
@@ -632,18 +712,22 @@ that admits the gap, because a seller will make a decision on it.
 
 ### G1. UK — the Excel download
 
+**Status: done.** The Excel was downloaded and fully extracted on 2026-09-28.
+G1 is kept below as the re-verification procedure.
+
 **Current state.**
 
 ```
-categories: 4
-coverage:   policy-level-only
-missingData: "full category table in Excel download"
+categories: 347  (4 policy-level records + 343 rows from the Excel)
+coverage:   complete
+missingData: "none"
 excelFile:  "TikTok Shop UK - Commission Rates by Product Category V2.xlsx"
-             needsManualDownload: true
+             needsManualDownload: false
 ```
 
-UK currently has only 4 policy-level records, not a real category table. One of
-them:
+The 4 policy-level records were kept, because the page uses `defaultRate` for the
+headline comparison and deleting them removes the reference the rest of the page
+is built against:
 
 ```json
 {
@@ -655,6 +739,39 @@ them:
   "notes": "Default 9% commission rate inclusive of VAT"
 }
 ```
+
+The 343 Excel rows break down as 28 categories: 24 that publish a single `All`
+row, and 4 that publish their own sub-categories (Beauty & Personal Care 116,
+Computers & Office Equipment 73, Phones & Electronics 71, Pre-Owned 59). No
+category publishes both, so `uk-<category>-all` never collides with a real
+sub-category. Every row is `uk-<category-slug>-<sub-category-slug>` at
+`confidence: high`, carrying `notes: "From official UK Excel (V2)"`.
+
+**Watch the exception list.** 127 categories sit at 5% against a 9% default.
+A card per off-default row produced 130 exception cards that restated the
+category table, so `buildExceptions` in `src/lib/seo/market-pages.ts` collapses a
+shared off-default rate into one summary row once more than 4 categories share
+it. Raise `DEVIATION_COLLAPSE_THRESHOLD` only with a reason; below it, genuine
+one-off exceptions stay individually named.
+
+**The 347-row table.** That is too long to scan, so the UK page wraps the table in
+`CategoryTableFilter`, which adds a "Search categories..." box. Two properties
+must hold if you touch it:
+
+- All 347 rows stay in the prerendered HTML. Filtering only sets the `hidden`
+  attribute at runtime, so search engines and readers without JavaScript see the
+  full table. Never move the filtering into `buildMarketPageModel`.
+- The box is UK only. It is rendered by a `meta.market === 'UK'` branch in the fee
+  page, because the other four markets top out at 63 rows and do not need it.
+  US is now the obvious next candidate at 202 rows; if the branch is widened,
+  re-measure the prerendered page size, because the filter itself works fine
+  that large.
+
+`CategoryRateTable` also takes `showParentLabel`, which prints the parent
+category above each sub-category name. UK needs it, since it lists 116
+sub-categories under Beauty & Personal Care and a bare "Accessories" does not
+identify a category. It defaults to off so the other four tables are unchanged.
+Matching uses the `data-search` attribute, which holds parent and name together.
 
 **Procedure.**
 
@@ -681,6 +798,9 @@ them:
    genuinely finished and the file is no longer the source of truth.
 7. Run the tests and rebuild.
 
+Both copies of the file must stay byte-identical: `data/rates/` is what the
+loader reads at runtime, `src/data/rates/` is the fallback it falls back to.
+
 **Rate format.** `rate` is a decimal fraction, not a percentage. `9%` is `0.09`,
 `12.5%` is `0.125`. The schema rejects anything outside 0 to 1, and it is not a
 published range, it is a validation bound. Writing `9` for a 9% rate would be
@@ -693,70 +813,70 @@ row, as the existing record does, so nobody compares it against a net figure.
 below the default. If the Excel shows promo rates, add them as `specialRules`
 entries of type `promo` with `discountedRate`, rather than overwriting `rate`.
 The fee pages already handle the promo separately, and overwriting `rate` would
-double-count it.
+double-count it. The published Excel contains no promo rows: it carries only
+0.05 and 0.09.
 
 ### G2. US — the pagination gap
 
-**Current state.**
+**Status: done.** The source page was fetched and fully extracted on 2026-09-28.
 
 ```
-categories:   78
-coverage:     partial
-missingData:  "Search results truncated; full table may have additional categories.
-               Need to access full page for complete extraction."
-missingCategories: "~20-30 sub-categories not visible due to pagination"
+categories:   202  (78 before, +124 added)
+parents:      27   (15 before, +12 added)
+rates:        0.06 on 185 rows, 0.05 on 17 rows
+coverage:     complete
 ```
 
-**Procedure.**
+**The premise in this section was wrong, and that is why it took a full read of
+the page to close it.** There is no pagination. TikTok renders the entire
+commission table into the server-side HTML of the single page at `sourceUrl`,
+206 data rows in one `<table>`, delivered in the initial payload. The earlier
+"~20-30 hidden sub-categories" note was a guess written without opening the
+page, and the real gap was 126 rows across 12 entire parent categories that had
+never been extracted at all: Food & Beverages, Furniture, Health, Home
+Improvement, Home Supplies, Kids' Fashion, Kitchenware, Luggage & Bags,
+Menswear & Underwear, Pet Supplies, Sports & Outdoor, and Toys & Hobbies.
 
-1. Open the source page. The URL is in `data/rates/US-categories.json` under
-   `sourceUrl`.
-2. Work through every page of results. US does not publish an Excel download, so
-   this is pagination, and it must be done by hand.
-3. Match the existing record shape exactly:
+Lesson worth keeping: a disclosure that names a specific shortfall should be
+verified against the source before it is written down, not estimated. The
+estimate was wrong by 4x and it pointed at the wrong parent categories.
 
-```json
-{
-  "id": "us-auto-car-electronics",
-  "name": "Car Electronics",
-  "parentCategory": "Automotive & Motorcycle",
-  "rate": 0.06,
-  "confidence": "high",
-  "specialRules": []
-}
-```
+**Two judgement calls, both taken with the owner:**
 
-4. Keep the `us-` prefix on `id`, and keep every id unique. The file currently
-   has 78 categories and 78 distinct ids; the schema does not enforce uniqueness,
-   so a duplicate id would silently make one row unreachable and could make two
-   categories resolve to the same fee. There is no reserved `us-standard` id in
-   this file today, but avoid one anyway: UK and MY both have a policy-level
-   "standard" record, and reusing the name for a different thing in another
-   market is how the two get confused later.
-5. Reuse `parentCategory` values that already exist rather than inventing near
-   duplicates. The page groups by parent, and a new spelling splits one group
-   into two.
-6. Only promote `extractionStatus` to `complete` when you have actually worked
-   through the final page and reached the end of the list:
+- The 4 rows under `PPE Auto Test Category L1` and `PPE Manual Test Category L1`
+  ("Auto Test Category L2 001", "Manual Test Category L2 Leaf 003" and
+  siblings) are TikTok's own QA stubs, published in the same table. They were
+  dropped. They are not categories a seller can list under, and surfacing
+  "Auto Test Category L2 001" as a real commission rate would be worse than
+  omitting it. The page is a transcript minus internal fixtures, not a
+  byte-for-byte mirror.
+- Two existing rows no longer appear on the page: `us-books-schooling`
+  ("Schooling") and `us-jewelry-crystal` ("Crystal"). Their current published
+  equivalents were already in the table ("Education & Schooling", "Natural
+  Crystal", both 6%), so the pairs are renames, not deletions. The two stale
+  rows were renamed in place, keeping their ids. Nothing was deleted, and
+  because the ids are unchanged, no calculation path or saved calculator link
+  can break.
 
-```json
-"extractionStatus": "complete",
-"coverage": "complete",
-"missingData": "none"
-```
+Ids for the 124 new rows use the file's existing convention: a short parent
+prefix, then the slug, e.g. `us-pet-dog-cat-food`. The 15 pre-existing parents
+keep their hand-shortened prefixes (`auto`, `preowned`, `household-appliances`,
+and so on) rather than a mechanical slug of the parent name, because those ids
+are already referenced and a mechanical slug would have rewritten them.
 
-7. Remove `missingCategories` once it no longer describes reality.
-8. Run the tests and rebuild.
+The 16 rows carrying the "$10,000, 3%" note kept the same `tieredThreshold`
+`specialRules` shape the file already used for Collectibles and Pre-Owned. The
+note text is carried verbatim as the description. Every other row has
+`specialRules: []`.
 
 **Verify the result in the browser** after rebuilding:
 
 - The coverage note on the US page should no longer say the table is partial.
 - The count of commission rows should equal the number of categories in the
-  file.
+  file, 202.
 - The US new-seller promo is still unverified. That is a separate, known gap and
   it should stay flagged. The US rate file contains no `promo` rules at all, and
-  the form labels the US promo rate unverified. It is not part of the pagination
-  fix.
+  the form labels the US promo rate unverified. It is not part of this fix.
 
 ### G3. MY and SG (also partial, lower priority)
 
@@ -1020,8 +1140,8 @@ docs/HANDOFF.md                    this file
 | | Status |
 | --- | --- |
 | Code | Launch-ready |
-| Tests | 659 passing, 45 files |
+| Tests | 683 passing, 46 files |
 | Lighthouse | 96 / 95 / 97 performance, 100 across the other three |
 | Browsers | Chrome and Firefox verified. Safari not tested; cannot run on Windows. |
 | Blockers | Four, all business decisions. Sections B, D, E, F. |
-| Phase 2 | Not started. Section G is the manual. |
+| Data | UK complete (347 categories), US complete (202 categories). |

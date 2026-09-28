@@ -22,13 +22,23 @@ function tableClasses(): string {
   return 'w-full border-collapse text-left';
 }
 
-/** The headline category commission table. */
+/**
+ * The headline category commission table.
+ *
+ * `showParentLabel` prints the parent category above each sub-category name. UK
+ * is the only market that needs it: its Excel lists sub-categories such as
+ * "Accessories" 116 times under Beauty & Personal Care, and on its own that name
+ * does not identify a category. The other four markets keep a single label per
+ * row, so this stays off by default.
+ */
 export function CategoryRateTable({
   rows,
   currency,
+  showParentLabel = false,
 }: {
   rows: CategoryRateRow[];
   currency: string;
+  showParentLabel?: boolean;
 }) {
   if (rows.length === 0) {
     return <p className="text-sm text-zinc-600 dark:text-zinc-400">No category rates published.</p>;
@@ -57,9 +67,19 @@ export function CategoryRateTable({
           {rows.map((row) => (
             <tr
               key={row.id}
+              // Search text for `CategoryTableFilter`. Carried in the markup
+              // rather than held in React state so the filter is additive: the
+              // rows render identically whether or not the client component
+              // that reads this attribute ever runs.
+              data-search={`${row.parentLabel ?? ''} ${row.name}`.trim().toLowerCase()}
               className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/60"
             >
               <th scope="row" className={`${TD} font-medium text-zinc-900 dark:text-zinc-100`}>
+                {showParentLabel && row.parentLabel ? (
+                  <span className="block text-xs font-normal text-zinc-500 dark:text-zinc-500">
+                    {row.parentLabel}
+                  </span>
+                ) : null}
                 <span className="block">{row.name}</span>
                 {row.tier ? (
                   <span className="block text-xs font-normal text-zinc-500 dark:text-zinc-500">

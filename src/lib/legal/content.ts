@@ -3,12 +3,15 @@
  *
  * Two rules govern this file, both of which matter more than the prose:
  *
- *   1. Nothing here asserts a legal fact I cannot support. There is no operator
- *      name, company number, address or jurisdiction in this repository, so
- *      none is invented. Where the real document needs one, the value is a
- *      clearly-marked `OPEN_ITEM` and `legalOpenItems()` exposes it, so it
- *      shows up in the launch checklist and in the test suite rather than
- *      shipping as a plausible-looking blank.
+ *   1. Nothing here asserts a legal fact that was not supplied. The operator
+ *      trading name (Fynza), the jurisdiction it operates from (Pakistan), the
+ *      hosting log retention period and a privacy contact address have all been
+ *      given by the operator, so they appear as real values. Anything a real
+ *      document still needs and this repository does not have is a
+ *      clearly-marked `OPEN_ITEM` and `legalOpenItems()` exposes it, so it shows
+ *      up in the launch checklist and in the test suite rather than shipping as
+ *      a plausible-looking blank. There is still no company number and no
+ *      registered postal address here, and neither has been invented.
  *
  *   2. The pages describe what this tool actually does. It reads public
  *      rate documentation, estimates fees, and stores nothing about the
@@ -16,8 +19,10 @@
  *      against a generic template, because a template that claims to collect
  *      data we do not collect is its own kind of lie.
  *
- * These are drafts written by a developer, not by a lawyer. `legalOpenItems()`
- * says so explicitly, and the launch checklist blocks on legal review.
+ * These are drafts written by a developer, not by a lawyer. Every value a real
+ * document needs is now filled in, so `legalOpenItems()` returns an empty list,
+ * but an empty list is not a legal review. The wording is unreviewed and the
+ * launch checklist still blocks on one.
  */
 
 export type LegalSlug = 'disclaimer' | 'privacy' | 'terms';
@@ -41,7 +46,45 @@ export interface LegalDocument {
 /** Marker for a value that must be supplied before launch. */
 const OPEN = 'OPEN_ITEM';
 
-export const LAST_REVIEWED = '2026-09-27';
+/**
+ * Exported so the shared legal page shell can say whether the page a reader is
+ * actually looking at still contains a placeholder, instead of asserting the
+ * same thing on all three pages regardless.
+ *
+ * All three documents are currently complete, so `legalOpenItems()` returns
+ * `[]` and the shell reports zero placeholders on every page. The marker and
+ * the detector both stay in place deliberately: they are what catches a
+ * placeholder being reintroduced later, and the test suite exercises both the
+ * empty and the detecting path against the real function.
+ */
+export const OPEN_ITEM_MARKER = OPEN;
+
+export const LAST_REVIEWED = '2026-09-28';
+
+/**
+ * The privacy contact address. This is the one real contact value the operator
+ * has supplied, so it is a constant rather than an `OPEN_ITEM` and the privacy
+ * page can actually name a way to reach us.
+ *
+ * It is a personal mailbox, not a role address on a domain. That is acceptable
+ * for a site this size, but it is a single point of failure: if access to it is
+ * lost, the page is advertising a dead contact. Move to an address on a domain
+ * you control before relying on it commercially.
+ *
+ * PLANNED: switch to `contact@fynza.store` once that domain is live. The value
+ * below is deliberately unchanged until then. Two things must change in the
+ * same commit, or the suite goes red:
+ *
+ *   1. this constant, and
+ *   2. the exact-set email assertion in `content.test.ts` ("does not invent an
+ *      operator name, company number or address"), which currently matches
+ *      `{alihere04@gmail.com}` and fails on any second address.
+ *
+ * Do not publish `contact@fynza.store` until the zone is controlled and mail
+ * routes to a monitored inbox. A published address nobody reads is worse than a
+ * personal one that at least somebody owns.
+ */
+const PRIVACY_CONTACT_EMAIL = 'alihere04@gmail.com';
 
 const SHARED_DISCLAIMER_SECTION: LegalSection = {
   id: 'not-affiliated',
@@ -107,37 +150,84 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     slug: 'privacy',
     title: 'Privacy Policy',
     metaDescription:
-      'This fee calculator does not use cookies, does not run analytics, and does not store anything about you. Here is exactly what happens to a request.',
+      'How this TikTok Shop fee calculator handles your data: no cookies, no accounts, no analytics, and the one category of server log data it does receive.',
     summary:
-      'The short version: we set no cookies, run no analytics, and store nothing about you.',
+      'The short version: no cookies, no accounts, no analytics, and the only personal data we receive is the ordinary server log entry our host records for every request.',
     updated: LAST_REVIEWED,
     sections: [
       {
-        id: 'what-we-collect',
-        heading: 'What we collect',
+        id: 'contact-details',
+        heading: 'Contact details',
         paragraphs: [
-          'We collect nothing about you. There is no account system, no login, no newsletter, no saved profile and no user-generated content on this site.',
+          `If you have any question about this notice, or want to exercise a data protection right, contact us at ${PRIVACY_CONTACT_EMAIL}. That address is read for privacy requests.`,
+        ],
+      },
+      {
+        id: 'what-we-collect',
+        heading: 'What information we collect, use and why',
+        paragraphs: [
+          'This site is a fee calculator. There is no account system, no login, no newsletter, no saved profile and no user-generated content, and we do not ask you to identify yourself anywhere.',
+          'That covers everything you type into a calculator. A value you enter is sent to our server to compute one result and is not written to storage, so it is not personal data we hold on your behalf.',
+          'There is one category of personal data we do receive, and it arrives before you do anything: when your browser requests a page, our hosting provider records a standard server log entry. That entry can include your IP address, the page requested, the time of the request and your browser\'s user-agent string.',
+          'We use those logs only to keep the site available and to diagnose faults. We do not use them to build a profile of you, and we do not use them for marketing.',
+          'We do not knowingly collect special category data. Please do not enter health, biometric or other sensitive details into any field on this site.',
         ],
         bullets: [
           'No cookies are set by this site.',
           'No analytics or tracking scripts run by default.',
+          'No advertising or cross-site tracking pixels are served.',
           'No personal data is entered into any form on this site. The fee estimator asks for a price and a category, and both are used in a single calculation.',
+          'We do not sell personal data, and we do not share it for anyone else\'s marketing.',
         ],
       },
       {
-        id: 'what-happens-to-your-input',
-        heading: 'What happens to what you type',
+        id: 'lawful-bases',
+        heading: 'Lawful bases',
         paragraphs: [
-          'The fee estimator and the main calculator compute results on the server. A value you enter is sent to our server for that one calculation and is not written to storage.',
-          'Do not enter anything confidential into these fields. They are number inputs for a calculator, not a secure form, and they are not encrypted at rest because they are never saved.',
+          'Under UK data protection law, and the equivalent rules in the EU and Singapore, we must have a lawful basis for collecting or using personal information. The lawful basis we rely on affects the rights available to you.',
+          'We rely on legitimate interests for the server log data described above: the legitimate interest is operating and securing a publicly available website, and a limited request log is a necessary and proportionate way to do that. We do not rely on consent, because there is nothing you are being asked to agree to and nothing that can be switched off.',
+          'Because we store no profile and no calculator input, we do not rely on contract, and we do not rely on legal obligation. We hold no special category data, so that basis does not apply.',
         ],
       },
       {
-        id: 'server-logs',
-        heading: 'Server logs',
+        id: 'data-protection-rights',
+        heading: 'Your data protection rights',
         paragraphs: [
-          'Like any website host, our hosting provider records standard request logs, which can include your IP address, the page requested and the timestamp. These are used to keep the site running and to diagnose faults.',
-          'These logs are not combined with any profile of you, and they are not used for marketing.',
+          'You have a set of rights over any personal data we hold about you. Some rights carry exemptions, which is why you may not receive everything you ask for. The Information Commissioner\'s Office publishes guidance on each of these.',
+          'The rights that can apply to you are listed below. Given what we hold, the realistic limit on most of them is that we can only act on the server log entries, and those are held by our hosting provider rather than by us.',
+        ],
+        bullets: [
+          'Right of access: ask us for copies of the personal information we hold about you, including where we got it from and who we share it with.',
+          'Right to rectification: ask us to correct or delete personal information you think is inaccurate or incomplete.',
+          'Right to erasure: ask us to delete personal information we hold about you.',
+          'Right to restriction of processing: ask us to limit how we use your personal information.',
+          'Right to object: object to the processing of your personal data, including where we rely on legitimate interests. Because our use of log data is necessary to run the site, we may not be able to comply, but we will explain why.',
+          'Right to data portability: ask us to transfer personal information you gave us to another organisation, or to you, in a structured, machine-readable format.',
+          'Right to withdraw consent: where we rely on consent, you can withdraw it at any time. We do not currently rely on consent for anything on this site.',
+        ],
+      },
+      {
+        id: 'responding-to-requests',
+        heading: 'How to make a request',
+        paragraphs: [
+          `Send your request to ${PRIVACY_CONTACT_EMAIL}. We must respond without undue delay and in any event within one month.`,
+          'There is no portal or account on this site, so a request is simply an email. Please say what you are asking for and include enough detail for us to find the relevant records, for example the date and the page you visited. We may ask you to confirm your identity before acting, so that we do not disclose anything to the wrong person.',
+          'If a request is complex, or you have made several, we may take up to three months. We will tell you if that happens, and we will explain why.',
+        ],
+      },
+      {
+        id: 'where-data-comes-from',
+        heading: 'Where we get personal information from',
+        paragraphs: [
+          'The only personal data we receive is the server log entry described above, and it comes from your browser\'s request to our hosting provider. We do not buy, rent, enrich or append data about you from any third party, and we do not receive your data from any third-party site you visit.',
+        ],
+      },
+      {
+        id: 'retention',
+        heading: 'How long we keep information',
+        paragraphs: [
+          'We store no calculator input and no profile of you, so there is nothing to retain on that side.',
+          'Server logs are retained for up to 90 days, after which they are automatically deleted. That retention period is configured on our hosting provider\'s account rather than in this site\'s code.',
         ],
       },
       {
@@ -164,10 +254,17 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
         ],
       },
       {
-        id: 'contact',
-        heading: 'Contact',
+        id: 'how-to-complain',
+        heading: 'How to complain',
         paragraphs: [
-          `If you have a privacy question, or want something deleted, contact us at ${OPEN}: a monitored address for privacy requests.`,
+          `If you have concerns about how we use your personal information, raise them with us first at ${PRIVACY_CONTACT_EMAIL}. We would rather hear about a problem directly.`,
+          'If you are not satisfied with our response, you can complain to the Information Commissioner\'s Office, the UK\'s data protection regulator.',
+          'The ICO also accepts complaints about data handled in the UK by organisations outside it, which is relevant to the US, Pakistani, Singapore, Malaysian and Philippine parts of this site.',
+        ],
+        bullets: [
+          'Information Commissioner\'s Office, Wycliffe House, Water Lane, Wilmslow, Cheshire SK9 5AF',
+          'Helpline: 0303 123 1113',
+          'Online: ico.org.uk/make-a-complaint',
         ],
       },
       SHARED_DISCLAIMER_SECTION,
@@ -185,7 +282,7 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
         id: 'acceptance',
         heading: 'Acceptance',
         paragraphs: [
-          `By using this website you agree to these terms. If you do not agree, do not use the site. These terms apply to ${OPEN}: the legal entity that operates this site, and using the site means you are at least 18 and legally able to enter a contract.`,
+          `By using this website you agree to these terms. If you do not agree, do not use the site. These terms apply to Fynza, the trading name under which this site is operated from Pakistan, and using the site means you are at least 18 and legally able to enter a contract.`,
         ],
       },
       {
@@ -235,7 +332,7 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
         id: 'governing-law',
         heading: 'Governing law',
         paragraphs: [
-          `These terms are governed by the laws of ${OPEN}: the jurisdiction in which the operating entity is established. Any dispute will be subject to the exclusive jurisdiction of the courts of that place, without affecting any mandatory consumer protection you have under the law of where you live.`,
+          `These terms are governed by the laws of Pakistan, where this site is operated from. Any dispute will be subject to the exclusive jurisdiction of the courts of that place, without affecting any mandatory consumer protection you have under the law of where you live.`,
         ],
       },
       SHARED_DISCLAIMER_SECTION,
@@ -254,9 +351,17 @@ export const LEGAL_SLUGS: LegalSlug[] = LEGAL_DOCUMENTS.map((doc) => doc.slug);
  *
  * Surfaced programmatically so the launch checklist and the test suite can
  * both read it. Shipping with these unfilled is a launch blocker, not a nit.
+ *
+ * The `docs` parameter exists so the detector can be tested against a document
+ * that does carry a marker. Without it, emptying the real list and asserting it
+ * is empty is a self-consistency check: reintroduce a marker and both sides of
+ * that comparison go to one, so the suite would stay green while a placeholder
+ * shipped. Passing a synthetic document makes the guard a real one.
  */
-export function legalOpenItems(): { document: LegalSlug; marker: string }[] {
-  return LEGAL_DOCUMENTS.flatMap((doc) =>
+export function legalOpenItems(
+  docs: LegalDocument[] = LEGAL_DOCUMENTS
+): { document: LegalSlug; marker: string }[] {
+  return docs.flatMap((doc) =>
     doc.sections
       .filter((section) => section.paragraphs.some((p) => p.includes(OPEN)))
       .map((section) => ({ document: doc.slug, marker: section.id }))

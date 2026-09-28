@@ -4,9 +4,9 @@
   "sourceUrl": "https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897",
   "sourceDate": "2025-09-18",
   "lastVerified": "2026-09-26",
-  "extractionStatus": "partial",
-  "coverage": "policy-level-only",
-  "missingData": "full category table in Excel download",
+  "extractionStatus": "complete",
+  "coverage": "complete",
+  "missingData": "none",
   "categories": [
     {
       "id": "uk-standard",
@@ -36,9 +36,2753 @@
       "id": "uk-new-seller-promo",
       "name": "New Seller Promotional Rate",
       "parentCategory": "All Categories (eligible new sellers)",
-      "rate": 0.0,
+      "rate": 0,
       "confidence": "medium",
       "notes": "0% commission after completing required Seller Missions within 45 days of onboarding. Exact rate not published on Seller University."
+    },
+    {
+      "id": "uk-household-appliances-all",
+      "name": "All",
+      "parentCategory": "Household Appliances",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-automotive-and-motorcycle-all",
+      "name": "All",
+      "parentCategory": "Automotive & Motorcycle",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-baby-and-maternity-all",
+      "name": "All",
+      "parentCategory": "Baby & Maternity",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-books-magazines-and-audio-all",
+      "name": "All",
+      "parentCategory": "Books, Magazines & Audio",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-collectibles-all",
+      "name": "All",
+      "parentCategory": "Collectibles",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-fashion-accessories-all",
+      "name": "All",
+      "parentCategory": "Fashion Accessories",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-food-and-beverages-all",
+      "name": "All",
+      "parentCategory": "Food & Beverages",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-furniture-all",
+      "name": "All",
+      "parentCategory": "Furniture",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-health-all",
+      "name": "All",
+      "parentCategory": "Health",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-home-improvement-all",
+      "name": "All",
+      "parentCategory": "Home Improvement",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-home-supplies-all",
+      "name": "All",
+      "parentCategory": "Home Supplies",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-jewelry-accessories-and-derivatives-all",
+      "name": "All",
+      "parentCategory": "Jewelry Accessories & Derivatives",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-kids-fashion-all",
+      "name": "All",
+      "parentCategory": "Kids' Fashion",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-kitchenware-all",
+      "name": "All",
+      "parentCategory": "Kitchenware",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-luggage-and-bags-all",
+      "name": "All",
+      "parentCategory": "Luggage & Bags",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-menswear-and-underwear-all",
+      "name": "All",
+      "parentCategory": "Menswear & Underwear",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-muslim-fashion-all",
+      "name": "All",
+      "parentCategory": "Muslim Fashion",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pet-supplies-all",
+      "name": "All",
+      "parentCategory": "Pet Supplies",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-shoes-all",
+      "name": "All",
+      "parentCategory": "Shoes",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-sports-and-outdoor-all",
+      "name": "All",
+      "parentCategory": "Sports & Outdoor",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-textiles-and-soft-furnishings-all",
+      "name": "All",
+      "parentCategory": "Textiles & Soft Furnishings",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-tools-and-hardware-all",
+      "name": "All",
+      "parentCategory": "Tools & Hardware",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-toys-and-hobbies-all",
+      "name": "All",
+      "parentCategory": "Toys & Hobbies",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-womenswear-and-underwear-all",
+      "name": "All",
+      "parentCategory": "Womenswear & Underwear",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-accessories",
+      "name": "Accessories",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-refurbished-haircare-device",
+      "name": "Refurbished Haircare Device",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-beauty-devices",
+      "name": "Body Beauty Devices",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-curlers-and-straighteners",
+      "name": "Curlers & Straighteners",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-electric-eyebrow-shapers",
+      "name": "Electric Eyebrow Shapers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-electric-shavers",
+      "name": "Electric Shavers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-electric-toothbrushes",
+      "name": "Electric Toothbrushes",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-facial-beauty-devices",
+      "name": "Facial Beauty Devices",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-dryers",
+      "name": "Hair Dryers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-removal-device",
+      "name": "Hair Removal Device",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-trimmers-and-clippers",
+      "name": "Hair Trimmers & Clippers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-massage-devices",
+      "name": "Massage Devices",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-oral-irrigators",
+      "name": "Oral Irrigators",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-acne-treatments",
+      "name": "Acne Treatments",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-adult-diapers",
+      "name": "Adult Diapers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-bath-and-body-care",
+      "name": "Bath & Body Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-bathing-accessories",
+      "name": "Bathing Accessories",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-blemish-balm-and-color-control",
+      "name": "Blemish Balm and Color Control",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-blush",
+      "name": "Blush",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-and-massage-oil",
+      "name": "Body & Massage Oil",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-care-kits",
+      "name": "Body Care Kits",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-creams-and-lotions",
+      "name": "Body Creams & Lotions",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-makeup",
+      "name": "Body Makeup",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-masks",
+      "name": "Body Masks",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-scrubs-and-peels",
+      "name": "Body Scrubs & Peels",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-body-wash-and-soap",
+      "name": "Body Wash & Soap",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-breast-care",
+      "name": "Breast Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-bronzer-and-highlighter",
+      "name": "Bronzer & Highlighter",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-concealer-and-foundation",
+      "name": "Concealer & Foundation",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-dental-floss-and-picks",
+      "name": "Dental Floss & Picks",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-denture-care",
+      "name": "Denture Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-deodorants-and-antiperspirants",
+      "name": "Deodorants & Antiperspirants",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-ear-plugs",
+      "name": "Ear Plugs",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-earwax-removal-products",
+      "name": "Earwax Removal Products",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-eye-treatments",
+      "name": "Eye Treatments",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-eyebrow-pencils-powder-paste",
+      "name": "Eyebrow Pencils/Powder/Paste",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-eyeliner-and-lipliner",
+      "name": "Eyeliner & Lipliner",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-eyeshadow",
+      "name": "Eyeshadow",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-face-masks",
+      "name": "Face Masks",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-face-scrubs-and-peels",
+      "name": "Face Scrubs & Peels",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-facial-cleansers",
+      "name": "Facial Cleansers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-facial-massage-cream",
+      "name": "Facial Massage Cream",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-facial-sunscreen-and-sun-care",
+      "name": "Facial Sunscreen & Sun Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-false-eyelashes-and-adhesives",
+      "name": "False Eyelashes & Adhesives",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-feminine-hygiene",
+      "name": "Feminine Hygiene",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-foot-odor-control",
+      "name": "Foot Odor Control",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-care",
+      "name": "Hair Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-dye",
+      "name": "Hair Dye",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-loss-products",
+      "name": "Hair Loss Products",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-removal-cream-wax-and-shave",
+      "name": "Hair Removal Cream, Wax & Shave",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-styling-powders",
+      "name": "Hair Styling Powders",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hair-treatments-scalp-treatments",
+      "name": "Hair Treatments/Scalp Treatments",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hand-and-foot-masks",
+      "name": "Hand & Foot Masks",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hand-lotions-creams-and-scrubs",
+      "name": "Hand Lotions, Creams & Scrubs",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hand-sanitizers",
+      "name": "Hand Sanitizers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-hand-wash",
+      "name": "Hand Wash",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-heat-patches",
+      "name": "Heat Patches",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-heatless-styling-tools",
+      "name": "Heatless Styling Tools",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-ice-packs",
+      "name": "Ice Packs",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-incontinence-bed-pads",
+      "name": "Incontinence Bed Pads",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-insect-repellents",
+      "name": "Insect Repellents",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-intimate-deodorants",
+      "name": "Intimate Deodorants",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-lip-treatments",
+      "name": "Lip Treatments",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-lipstick-and-lip-gloss",
+      "name": "Lipstick & Lip Gloss",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup",
+      "name": "Makeup",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup-base-and-primers",
+      "name": "Makeup Base and Primers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup-fixing-spray",
+      "name": "Makeup Fixing Spray",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup-remover",
+      "name": "Makeup Remover",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup-sets",
+      "name": "Makeup Sets",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-makeup-tools",
+      "name": "Makeup Tools",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-manicure-and-pedicure-tools",
+      "name": "Manicure & Pedicure Tools",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-manual-massage-tools",
+      "name": "Manual Massage Tools",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-manual-shaving-accessories",
+      "name": "Manual Shaving Accessories",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-mascara",
+      "name": "Mascara",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-men-s-perfume",
+      "name": "Men's Perfume",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-menopause-products",
+      "name": "Menopause Products",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-menstrual-cups",
+      "name": "Menstrual Cups",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-moisturizers-and-mists",
+      "name": "Moisturizers & Mists",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-mousse-and-gel",
+      "name": "Mousse & Gel",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-mouthwash",
+      "name": "Mouthwash",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nail-art-and-nail-polish",
+      "name": "Nail Art & Nail Polish",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nail-art-kits",
+      "name": "Nail Art Kits",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nail-polish-removers",
+      "name": "Nail Polish Removers",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nail-treatments",
+      "name": "Nail Treatments",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nasal-cleaning",
+      "name": "Nasal Cleaning",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-nasal-treatment",
+      "name": "Nasal Treatment",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-neck-care",
+      "name": "Neck Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-oral-care-kits",
+      "name": "Oral Care Kits",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-oral-spray",
+      "name": "Oral Spray",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-orthodontic-accessories",
+      "name": "Orthodontic Accessories",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-perfume",
+      "name": "Perfume",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-perfume-sets",
+      "name": "Perfume Sets",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-powder",
+      "name": "Powder",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-razors",
+      "name": "Razors",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-sanitary-towels",
+      "name": "Sanitary Towels",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-serums-and-essences",
+      "name": "Serums & Essences",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-shampoo-and-conditioner",
+      "name": "Shampoo & Conditioner",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-shaving-foam-and-aftershave",
+      "name": "Shaving Foam & Aftershave",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-shaving-tool-sets",
+      "name": "Shaving Tool Sets",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-skin-care-kits",
+      "name": "Skin Care Kits",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-skincare",
+      "name": "Skincare",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-skincare-tools",
+      "name": "Skincare Tools",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-sleep-masks",
+      "name": "Sleep Masks",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-sunscreen-and-sun-care",
+      "name": "Sunscreen & Sun Care",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-talcum-powder",
+      "name": "Talcum Powder",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-tampons",
+      "name": "Tampons",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-tanning-oils-and-self-tanners",
+      "name": "Tanning Oils & Self Tanners",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-tattoo-machines-and-kits",
+      "name": "Tattoo Machines & Kits",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-teeth-whitening",
+      "name": "Teeth Whitening",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-temporary-tattoos",
+      "name": "Temporary Tattoos",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-toners",
+      "name": "Toners",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-tongue-cleaners",
+      "name": "Tongue Cleaners",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-toothbrushes",
+      "name": "Toothbrushes",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-toothpastes",
+      "name": "Toothpastes",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-unisex-perfume",
+      "name": "Unisex Perfume",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-beauty-and-personal-care-women-s-perfume",
+      "name": "Women's Perfume",
+      "parentCategory": "Beauty & Personal Care",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-access-control-and-attendance-devices",
+      "name": "Access Control & Attendance Devices",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-advertisement-printing-equipment",
+      "name": "Advertisement Printing Equipment",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-barcode-scanners",
+      "name": "Barcode Scanners",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-compact-discs",
+      "name": "Compact Discs",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-conference-video-and-audio-devices",
+      "name": "Conference Video & Audio Devices",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-desktop-computers",
+      "name": "Desktop Computers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-fans-and-heatsinks",
+      "name": "Fans & Heatsinks",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-fax-machines",
+      "name": "Fax Machines",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-flash-drives-and-otg-cables",
+      "name": "Flash Drives & OTG Cables",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-graphics-cards",
+      "name": "Graphics Cards",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-hard-disk-enclosures-and-docking-stations",
+      "name": "Hard Disk Enclosures & Docking Stations",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-hard-drives",
+      "name": "Hard Drives",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-keyboards-and-mouse",
+      "name": "Keyboards & Mouse",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-kvm-switches",
+      "name": "KVM Switches",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-label-printers",
+      "name": "Label Printers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laminators",
+      "name": "Laminators",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laptop-batteries",
+      "name": "Laptop Batteries",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laptop-chargers-and-adapters",
+      "name": "Laptop Chargers & Adapters",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laptops",
+      "name": "Laptops",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-modems-and-wireless-routers",
+      "name": "Modems & Wireless Routers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-money-counters",
+      "name": "Money Counters",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-monitors",
+      "name": "Monitors",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-motherboards",
+      "name": "Motherboards",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-network-attached-storage-nas",
+      "name": "Network Attached Storage (NAS)",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-network-cables-and-connectors",
+      "name": "Network Cables & Connectors",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-network-switches-and-poe",
+      "name": "Network Switches & PoE",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-equipment-parts",
+      "name": "Office Equipment Parts",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-optical-drives",
+      "name": "Optical Drives",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-paper-shredders",
+      "name": "Paper Shredders",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-power-supply-units",
+      "name": "Power Supply Units",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-powerline-adapters",
+      "name": "Powerline Adapters",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-print-servers",
+      "name": "Print Servers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-printers-and-scanners",
+      "name": "Printers & Scanners",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-processors",
+      "name": "Processors",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-ram",
+      "name": "RAM",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-repeaters",
+      "name": "Repeaters",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-servers",
+      "name": "Servers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-smart-retail-equipment",
+      "name": "Smart Retail Equipment",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-software",
+      "name": "Software",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-sound-cards",
+      "name": "Sound Cards",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-ssd",
+      "name": "SSD",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-typewriters",
+      "name": "Typewriters",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-ups-and-stabilizers",
+      "name": "UPS & Stabilizers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-usb-hubs-and-card-readers",
+      "name": "USB Hubs & Card Readers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-webcams",
+      "name": "Webcams",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-wireless-adapters-and-network-cards",
+      "name": "Wireless Adapters & Network Cards",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-3d-printing-supplies",
+      "name": "3D Printing Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-accounting-supplies",
+      "name": "Accounting Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-art-supplies",
+      "name": "Art Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-calendars-and-accessories",
+      "name": "Calendars & Accessories",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-cards",
+      "name": "Cards",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-cooling-pads",
+      "name": "Cooling Pads",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-desk-organizers-and-accessories",
+      "name": "Desk Organizers & Accessories",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-envelopes-and-postal-supplies",
+      "name": "Envelopes & Postal Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-gifts-and-wrapping",
+      "name": "Gifts & Wrapping",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-identification-badges-and-supplies",
+      "name": "Identification Badges & Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-ink-and-toner-cartridges",
+      "name": "Ink & Toner Cartridges",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-keyboard-and-trackpad-covers",
+      "name": "Keyboard & Trackpad Covers",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-labels-index-dividers-and-stamps",
+      "name": "Labels, Index Dividers & Stamps",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laptop-covers-and-cases",
+      "name": "Laptop Covers & Cases",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-laptop-stands-and-trays",
+      "name": "Laptop Stands & Trays",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-mouse-pads",
+      "name": "Mouse Pads",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-notebooks-and-paper",
+      "name": "Notebooks & Paper",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-binding-supplies",
+      "name": "Office Binding Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-cutting-supplies",
+      "name": "Office Cutting Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-filing-products",
+      "name": "Office Filing Products",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-measuring-supplies",
+      "name": "Office Measuring Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-office-presentation-supplies",
+      "name": "Office Presentation Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-pc-cases",
+      "name": "PC Cases",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-safes",
+      "name": "Safes",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-school-and-educational-supplies",
+      "name": "School & Educational Supplies",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-tape-adhesives-and-fasteners",
+      "name": "Tape, Adhesives & Fasteners",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-computers-and-office-equipment-writing-and-correction-tools",
+      "name": "Writing & Correction Tools",
+      "parentCategory": "Computers & Office Equipment",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-action-cameras",
+      "name": "Action Cameras",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-amplifiers-and-mixers",
+      "name": "Amplifiers & Mixers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-audio-and-video-accessories",
+      "name": "Audio & Video Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-av-receivers",
+      "name": "AV Receivers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-button-batteries",
+      "name": "Button Batteries",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-cables-chargers-and-adapters",
+      "name": "Cables, Chargers & Adapters",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-camera-accessories",
+      "name": "Camera Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-camera-care",
+      "name": "Camera Care",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-camera-lenses",
+      "name": "Camera Lenses",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-casting-devices",
+      "name": "Casting Devices",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-cd-and-dvd-players",
+      "name": "CD & DVD Players",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-console-accessories",
+      "name": "Console Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-digital-and-smart-pens",
+      "name": "Digital & Smart Pens",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-drones-and-accessories",
+      "name": "Drones & Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-dry-cell-batteries",
+      "name": "Dry Cell Batteries",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-dslrs",
+      "name": "DSLRs",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-e-dictionaries",
+      "name": "E-dictionaries",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-earphones-and-headphones",
+      "name": "Earphones & Headphones",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-education-device-parts-and-accessories",
+      "name": "Education Device Parts & Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-electronic-learning-devices",
+      "name": "Electronic Learning Devices",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-electronic-notebooks",
+      "name": "Electronic Notebooks",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-ereader-device",
+      "name": "eReader Device",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-film-cameras",
+      "name": "Film Cameras",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-fitness-trackers",
+      "name": "Fitness Trackers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-gps-trackers",
+      "name": "GPS Trackers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-handheld-games-consoles",
+      "name": "Handheld Games Consoles",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-home-cinema-systems",
+      "name": "Home Cinema Systems",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-home-games-consoles",
+      "name": "Home Games Consoles",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-instant-cameras",
+      "name": "Instant Cameras",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-microphones",
+      "name": "Microphones",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-mirrorless-cameras",
+      "name": "Mirrorless Cameras",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-mobile-lenses-and-flashes",
+      "name": "Mobile Lenses & Flashes",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-mobile-phone-parts",
+      "name": "Mobile Phone Parts",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-mobile-phones",
+      "name": "Mobile Phones",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-mp3-and-mp4-players",
+      "name": "MP3 & MP4 Players",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-phone-batteries",
+      "name": "Phone Batteries",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-pocket-wi-fi",
+      "name": "Pocket Wi-Fi",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-point-and-shoot-cameras",
+      "name": "Point & Shoot Cameras",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-power-banks",
+      "name": "Power Banks",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-projectors",
+      "name": "Projectors",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-radio-and-cassette-players",
+      "name": "Radio & Cassette Players",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-reading-pens-and-devices",
+      "name": "Reading Pens & Devices",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-security-cameras-and-systems",
+      "name": "Security Cameras & Systems",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-selfie-accessories",
+      "name": "Selfie Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-sim-cards-and-accessories",
+      "name": "SIM Cards & Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-smart-glasses",
+      "name": "Smart Glasses",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-smart-watches",
+      "name": "Smart Watches",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-speakers",
+      "name": "Speakers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-styluses",
+      "name": "Styluses",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-chargers-and-adapters",
+      "name": "Tablet Chargers & Adapters",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-keyboards",
+      "name": "Tablet Keyboards",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-parts",
+      "name": "Tablet Parts",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablets",
+      "name": "Tablets",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-universal-battery-chargers",
+      "name": "Universal Battery Chargers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-usb-and-mobile-fans",
+      "name": "USB & Mobile Fans",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-usb-and-mobile-lights",
+      "name": "USB & Mobile Lights",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-usb-vacuums",
+      "name": "USB Vacuums",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-video-camcorders",
+      "name": "Video Camcorders",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-video-games",
+      "name": "Video Games",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-voice-recorders",
+      "name": "Voice Recorders",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-vr-devices",
+      "name": "VR Devices",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-walkie-talkies",
+      "name": "Walkie Talkies",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-wearable-accessories",
+      "name": "Wearable Accessories",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-writing-tablets",
+      "name": "Writing Tablets",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-cases-screen-protectors-and-stickers",
+      "name": "Cases, Screen Protectors & Stickers",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-phone-holders-and-mounts",
+      "name": "Phone Holders & Mounts",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-phone-straps-and-charms",
+      "name": "Phone Straps & Charms",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-bags-and-sleeves",
+      "name": "Tablet Bags & Sleeves",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-covers-and-cases",
+      "name": "Tablet Covers & Cases",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-screen-protectors",
+      "name": "Tablet Screen Protectors",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-phones-and-electronics-tablet-stands-and-bases",
+      "name": "Tablet Stands & Bases",
+      "parentCategory": "Phones & Electronics",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-mobile-phones",
+      "name": "Mobile Phones",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-smart-watches",
+      "name": "Smart Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-tablets",
+      "name": "Tablets",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.05,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-automatic-watches",
+      "name": "Automatic Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-backpacks",
+      "name": "Backpacks",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-bag-accessories",
+      "name": "Bag Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-belt-bags",
+      "name": "Belt Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-belts",
+      "name": "Belts",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-boots",
+      "name": "Boots",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-clutches-and-wristlets",
+      "name": "Clutches & Wristlets",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-costume-jewellery-and-accessories",
+      "name": "Costume Jewellery & Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-crossbody-bags",
+      "name": "Crossbody Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-footwear-accessories",
+      "name": "Footwear Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-frames-and-glasses",
+      "name": "Frames & Glasses",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-gloves",
+      "name": "Gloves",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-golf-balls",
+      "name": "Golf Balls",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-hair-accessories",
+      "name": "Hair Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-hats",
+      "name": "Hats",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-high-heels",
+      "name": "High Heels",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-luggage",
+      "name": "Luggage",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-luggage-accessories",
+      "name": "Luggage Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-luxury-watches",
+      "name": "Luxury Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-manual-watches",
+      "name": "Manual Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-bottoms",
+      "name": "Men's Bottoms",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-dress-shoes",
+      "name": "Men's Dress Shoes",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-jackets-and-coats",
+      "name": "Men's Jackets & Coats",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-jumpers-cardigans-and-hoodies",
+      "name": "Men's Jumpers, Cardigans & Hoodies",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-sportswear",
+      "name": "Men's Sportswear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-suits-and-overalls",
+      "name": "Men's Suits & Overalls",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-swimwear-and-beachwear",
+      "name": "Men's Swimwear & Beachwear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-men-s-tops",
+      "name": "Men's Tops",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-messenger-bags",
+      "name": "Messenger Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-mini-bags",
+      "name": "Mini Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-non-sports-trading-card-packs-and-boxes",
+      "name": "Non-Sports Trading Card Packs & Boxes",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-non-sports-trading-cards-graded-singles",
+      "name": "Non-Sports Trading Cards Graded Singles",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-professional-and-technology-bags",
+      "name": "Professional & Technology Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-uartz-watches",
+      "name": "Ǫuartz Watches",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-sandals",
+      "name": "Sandals",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-shoulder-bags",
+      "name": "Shoulder Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-small-leather-goods",
+      "name": "Small Leather Goods",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-sneakers",
+      "name": "Sneakers",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-sports-trading-cards-graded-singles",
+      "name": "Sports Trading Cards Graded Singles",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-sports-trading-cards-packs-and-boxes",
+      "name": "Sports Trading Cards Packs & Boxes",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-sunglasses",
+      "name": "Sunglasses",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-toiletry-bags",
+      "name": "Toiletry Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-tote-bags",
+      "name": "Tote Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-trading-cards-accessories",
+      "name": "Trading Cards Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-travel-bags",
+      "name": "Travel Bags",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-watch-accessories",
+      "name": "Watch Accessories",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-bottoms",
+      "name": "Women's Bottoms",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-dresses",
+      "name": "Women's Dresses",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-flats",
+      "name": "Women's Flats",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-jackets-and-coats",
+      "name": "Women's Jackets & Coats",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-jumpers-cardigans-and-hoodies",
+      "name": "Women's Jumpers, Cardigans & Hoodies",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-lingerie-nightwear-and-loungewear",
+      "name": "Women's Lingerie, Nightwear & Loungewear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-sportswear",
+      "name": "Women's Sportswear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-suits-and-overalls",
+      "name": "Women's Suits & Overalls",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-swimwear-and-beachwear",
+      "name": "Women's Swimwear & Beachwear",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
+    },
+    {
+      "id": "uk-pre-owned-women-s-tops",
+      "name": "Women's Tops",
+      "parentCategory": "Pre-Owned",
+      "rate": 0.09,
+      "confidence": "high",
+      "notes": "From official UK Excel (V2)"
     }
   ],
   "defaultRate": 0.09,
@@ -46,6 +2790,6 @@
     "name": "TikTok Shop UK - Commission Rates by Product Category V2.xlsx",
     "size": "18.5 KB",
     "downloadUrl": "https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897 (Excel download link on page)",
-    "needsManualDownload": true
+    "needsManualDownload": false
   }
 }

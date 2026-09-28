@@ -44,22 +44,33 @@ the canonicals become absolute and robots.txt gains the sitemap line.
 - Code: `src/lib/site/config.ts`
 - Blocker list: `siteUrlOpenItems()`
 
-### 2. No legal entity
+### 2. Legal entity
 
-The three legal pages carry visible `OPEN_ITEM` markers where a real document
-needs one:
+All three legal pages carried visible `OPEN_ITEM` markers. All three are filled
+as of 2026-09-28:
 
-| Page | Missing |
-| --- | --- |
-| `/terms` | Name of the legal entity operating the site |
-| `/terms` | Governing jurisdiction |
-| `/privacy` | A monitored contact address |
+| Page | Value | Now |
+| --- | --- | --- |
+| `/terms` | Name of the operating entity | Fynza, described as a trading name |
+| `/terms` | Governing jurisdiction | Pakistan |
+| `/privacy` | Server log retention | 90 days |
 
-The pages say on their face that they are drafts and have not been reviewed by
-a lawyer. That notice is load-bearing, not decoration: it is there so the
-unserved state is visible rather than hidden. **Get a lawyer to review these
-before launch**, then fill in the markers in `src/lib/legal/content.ts` and
-remove the draft notice from `src/components/legal/LegalDocumentView.tsx`.
+`legalOpenItems()` returns `[]`. That is a completeness result, not a legal
+review. The pages still say on their face that they are drafts written by a
+developer and have not been reviewed by one, and that notice stays until a
+lawyer has signed off. **Get a lawyer to review these before launch.**
+
+Two values in that table are assertions about things this repository cannot
+verify, and both need confirming against the live systems:
+
+- **The 90-day log retention** is configured on the Vercel project, not in this
+  code. The page now states it as fact. If the project is set to something else,
+  the page is wrong and must be changed in the same deploy.
+- **Fynza is described as a trading name, not a registered company.** The
+  governing-law clause points at the courts of Pakistan, which presumes a real
+  person or entity behind the name. Confirm which, and confirm whether a UK or
+  EU representative is required now that the operator is established outside
+  the UK (UK GDPR Art. 27).
 
 - Code: `src/lib/legal/content.ts`
 - Blocker list: `legalOpenItems()`
@@ -183,10 +194,16 @@ domain. Do not skip it.
 **Legal**
 
 - [ ] `/disclaimer`, `/privacy`, `/terms` reviewed by a lawyer.
-- [ ] All three `OPEN_ITEM` markers filled in.
-- [ ] The draft-for-review notice removed from `LegalDocumentView.tsx`.
-- [ ] `legalOpenItems()` returns `[]`.
-- [ ] `LAST_REVIEWED` in `src/lib/legal/content.ts` updated to the real date.
+- [x] All three `OPEN_ITEM` markers filled in.
+- [x] `legalOpenItems()` returns `[]`.
+- [ ] Vercel project log retention confirmed to match the 90 days stated on
+      `/privacy`.
+- [ ] UK/EU representative question answered now that the operator is
+      established in Pakistan.
+- [ ] The draft-for-review notice removed from `LegalDocumentView.tsx` — only
+      after a lawyer signs off, and only once the last review date is real.
+- [ ] `LAST_REVIEWED` in `src/lib/legal/content.ts` updated to the date the
+      lawyer signed off.
 
 **SEO**
 

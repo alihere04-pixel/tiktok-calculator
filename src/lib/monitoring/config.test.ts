@@ -73,6 +73,32 @@ describe('analytics enablement is consent-gated', () => {
     vi.stubEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER', 'my-own-script');
     expect(monitoringConfig().analytics.provider).toBe('none');
   });
+
+  it('recognises vercel as a valid provider, so the wired-in tracker is representable', () => {
+    // Vercel Web Analytics is the provider actually used by AnalyticsGate. It
+    // has to be a member of the union, or the gate could only ever be configured
+    // to 'none' and the "no analytics" claim would be true for the wrong reason.
+    clearEnv();
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER', 'vercel');
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_DOMAIN', 'fynza.store');
+    vi.stubEnv('NEXT_PUBLIC_CONSENT_GATE', 'true');
+    const config = monitoringConfig();
+    expect(config.analytics.provider).toBe('vercel');
+    expect(config.analytics.enabled).toBe(true);
+  });
+
+  it('does not treat vercel as a consent-hostile provider, unlike ga4', () => {
+    // The distinction: GA4 writes its own cookie before any banner can ask.
+    // Vercel's cookie is opt-in via `window.va("enableCookie")` and off by
+    // default, so it is gated rather than banned. What it does do is persist
+    // `__va_attribution` in localStorage, which is why it still needs consent
+    // and still ships off.
+    clearEnv();
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER', 'vercel');
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_DOMAIN', 'fynza.store');
+    vi.stubEnv('NEXT_PUBLIC_CONSENT_GATE', 'true');
+    expect(analyticsBlockers()).toEqual([]);
+  });
 });
 
 describe('analyticsBlockers', () => {

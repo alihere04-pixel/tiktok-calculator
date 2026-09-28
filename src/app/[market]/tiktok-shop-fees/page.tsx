@@ -20,6 +20,7 @@ import {
   TierNotes,
 } from '@/components/seo/FeeBreakdownTables';
 import { AffiliateGuide } from '@/components/seo/AffiliateGuide';
+import { CategoryTableFilter } from '@/components/seo/CategoryTableFilter';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { MiniFeeCalculator } from '@/components/seo/MiniFeeCalculator';
 import { SellerCenterCta } from '@/components/seo/SellerCenterCta';
@@ -166,9 +167,26 @@ export default async function MarketFeesPage({ params }: PageProps) {
               </div>
             </div>
           ) : null}
-          <div className="mt-4">
-            <CategoryRateTable rows={model.categoryRates} currency={model.currency} />
-          </div>
+          {/* UK's Excel lists 343 sub-categories, so the table gets a search
+              box. UK only: the other four markets top out at 63 rows and stay
+              a plain static table. The rows are still server-rendered, so all
+              347 are in the HTML for search engines and for readers without
+              JavaScript. */}
+          {meta.market === 'UK' ? (
+            <div className="mt-4">
+              <CategoryTableFilter>
+                <CategoryRateTable
+                  rows={model.categoryRates}
+                  currency={model.currency}
+                  showParentLabel
+                />
+              </CategoryTableFilter>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <CategoryRateTable rows={model.categoryRates} currency={model.currency} />
+            </div>
+          )}
         </section>
 
         {/* 2. Transaction fees */}

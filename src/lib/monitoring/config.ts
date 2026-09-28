@@ -24,7 +24,15 @@
  * what is on and what is off is never a guess.
  */
 
-export type AnalyticsProvider = 'none' | 'plausible' | 'umami' | 'ga4';
+/**
+ * `vercel` is Vercel Web Analytics, which is the provider actually wired into
+ * this app. It is gated, but it is NOT in `CONSENT_HOSTILE_PROVIDERS`: its
+ * cookie is opt-in via `window.va("enableCookie")` and is off by default. What
+ * it does do unconditionally is persist an attribution identifier in
+ * localStorage under `__va_attribution` and forward a cross-origin Referer,
+ * which is why it still requires consent and still stays off by default.
+ */
+export type AnalyticsProvider = 'none' | 'vercel' | 'plausible' | 'umami' | 'ga4';
 
 export interface MonitoringConfig {
   analytics: {
@@ -51,7 +59,7 @@ const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
 export function monitoringConfig(): MonitoringConfig {
   const rawProvider = (readEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER') ?? 'none').toLowerCase();
   const provider = (
-    ['none', 'plausible', 'umami', 'ga4'] as const
+    ['none', 'vercel', 'plausible', 'umami', 'ga4'] as const
   ).includes(rawProvider as AnalyticsProvider)
     ? (rawProvider as AnalyticsProvider)
     : 'none';

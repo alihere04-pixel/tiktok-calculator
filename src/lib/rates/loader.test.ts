@@ -131,17 +131,92 @@ describe('lib/rates/loader', () => {
       );
     });
 
-    it('preserves the US missingCategories note', async () => {
+    it('marks the US table complete and drops the missingCategories note', async () => {
       const rates = await loadMarketRates('US');
-      expect(rates.missingCategories).toBeTruthy();
-      expect(typeof rates.missingCategories).toBe('string');
+      // The Seller University page ships the whole commission table in its
+      // server-side HTML, so the "pagination gap" this file used to declare was
+      // never real. The note is removed rather than left to describe a gap that
+      // no longer exists.
+      expect(rates.extractionStatus).toBe('complete');
+      expect(rates.coverage).toBe('complete');
+      expect(rates.missingData).toBe('none');
+      expect(rates.missingCategories).toBeUndefined();
+    });
+
+    it('carries the full US category table from the Seller University page', async () => {
+      const rates = await loadMarketRates('US');
+
+      // 78 previously transcribed rows plus the 124 that were never extracted.
+      expect(rates.categories).toHaveLength(202);
+      expect(new Set(rates.categories.map((c) => c.id)).size).toBe(202);
+      expect(new Set(rates.categories.map((c) => c.name)).size).toBe(202);
+
+      // 27 parents: the 15 that existed plus the 12 that were missing entirely.
+      expect(new Set(rates.categories.map((c) => c.parentCategory)).size).toBe(27);
+
+      for (const category of rates.categories) {
+        expect(category.id.startsWith('us-')).toBe(true);
+        expect(category.name.length).toBeGreaterThan(0);
+        expect(category.parentCategory.length).toBeGreaterThan(0);
+        expect(category.rate).toBeGreaterThanOrEqual(0);
+        expect(category.rate).toBeLessThanOrEqual(1);
+      }
+
+      // The page publishes only 6% and 5%. Anything else means a row was
+      // transcribed from the wrong column.
+      const ratesPublished = new Set(rates.categories.map((c) => c.rate));
+      expect([...ratesPublished].sort()).toEqual([0.05, 0.06]);
+
+      // TikTok's own QA stubs are published in the same table but are not
+      // categories a seller can list under, so they must never reach the file.
+      const qaFixtures = rates.categories.filter(
+        (c) => /test category/i.test(c.parentCategory) || /test category/i.test(c.name)
+      );
+      expect(qaFixtures).toEqual([]);
+
+      // The two rows the page renamed. Their ids are preserved so any saved
+      // calculator link keeps resolving to the same rate.
+      const renamed = rates.categories.find((c) => c.id === 'us-books-schooling');
+      expect(renamed?.name).toBe('Education & Schooling');
+      const crystal = rates.categories.find((c) => c.id === 'us-jewelry-crystal');
+      expect(crystal?.name).toBe('Natural Crystal');
+
+      // The 16 rows that carry the $10,000 threshold note keep the tiered rule.
+      const tieredRates = rates.categories
+        .map((c) => c.specialRules?.[0])
+        .filter((rule) => rule?.type === 'tieredThreshold');
+      expect(tieredRates).toHaveLength(16);
+      for (const rule of tieredRates) {
+        expect(rule?.rateAboveThreshold).toBe(0.03);
+      }
     });
 
     it('preserves the UK defaultRate and excelFile reference', async () => {
       const rates = await loadMarketRates('UK');
       expect(rates.defaultRate).toBe(0.09);
-      expect(rates.excelFile?.needsManualDownload).toBe(true);
+      // The Excel has been downloaded and fully extracted, so the file is no
+      // longer something a human has to fetch by hand.
+      expect(rates.excelFile?.needsManualDownload).toBe(false);
       expect(rates.excelFile?.name).toContain('Commission Rates');
+      expect(rates.extractionStatus).toBe('complete');
+      expect(rates.coverage).toBe('complete');
+    });
+
+    it('carries the full UK category table extracted from the Excel', async () => {
+      const rates = await loadMarketRates('UK');
+
+      // 4 policy-level records plus the 343 rows of the published Excel.
+      expect(rates.categories).toHaveLength(347);
+      expect(new Set(rates.categories.map((c) => c.id)).size).toBe(347);
+
+      // Every Excel row is a real record, not a placeholder: no empty labels and
+      // every rate is a usable decimal.
+      for (const category of rates.categories) {
+        expect(category.name.length).toBeGreaterThan(0);
+        expect(category.parentCategory.length).toBeGreaterThan(0);
+        expect(category.rate).toBeGreaterThanOrEqual(0);
+        expect(category.rate).toBeLessThanOrEqual(1);
+      }
     });
   });
 

@@ -179,6 +179,52 @@ describe('UK page specifics', () => {
     // is the same string by construction.
     expect(screen.getAllByText(/excludes the promotional rate/).length).toBeGreaterThan(0);
   });
+
+  it('offers a category search box above the table', async () => {
+    await renderPage('uk');
+    expect(screen.getByPlaceholderText('Search categories...')).toBeTruthy();
+  });
+
+  it('keeps all 347 rows in the HTML, so search engines and no-JS readers see them', async () => {
+    const { container } = await renderPage('uk');
+
+    // 4 policy records + 343 Excel rows. Nothing is filtered at build time.
+    const rows = container.querySelectorAll('tr[data-search]');
+    expect(rows).toHaveLength(347);
+    // Not one row starts hidden, so a reader without JavaScript sees the lot.
+    expect(Array.from(rows).every((row) => !row.hasAttribute('hidden'))).toBe(true);
+  });
+
+  it('labels each UK row with its parent category, since sub-category names repeat', async () => {
+    await renderPage('uk');
+
+    // UK lists 116 sub-categories under Beauty & Personal Care, so a bare name
+    // like "Curlers & Straighteners" does not identify a category on its own.
+    const row = screen.getByRole('row', { name: /Curlers & Straighteners/ });
+    expect(row.textContent).toContain('Beauty & Personal Care');
+  });
+});
+
+describe('the category search box is UK only', () => {
+  it('is absent on the four markets whose tables are short enough to scan', async () => {
+    for (const slug of SEO_SLUGS.filter((s) => s !== 'uk')) {
+      cleanup();
+      await renderPage(slug);
+      expect(screen.queryByPlaceholderText('Search categories...')).toBeNull();
+    }
+  });
+
+  it('leaves the other market tables free of the parent-category label', async () => {
+    for (const slug of ['us', 'my', 'sg', 'ph']) {
+      cleanup();
+      const { container } = await renderPage(slug);
+      // The attribute still exists so the markup is uniform, but no row gains a
+      // second line it did not have before.
+      const rows = container.querySelectorAll('tr[data-search]');
+      expect(rows.length).toBeGreaterThan(0);
+      expect(Array.from(rows).every((row) => !row.hasAttribute('hidden'))).toBe(true);
+    }
+  });
 });
 
 describe('MY page specifics', () => {

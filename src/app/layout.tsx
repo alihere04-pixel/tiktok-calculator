@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ReactNode } from "react";
 import { siteUrl } from "@/lib/site/config";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next";
+import { AnalyticsGate } from "@/components/analytics/AnalyticsGate";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         {children}
-        <Analytics />
+        <AnalyticsGate />
       </body>
     </html>
   );

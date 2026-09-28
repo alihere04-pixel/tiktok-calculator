@@ -58,6 +58,52 @@ describe('CategoryRateTable', () => {
     expect(screen.queryByRole('table')).toBeNull();
     expect(screen.getByText('No category rates published.')).toBeTruthy();
   });
+
+  it('gives every row its searchable text, for the UK search box', () => {
+    render(
+      <CategoryRateTable
+        rows={[
+          {
+            id: 'uk-beauty-and-personal-care-accessories',
+            name: 'Accessories',
+            parentLabel: 'Beauty & Personal Care',
+            rateLabel: '5%',
+            confidence: 'high',
+          },
+        ]}
+        currency="GBP"
+        showParentLabel
+      />
+    );
+
+    const row = screen.getByRole('row', { name: /Accessories/ });
+    // Parent and sub-category together, so a search for either one finds it.
+    expect(row.getAttribute('data-search')).toBe('beauty & personal care accessories');
+  });
+
+  it('prints the parent category above the sub-category only when asked', () => {
+    // ROWS[0] is the PH fixture, whose name is already the full category. This
+    // uses a UK-shaped row, where the name is only a sub-category.
+    const ukRow: CategoryRateRow = {
+      id: 'uk-beauty-and-personal-care-accessories',
+      name: 'Accessories',
+      parentLabel: 'Beauty & Personal Care',
+      rateLabel: '5%',
+      confidence: 'high',
+    };
+
+    const { unmount } = render(<CategoryRateTable rows={[ukRow]} currency="GBP" />);
+    // Off by default, so the four smaller market tables are unchanged.
+    expect(screen.getByRole('row', { name: /Accessories/ }).textContent).not.toContain(
+      'Beauty & Personal Care'
+    );
+    unmount();
+
+    render(<CategoryRateTable rows={[ukRow]} currency="GBP" showParentLabel />);
+    expect(screen.getByRole('row', { name: /Accessories/ }).textContent).toContain(
+      'Beauty & Personal Care'
+    );
+  });
 });
 
 const LINES: FeeLine[] = [
