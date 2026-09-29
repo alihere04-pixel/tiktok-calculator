@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import type { CalculatorInputs, Market } from '@/lib/calculation';
 // Imported from the type module rather than `@/lib/calculation`, whose public
 // surface is the Step 6 API (entry point, helpers, result types).
@@ -20,6 +21,28 @@ export interface CategoryOption {
   group?: string;
   description?: string;
 }
+
+/**
+ * The money fields the user types into.
+ *
+ * These are bound to a raw text draft instead of straight to `inputs`, because
+ * a numeric binding cannot express "not entered yet": a 0 default is rendered
+ * as a literal `0` in the box, and typing then appends to it, so entering 100
+ * shows `0100` sitting under the currency prefix.
+ *
+ * The calculation model is deliberately left alone. `inputs[key]` is still
+ * always a number, an empty draft is 0, and the engines and validation are
+ * untouched. Only the text the user sees is different.
+ */
+export type MoneyFieldKey =
+  | 'sellingPrice'
+  | 'sellerDiscount'
+  | 'platformDiscount'
+  | 'customerShipping'
+  | 'cogs'
+  | 'outboundShipping'
+  | 'cpa';
+
 
 /** Minimal shape the hook needs from rate data. Avoids importing the loader
  *  (which uses `fs`) into anything that ships to the browser. */
@@ -182,6 +205,14 @@ export function useCalculator(
 ) {
   const [inputs, setInputs] = useState<CalculatorInputs>(() => createDefaultInputs(initialMarket));
 
+  /**
+   * Raw text typed into each money field. A key that is absent means the field
+   * has never been touched, which renders as an empty box showing the
+   * `placeholder` rather than a pre-filled `0`.
+   */
+  const [moneyDrafts, setMoneyDrafts] = useState<Partial<Record<MoneyFieldKey, string>>>({});
+
+
   const currentRates = ratesByMarket[inputs.market] ?? null;
 
   const update = useCallback(<K extends keyof CalculatorInputs>(key: K, value: CalculatorInputs[K]) => {
@@ -191,6 +222,27 @@ export function useCalculator(
   const updateMany = useCallback((patch: Partial<CalculatorInputs>) => {
     setInputs((prev) => ({ ...prev, ...patch }));
   }, []);
+
+  /**
+   * Text binding for the money inputs.
+   *
+   * `value` is the draft string, so an untouched field is empty and a cleared
+   * field stays empty instead of snapping back to `0`. The numeric side of
+   * `inputs` is still updated in step, mapping `''` to 0, because that is the
+   * value the calculation engines and their validation expect.
+   */
+  const money = useMemo(
+    () => ({
+      value: (key: MoneyFieldKey): string => moneyDrafts[key] ?? '',
+      onChange: (key: MoneyFieldKey) => (event: ChangeEvent<HTMLInputElement>): void => {
+        const raw = event.target.value;
+        setMoneyDrafts((prev) => ({ ...prev, [key]: raw }));
+        update(key, raw === '' ? 0 : Number(raw));
+      },
+    }),
+    [moneyDrafts, update]
+  );
+
 
   /**
    * Switching market invalidates the category, and the tier with it, because
@@ -210,6 +262,9 @@ export function useCalculator(
 
   const reset = useCallback(() => {
     setInputs(createDefaultInputs(initialMarket));
+    // Clearing the numeric model is not enough on its own: a stale draft would
+    // still show the old amount in the box.
+    setMoneyDrafts({});
   }, [initialMarket]);
 
   const marketOptions = useMemo<MarketOption[]>(
@@ -268,6 +323,7 @@ export function useCalculator(
     inputs,
     update,
     updateMany,
+    money,
     setMarket,
     setSellerTier,
     setCategoryId,

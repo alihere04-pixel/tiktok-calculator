@@ -1,6 +1,5 @@
 'use client';
 
-import { useCallback } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { Collapsible } from '@/components/ui/Collapsible';
@@ -8,14 +7,9 @@ import type { UseCalculatorReturn } from '@/hooks/useCalculator';
 
 /** Discounts the seller funds, plus what the buyer pays for shipping. */
 export function SectionB_DiscountsShipping({ calculator }: { calculator: UseCalculatorReturn }) {
-  const { inputs, update, conditional, marketOptions } = calculator;
+  const { inputs, money, conditional, marketOptions } = calculator;
 
   const currency = marketOptions.find((m) => m.value === inputs.market)?.currency ?? '';
-
-  const parseNumber = useCallback(
-    (value: string) => (value === '' ? 0 : Number(value)),
-    []
-  );
 
   const sellerDiscountError =
     inputs.sellerDiscount > inputs.sellingPrice && inputs.sellingPrice > 0
@@ -42,8 +36,8 @@ export function SectionB_DiscountsShipping({ calculator }: { calculator: UseCalc
         inputMode="decimal"
         min={0}
         step="0.01"
-        value={inputs.sellerDiscount}
-        onChange={(event) => update('sellerDiscount', parseNumber(event.target.value))}
+        value={money.value('sellerDiscount')}
+        onChange={money.onChange('sellerDiscount')}
         error={sellerDiscountError}
         prefix={currency || undefined}
         placeholder="0.00"
@@ -63,8 +57,8 @@ export function SectionB_DiscountsShipping({ calculator }: { calculator: UseCalc
           inputMode="decimal"
           min={0}
           step="0.01"
-          value={inputs.platformDiscount}
-          onChange={(event) => update('platformDiscount', parseNumber(event.target.value))}
+          value={money.value('platformDiscount')}
+          onChange={money.onChange('platformDiscount')}
           prefix={currency || undefined}
           placeholder="0.00"
           helperText="Optional. A voucher paid by TikTok rather than by you."
@@ -83,8 +77,8 @@ export function SectionB_DiscountsShipping({ calculator }: { calculator: UseCalc
         inputMode="decimal"
         min={0}
         step="0.01"
-        value={inputs.customerShipping}
-        onChange={(event) => update('customerShipping', parseNumber(event.target.value))}
+        value={money.value('customerShipping')}
+        onChange={money.onChange('customerShipping')}
         prefix={currency || undefined}
         placeholder="0.00"
         helperText="Optional. Charged to the buyer, not deducted from your profit."

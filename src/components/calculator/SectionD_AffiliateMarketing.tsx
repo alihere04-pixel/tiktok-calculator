@@ -16,7 +16,7 @@ const AFFILIATE_MODES: Array<{ value: AffiliateMode; label: string; description:
 
 /** Affiliate commission, return rate and ad spend. */
 export function SectionD_AffiliateMarketing({ calculator }: { calculator: UseCalculatorReturn }) {
-  const { inputs, update, conditional, marketOptions } = calculator;
+  const { inputs, update, money, conditional, marketOptions } = calculator;
   const currency = marketOptions.find((m) => m.value === inputs.market)?.currency ?? '';
 
   const affiliateRateError =
@@ -100,8 +100,8 @@ export function SectionD_AffiliateMarketing({ calculator }: { calculator: UseCal
         inputMode="decimal"
         min={0}
         step="0.01"
-        value={inputs.cpa}
-        onChange={(event) => update('cpa', event.target.value === '' ? 0 : Number(event.target.value))}
+        value={money.value('cpa')}
+        onChange={money.onChange('cpa')}
         error={inputs.cpa < 0 ? 'Ad spend cannot be negative' : undefined}
         prefix={currency || undefined}
         placeholder="0.00"

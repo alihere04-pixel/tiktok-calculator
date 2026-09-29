@@ -19,7 +19,7 @@ import type { ConfidenceLevel } from '@/components/ui/Badge';
 export function SectionA_MarketProduct({ calculator }: { calculator: UseCalculatorReturn }) {
   const {
     inputs,
-    update,
+    money,
     setMarket,
     setSellerTier,
     setCategoryId,
@@ -107,8 +107,8 @@ export function SectionA_MarketProduct({ calculator }: { calculator: UseCalculat
           min={0}
           step="0.01"
           required
-          value={Number.isFinite(inputs.sellingPrice) ? inputs.sellingPrice : ''}
-          onChange={(event) => update('sellingPrice', event.target.value === '' ? 0 : Number(event.target.value))}
+          value={money.value('sellingPrice')}
+          onChange={money.onChange('sellingPrice')}
           error={sellingPriceError}
           prefix={currency || undefined}
           placeholder="0.00"

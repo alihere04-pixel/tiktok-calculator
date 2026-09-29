@@ -7,7 +7,7 @@ import type { UseCalculatorReturn } from '@/hooks/useCalculator';
 
 /** The two costs that hit every sale regardless of how it sells. */
 export function SectionC_Costs({ calculator }: { calculator: UseCalculatorReturn }) {
-  const { inputs, update, marketOptions } = calculator;
+  const { inputs, money, marketOptions } = calculator;
   const currency = marketOptions.find((m) => m.value === inputs.market)?.currency ?? '';
 
   return (
@@ -26,10 +26,8 @@ export function SectionC_Costs({ calculator }: { calculator: UseCalculatorReturn
         min={0}
         step="0.01"
         required
-        value={inputs.cogs}
-        onChange={(event) =>
-          update('cogs', event.target.value === '' ? 0 : Number(event.target.value))
-        }
+        value={money.value('cogs')}
+        onChange={money.onChange('cogs')}
         prefix={currency || undefined}
         placeholder="0.00"
         helperText="Your landed cost per unit."
@@ -48,10 +46,8 @@ export function SectionC_Costs({ calculator }: { calculator: UseCalculatorReturn
         min={0}
         step="0.01"
         required
-        value={inputs.outboundShipping}
-        onChange={(event) =>
-          update('outboundShipping', event.target.value === '' ? 0 : Number(event.target.value))
-        }
+        value={money.value('outboundShipping')}
+        onChange={money.onChange('outboundShipping')}
         prefix={currency || undefined}
         placeholder="0.00"
         helperText="Your shipping cost per unit. Enter 0 if the customer pays it."
