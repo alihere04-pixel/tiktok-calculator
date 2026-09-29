@@ -335,4 +335,15 @@ describe('calculateMYFeesSync', () => {
       expect(Number(fee.amount.toFixed(2))).toBe(fee.amount);
     }
   });
+
+  it('BXP Mall category commission is 10.26% with sellerTier standard', () => {
+    const inputs = {
+      ...baseInputs,
+      sellerTier: 'standard' as const,
+      categoryId: 'my-electronics-bxp-mall',
+    } as CalculatorInputs;
+    const fees = calculateMYFeesSync(inputs, myRates);
+    const commission = findFee(fees, 'Commission Fee')!;
+    expect(commission!.rate).toBe('10.260%');
+  });
 });

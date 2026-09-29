@@ -53,6 +53,16 @@ function resolveTier(inputs: CalculatorInputs): MYTier {
   return isMall ? 'Non-BXP Mall' : 'Non-BXP Marketplace';
 }
 
+// Selected category tier, when available, is used by resolveTier to pick the
+// correct BXP / Non‑BXP band.  The caller (buildMYFees) passes the tier string
+// found on the category object so that resolveTier can honour it.
+function getCategoryTier(
+  inputs: CalculatorInputs,
+  rates: MarketRateData
+): string | undefined {
+  return rates.categories.find((c) => c.id === inputs.categoryId)?.tier;
+}
+
 // Published ranges per tier, used as a flagged fallback when a category has no
 // exact entry. The midpoint is used rather than an invented point estimate.
 const MY_KNOWN_RANGES: Record<MYTier, [number, number]> = {
@@ -85,7 +95,17 @@ function buildMYFees(
   // Customer Payment = Item Price - Seller Discount + Customer Shipping
   const customerPayment = netSales + inputs.customerShipping;
 
-  const tier = resolveTier(inputs);
+  let tier = resolveTier(inputs);
+  // Honour the category's own tier label when it is available, so that a
+  // BXP‑Mall category is recognised even if the seller‑tier dropdown still
+  // shows ‘standard’ or ‘mall’.  Only apply when the category tier does not
+  // already indicate a Non‑BXP classification, preserving the existing fallback
+  // behaviour for categories whose tier label is “Non‑BXP …”.
+  const categoryTier = getCategoryTier(inputs, rates);
+  if (categoryTier) {
+    if (/BXP Mall/i.test(categoryTier) && !/Non-/.test(categoryTier)) tier = 'BXP Mall';
+    else if (/BXP Marketplace/i.test(categoryTier) && !/Non-/.test(categoryTier)) tier = 'BXP Marketplace';
+  }
   const extraFees = rates.additionalFees ?? {};
 
   // Commission. Note that 4.86% is the lower bound of the BXP Marketplace
