@@ -252,8 +252,17 @@ export function useCalculator(
     setInputs((prev) => ({ ...prev, market, categoryId: '', sellerTier: null }));
   }, []);
 
+  /**
+   * Changing the tier must not discard an already-chosen category.
+   *
+   * The category list is not filtered by tier, so there is nothing about a new
+   * tier that invalidates the selection. Clearing `categoryId` here used to
+   * leave the form silently unable to submit (the Calculate button needs a
+   * category) with no visible cause, which is how a Malaysia run ended up
+   * reporting an empty `categoryId` despite a category having been picked.
+   */
   const setSellerTier = useCallback((tier: SellerTier | null) => {
-    setInputs((prev) => ({ ...prev, sellerTier: tier, categoryId: '' }));
+    setInputs((prev) => ({ ...prev, sellerTier: tier }));
   }, []);
 
   const setCategoryId = useCallback((categoryId: string) => {

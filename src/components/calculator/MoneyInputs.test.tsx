@@ -69,6 +69,17 @@ function submittedInputs() {
   return call.inputs;
 }
 
+/**
+ * A category is mandatory, so the Calculate button is disabled without one.
+ * These tests are about the money fields, so pick a category to make the form
+ * submittable and let the assertions concentrate on the numeric model.
+ */
+function calculateWithCategoryChosen() {
+  fireEvent.focus(screen.getByLabelText(/^Category/));
+  fireEvent.mouseDown(screen.getAllByRole('option')[0]);
+  fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
+}
+
 beforeEach(() => {
   mockRun.mockReset();
   mockRun.mockResolvedValue({ ok: true, snapshot: makeSnapshot({}) } satisfies CalculationOutcome);
@@ -149,7 +160,7 @@ describe('currency prefix stays separated from the typed amount', () => {
     render(<CalculatorForm ratesByMarket={RATES} />);
     const input = moneyField(/^Selling price/);
 
-    expect(input.classList.contains('pl-10')).toBe(true);
+    expect(input.classList.contains('pl-12')).toBe(true);
     expect(input.classList.contains('pl-7')).toBe(false);
   });
 
@@ -157,7 +168,7 @@ describe('currency prefix stays separated from the typed amount', () => {
     render(<CalculatorForm ratesByMarket={RATES} />);
     const returnRate = moneyField(/^Return \/ refund rate/);
 
-    expect(returnRate.classList.contains('pl-10')).toBe(false);
+    expect(returnRate.classList.contains('pl-12')).toBe(false);
   });
 });
 
@@ -166,7 +177,7 @@ describe('the numeric calculation model is unchanged', () => {
     render(<CalculatorForm ratesByMarket={RATES} />);
     typeInto(moneyField(/^Selling price/), '100');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
+    calculateWithCategoryChosen();
     await waitFor(() => expect(mockRun).toHaveBeenCalled());
 
     expect(submittedInputs().sellingPrice).toBe(100);
@@ -180,7 +191,7 @@ describe('the numeric calculation model is unchanged', () => {
     expect(cogs.value).toBe('40');
     fireEvent.change(cogs, { target: { value: '' } });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
+    calculateWithCategoryChosen();
     await waitFor(() => expect(mockRun).toHaveBeenCalled());
 
     expect(submittedInputs().cogs).toBe(0);
@@ -189,7 +200,7 @@ describe('the numeric calculation model is unchanged', () => {
   it('still defaults untouched money fields to 0 for validation', async () => {
     render(<CalculatorForm ratesByMarket={RATES} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
+    calculateWithCategoryChosen();
     await waitFor(() => expect(mockRun).toHaveBeenCalled());
 
     const inputs = submittedInputs();

@@ -62,6 +62,35 @@ export function CalculatorForm({
   const isStale =
     result !== null && JSON.stringify(inputs) !== JSON.stringify(result.inputs);
 
+  /**
+   * `categoryId` is mandatory to the engine, and the server's validation message
+   * for it ("categoryId is required and must be a non-empty string") is an
+   * internal field name rather than anything a seller can act on. The category
+   * Select is already marked `required`, so the form refuses to submit without
+   * one and explains why, instead of round-tripping a raw error.
+   */
+  const categoryMissing = inputs.categoryId.trim() === '';
+
+  /**
+   * A result belongs to the market that produced it. Switching market changes
+   * the rate file, the currency and the category list, so the previous numbers
+   * must not sit under the new market: the result and any error are dropped and
+   * the new market starts from its empty state.
+   *
+   * This is React's documented pattern for adjusting state when a prop changes,
+   * rather than an effect: the component re-runs immediately without committing
+   * the discarded render, and the reset lands in the same commit as the market
+   * change, so the old result never paints. `isStale` is deliberately left alone
+   * and still marks a result out of date for every other input edit.
+   */
+  const [resultMarket, setResultMarket] = useState(inputs.market);
+  if (inputs.market !== resultMarket) {
+    setResultMarket(inputs.market);
+    setResult(null);
+    setErrors(null);
+  }
+
+
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsPending(true);
@@ -100,9 +129,14 @@ export function CalculatorForm({
         <SectionG_Programs calculator={calculator} />
 
         <div className="pt-1">
-          <Button type="submit" size="lg" fullWidth disabled={isPending}>
+          <Button type="submit" size="lg" fullWidth disabled={isPending || categoryMissing}>
             {isPending ? 'Calculating...' : 'Calculate Profit'}
           </Button>
+          {categoryMissing ? (
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              Choose a category first. Fee rates are specific to the category you sell in.
+            </p>
+          ) : null}
         </div>
       </form>
 

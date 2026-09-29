@@ -37,7 +37,17 @@ const RATES: Partial<Record<Market, MarketRateSummary>> = {
 
 const SNAPSHOT = makeSnapshot({ totalPlatformFees: 6, netProfit: 59 });
 
+/**
+ * A category is mandatory, so the Calculate button stays disabled without one.
+ * Every test here exercises a valid form, so pick the first category first.
+ */
+function chooseFirstCategory() {
+  fireEvent.focus(screen.getByLabelText(/^Category/));
+  fireEvent.mouseDown(screen.getAllByRole('option')[0]);
+}
+
 function clickCalculate() {
+  chooseFirstCategory();
   fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
 }
 
@@ -86,16 +96,31 @@ describe('CalculatorForm results cycle', () => {
   it('shows the error state and no panel when validation fails', async () => {
     mockRun.mockResolvedValue({
       ok: false,
-      errors: ['categoryId is required and must be a non-empty string'],
+      errors: ['Selling price must be greater than 0'],
     });
     render(<CalculatorForm ratesByMarket={RATES} />);
 
     clickCalculate();
 
     const alert = await waitFor(() => screen.getByRole('alert'));
-    expect(alert.textContent).toContain('categoryId is required');
+    expect(alert.textContent).toContain('Selling price must be greater than 0');
     expect(screen.queryByText('Your result')).toBeNull();
     expect(screen.queryByText('Fee breakdown')).toBeNull();
+  });
+
+  it('cannot surface the raw categoryId validation message', async () => {
+    // The engine still rejects an empty categoryId, but the form now blocks the
+    // submit, so that internal message can never reach the seller.
+    mockRun.mockResolvedValue({
+      ok: false,
+      errors: ['categoryId is required and must be a non-empty string'],
+    });
+    render(<CalculatorForm ratesByMarket={RATES} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Calculate Profit' }));
+
+    expect(mockRun).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('renders the panel outside the form so its own inputs are not nested', async () => {

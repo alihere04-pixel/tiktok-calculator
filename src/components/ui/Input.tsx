@@ -86,7 +86,11 @@ export function Input({
             error
               ? 'border-red-500 focus:ring-red-500 dark:border-red-500'
               : 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900 dark:border-zinc-700 dark:focus:border-zinc-50 dark:focus:ring-zinc-50',
-            prefix && 'pl-10',
+            // pl-12 (3rem) clears a three-letter code such as USD/MYR/GBP, which
+            // renders ~28px wide from left-3 (0.75rem) and so ends around x=40px.
+            // pl-10 only just cleared a single symbol and left the amount
+            // visually touching the prefix.
+            prefix && 'pl-12',
             suffix && 'pr-10',
             className
           )}
