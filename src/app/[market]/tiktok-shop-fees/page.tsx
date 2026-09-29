@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { loadMarketRatesSync } from '@/lib/rates/loader';
+import { loadMarketRates, loadMarketRatesSync } from '@/lib/rates/loader';
 import {
   SEO_MARKETS,
   buildDescription,
@@ -54,7 +54,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const meta = metaForSlug(slug);
   if (!meta) return {};
 
-  const model = buildMarketPageModel(loadMarketRatesSync(meta.market), meta);
+  const data = await loadMarketRates(meta.market);
+  const model = buildMarketPageModel(data, meta);
   const description = buildDescription(model);
   const url = `/${meta.slug}/tiktok-shop-fees`;
 
@@ -98,7 +99,7 @@ export default async function MarketFeesPage({ params }: PageProps) {
   const meta = metaForSlug(slug);
   if (!meta) notFound();
 
-  const data = loadMarketRatesSync(meta.market);
+  const data = await loadMarketRates(meta.market);
   const model = buildMarketPageModel(data, meta);
 
   const miniCalculatorRates = {

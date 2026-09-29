@@ -18,7 +18,7 @@
 // export anything else.
 
 import { calculateProfit, validateInputs } from '@/lib/calculation';
-import { loadMarketRatesSync } from '@/lib/rates/loader';
+import { loadMarketRatesSync, preloadAllRates } from '@/lib/rates/loader';
 import { DEFAULT_MONTHLY_UNITS, DEFAULT_TARGET_PROFIT, DEFAULT_TARGET_ROAS } from '@/lib/results/defaults';
 import type { CalculationOutcome, CalculationRequest, ResultSnapshot } from '@/lib/results/types';
 
@@ -28,6 +28,8 @@ function safeNumber(value: unknown, fallback: number, minimum: number): number {
 }
 
 export async function runCalculation(request: CalculationRequest): Promise<CalculationOutcome> {
+  await preloadAllRates();
+
   const inputs = request?.inputs;
 
   // `validateInputs` handles a missing inputs object on its own and returns a

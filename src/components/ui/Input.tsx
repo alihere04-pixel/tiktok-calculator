@@ -86,7 +86,7 @@ export function Input({
             error
               ? 'border-red-500 focus:ring-red-500 dark:border-red-500'
               : 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900 dark:border-zinc-700 dark:focus:border-zinc-50 dark:focus:ring-zinc-50',
-            prefix && 'pl-7',
+            prefix && 'pl-10',
             suffix && 'pr-10',
             className
           )}
