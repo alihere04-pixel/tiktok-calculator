@@ -13,8 +13,8 @@ import type { Market } from '@/hooks/useCalculator';
  * client bundle never imports the loader. The actual calculation happens in the
  * `runCalculation` server action, not on this page.
  */
-export default function Home() {
-  const allRates = loadAllMarketRates();
+export default async function Home() {
+  const allRates = await loadAllMarketRates();
 
   const ratesByMarket: Partial<Record<Market, MarketRateSummary>> = {};
   for (const [key, rates] of Object.entries(allRates)) {
