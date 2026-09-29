@@ -90,10 +90,9 @@ describe.each(['disclaimer', 'privacy', 'terms'] as const)('LegalDocumentView: %
     }
   });
 
-  it('links to the other two legal pages using next/link, not a raw anchor', () => {
+  it('links to the other two legal pages in the main content nav using next/link', () => {
     // Raw internal anchors cause a full page reload and fail Next's client
-    // navigation, so the shared shell uses next/link throughout. Each page is
-    // linked from both the nav and the footer, hence getAllByRole.
+    // navigation, so the shared shell uses next/link throughout.
     const { container } = renderDoc(slug);
     for (const anchor of container.querySelectorAll('a')) {
       const href = anchor.getAttribute('href')!;
@@ -106,11 +105,6 @@ describe.each(['disclaimer', 'privacy', 'terms'] as const)('LegalDocumentView: %
     expect(screen.getAllByRole('link', { name: 'Disclaimer' }).length).toBeGreaterThan(0);
   });
 
-  it('links back to the calculator', () => {
-    renderDoc(slug);
-    expect(screen.getAllByRole('link', { name: 'Profit calculator' }).length).toBeGreaterThan(0);
-  });
-
   it('has no external link without noopener', () => {
     const { container } = renderDoc(slug);
     for (const anchor of container.querySelectorAll('a[target="_blank"]')) {
@@ -119,14 +113,9 @@ describe.each(['disclaimer', 'privacy', 'terms'] as const)('LegalDocumentView: %
     }
   });
 
-  it('states the site is not affiliated with TikTok in the footer', () => {
-    // Scoped to the footer: the disclaimer also carries a "Not affiliated with
-    // TikTok" section heading, so an unscoped query would match twice.
+  it('no longer renders its own footer since footer is now global', () => {
     const { container } = renderDoc(slug);
-    const footer = container.querySelector('footer')!;
-    expect(footer.textContent).toMatch(/Not affiliated with TikTok/);
-    // The heading is the h2 in the body, the assertion above is the footer.
-    expect(container.querySelector('footer')?.querySelector('h2')).toBeNull();
+    expect(container.querySelector('footer')).toBeNull();
   });
 });
 

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { LegalDocument, LegalSlug } from '@/lib/legal/content';
+import type { LegalDocument } from '@/lib/legal/content';
 import { OPEN_ITEM_MARKER } from '@/lib/legal/content';
 import { formatIsoDate } from '@/lib/seo/format';
 
@@ -86,28 +86,6 @@ export function LegalDocumentView({
           </section>
         ))}
       </main>
-
-      <footer className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto w-full max-w-3xl px-4 py-6 text-sm sm:px-6">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            An independent tool. Not affiliated with TikTok.
-          </p>
-          <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-            <Link href="/" className="underline underline-offset-2 dark:text-zinc-200">
-              Profit calculator
-            </Link>
-            {allDocuments.map((doc) => (
-              <Link
-                key={doc.slug}
-                href={`/${doc.slug}` as `/${LegalSlug}`}
-                className="underline underline-offset-2 dark:text-zinc-200"
-              >
-                {doc.title}
-              </Link>
-            ))}
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

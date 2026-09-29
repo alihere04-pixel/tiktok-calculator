@@ -420,20 +420,6 @@ export default async function MarketFeesPage({ params }: PageProps) {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto w-full max-w-3xl px-4 py-6 text-sm sm:px-6">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Rates change. Confirm anything you plan to rely on in TikTok Seller Center before you act
-            on it.
-          </p>
-          <p className="mt-2">
-            <Link href="/" className="underline underline-offset-2 dark:text-zinc-200">
-              TikTok Shop Profit Calculator
-            </Link>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

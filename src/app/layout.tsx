@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { siteUrl } from "@/lib/site/config";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         {children}
+        <Footer />
         <Analytics />
       </body>
     </html>
