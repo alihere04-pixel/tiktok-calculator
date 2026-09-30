@@ -51,7 +51,6 @@ function makeInputs(market: Market, overrides: Partial<CalculatorInputs> = {}): 
     cpa: 0,
     newSellerPromo: false,
     promoDaysRemaining: 0,
-    fulfillmentMethod: 'selfShip',
     isPreOrder: false,
     isShippingProgramEnrolled: false,
     isGMVMaxActive: false,
@@ -252,7 +251,8 @@ describe('calculateProfit - invalid inputs', () => {
   it('error result reverse calculators return safe zeros instead of throwing', () => {
     const result = calculateProfit(makeInputs('US', { sellingPrice: -1 }));
     expect(result.breakEvenPrice).toBe(0);
-    expect(result.targetProfitPrice(50)).toBe(0);
+    // F-11: an error result must also say "not achievable", not just price 0.
+    expect(result.targetProfitPrice(50)).toEqual({ price: 0, achievable: false });
     expect(result.maxCPA(4)).toBe(0);
     expect(result.monthlyProjection(100)).toEqual({
       units: 0,
@@ -291,7 +291,8 @@ describe('reverse calculators', () => {
   it('targetProfitPrice delivers approximately the requested profit', () => {
     const result = calculateProfit(makeInputs('US'));
     for (const target of [10, 25, 50]) {
-      const price = result.targetProfitPrice(target);
+      const { price, achievable } = result.targetProfitPrice(target);
+      expect(achievable).toBe(true);
       expect(price).toBeGreaterThan(0);
       const probe = calculateProfit({ ...makeInputs('US'), sellingPrice: price });
       expect(probe.netProfit).toBeCloseTo(target, 0);
@@ -300,8 +301,43 @@ describe('reverse calculators', () => {
 
   it('returns a price above sellingPrice for an aggressive target', () => {
     const result = calculateProfit(makeInputs('US'));
-    const price = result.targetProfitPrice(1_000_000);
+    const { price, achievable } = result.targetProfitPrice(1_000_000);
+    expect(achievable).toBe(true);
     expect(price).toBeGreaterThan(100);
+  });
+
+  it('targetProfitPrice always reports achievability alongside the price', () => {
+    // F-11: the engine used to return a bare number, and 0 doubled as the
+    // "no solution" sentinel. Achievability is now a field of its own, so a
+    // caller can never mistake a sentinel for a real quote.
+    const result = calculateProfit(makeInputs('US'));
+    for (const target of [-100, 0, 10, 25, 50, 1_000_000]) {
+      const { price, achievable } = result.targetProfitPrice(target);
+      expect(typeof price).toBe('number');
+      expect(typeof achievable).toBe('boolean');
+      // A negative target is satisfiable at the floor, so it is achievable.
+      expect(achievable).toBe(true);
+      expect(price).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('a large but reachable target is still achievable', () => {
+    // Guards the 100x search bound from being reported as "unachievable"
+    // merely because the target is large: at a ~10% all-in fee rate, any
+    // positive target is reachable at some price.
+    const result = calculateProfit(makeInputs('US'));
+    const { price, achievable } = result.targetProfitPrice(1_000_000);
+    expect(achievable).toBe(true);
+    expect(price).toBeGreaterThan(1_000_000);
+  });
+
+  it('a zero target returns break-even, not the bare fixed costs', () => {
+    // A zero target has to cover the fees charged at that price, so it is the
+    // break-even price and not cogs + shipping.
+    const result = calculateProfit(makeInputs('US'));
+    const { price, achievable } = result.targetProfitPrice(0);
+    expect(achievable).toBe(true);
+    expect(price).toBeCloseTo(result.breakEvenPrice, 1);
   });
 
   it('maxCPA is the min of the ROAS cap and the profit cap', () => {

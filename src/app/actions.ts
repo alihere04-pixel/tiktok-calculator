@@ -56,7 +56,7 @@ export async function runCalculation(request: CalculationRequest): Promise<Calcu
       return { ok: false, errors: result.errors };
     }
 
-    const targetProfitPrice = result.targetProfitPrice(targetProfit);
+    const target = result.targetProfitPrice(targetProfit);
 
     const snapshot: ResultSnapshot = {
       currency: loadMarketRatesSync(inputs.market).currency,
@@ -65,6 +65,9 @@ export async function runCalculation(request: CalculationRequest): Promise<Calcu
         rate: fee.rate,
         base: fee.base,
         amount: fee.amount,
+        // An omitted state means unpriced, never priced: the client must not be
+        // able to read a missing field as a verified rate.
+        pricing: fee.pricing ?? 'unpriced',
         sourceUrl: fee.sourceUrl,
         effectiveDate: fee.effectiveDate,
         lastVerified: fee.lastVerified,
@@ -72,6 +75,8 @@ export async function runCalculation(request: CalculationRequest): Promise<Calcu
         notes: fee.notes,
       })),
       totalPlatformFees: result.totalPlatformFees,
+      complete: result.complete,
+      unpricedFees: result.unpricedFees,
       netProfit: result.netProfit,
       profitMargin: result.profitMargin,
       effectiveTakeRate: result.effectiveTakeRate,
@@ -80,9 +85,8 @@ export async function runCalculation(request: CalculationRequest): Promise<Calcu
       breakEvenPrice: result.breakEvenPrice,
       reverse: {
         targetProfitInput: targetProfit,
-        targetProfitPrice,
-        // 0 is the engine's "no solution within 100x" sentinel, not a real price.
-        targetProfitAchievable: targetProfitPrice > 0,
+        targetProfitPrice: target.price,
+        targetProfitAchievable: target.achievable,
         targetROAS,
         maxCPA: result.maxCPA(targetROAS),
       },

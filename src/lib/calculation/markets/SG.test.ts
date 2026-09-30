@@ -29,7 +29,6 @@ const baseInputs: CalculatorInputs = {
   cpa: 0,
   newSellerPromo: false,
   promoDaysRemaining: 0,
-  fulfillmentMethod: 'selfShip',
   isPreOrder: false,
   isShippingProgramEnrolled: false,
   isGMVMaxActive: false,
@@ -134,10 +133,13 @@ describe('calculateSGFeesSync', () => {
   });
 
   it('Mixed BXP electronics adds a 3.27% BXP service fee', () => {
+    // F-03: the seller's programme is authoritative, so selecting BXP Mixed is
+    // what prices the mixed rate and triggers the service fee. Previously the
+    // category row's own `tier` won, and the mixed rows were unreachable.
     const inputs = {
       ...baseInputs,
-      sellerTier: 'bxp' as const,
-      categoryId: 'sg-bxp-mixed-electronics',
+      sellerTier: 'bxp-mixed' as const,
+      categoryId: 'sg-electronics-selected-lifestyle',
     };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
@@ -153,8 +155,8 @@ describe('calculateSGFeesSync', () => {
   it('Mixed BXP other categories uses the 5.995% rate', () => {
     const inputs = {
       ...baseInputs,
-      sellerTier: 'bxp' as const,
-      categoryId: 'sg-bxp-mixed-other',
+      sellerTier: 'bxp-mixed' as const,
+      categoryId: 'sg-fashion-fmcg-lifestyle-etc',
     };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
@@ -162,12 +164,39 @@ describe('calculateSGFeesSync', () => {
     expect(commission!.amount).toBe(6);
   });
 
-  it('isBxpMixed flag triggers the mixed rate for a BXP seller', () => {
+  it('the same category prices differently per selected programme', () => {
+    // F-03 regression: one category, four programmes, four published rates.
+    const cases: Array<[NonNullable<CalculatorInputs['sellerTier']>, string]> = [
+      ['standard', '8.175%'],
+      ['bxp', '7.085%'],
+      ['bxp-mixed', '5.995%'],
+    ];
+    for (const [tier, rate] of cases) {
+      const fees = calculateSGFeesSync(
+        { ...baseInputs, sellerTier: tier, categoryId: 'sg-fashion-fmcg-lifestyle-etc' },
+        sgRates
+      );
+      expect(findFee(fees, 'Commission Fee')!.rate, tier).toBe(rate);
+    }
+  });
+
+  it('an unmapped category falls back to the selected programme rate, not 0%', () => {
     const inputs = {
       ...baseInputs,
-      sellerTier: 'bxp' as const,
+      sellerTier: 'bxp-restricted' as const,
       categoryId: 'sg-unmapped-category',
-      isBxpMixed: true,
+    } as CalculatorInputs;
+    const fees = calculateSGFeesSync(inputs, sgRates);
+    const commission = findFee(fees, 'Commission Fee');
+    expect(commission!.rate).toBe('7.085%');
+    expect(findFee(fees, 'BXP Service Fee')).toBeUndefined();
+  });
+
+  it('an unmapped category on BXP Mixed keeps the mixed rate and service fee', () => {
+    const inputs = {
+      ...baseInputs,
+      sellerTier: 'bxp-mixed' as const,
+      categoryId: 'sg-unmapped-category',
     } as CalculatorInputs;
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
@@ -176,28 +205,14 @@ describe('calculateSGFeesSync', () => {
     expect(findFee(fees, 'BXP Service Fee')).toBeDefined();
   });
 
-  it('isBxpRestricted flag triggers the restricted rate for a BXP seller', () => {
-    const inputs = {
-      ...baseInputs,
-      sellerTier: 'bxp' as const,
-      categoryId: 'sg-unmapped-category',
-      isBxpRestricted: true,
-    } as CalculatorInputs;
-    const fees = calculateSGFeesSync(inputs, sgRates);
-    const commission = findFee(fees, 'Commission Fee');
-    expect(commission!.rate).toBe('7.085%');
-    expect(findFee(fees, 'BXP Service Fee')).toBeUndefined();
-  });
-
-  it('BXP flags are ignored for standard sellers', () => {
-    const inputs = {
-      ...baseInputs,
-      sellerTier: 'standard' as const,
-      categoryId: 'sg-unmapped-category',
-      isBxpMixed: true,
-    } as CalculatorInputs;
-    const fees = calculateSGFeesSync(inputs, sgRates);
-    expect(findFee(fees, 'BXP Service Fee')).toBeUndefined();
+  it('BXP Mixed is the only programme that charges the service fee', () => {
+    for (const tier of ['standard', 'bxp', 'bxp-restricted'] as const) {
+      const fees = calculateSGFeesSync(
+        { ...baseInputs, sellerTier: tier, categoryId: 'sg-electronics-selected-lifestyle' },
+        sgRates
+      );
+      expect(findFee(fees, 'BXP Service Fee'), tier).toBeUndefined();
+    }
   });
 
   it('Unknown category falls back to the standard default and is flagged', () => {
@@ -253,8 +268,8 @@ describe('calculateSGFeesSync', () => {
   it('Full fee set is returned for a mixed BXP pre-order affiliate order', () => {
     const inputs = {
       ...baseInputs,
-      sellerTier: 'bxp' as const,
-      categoryId: 'sg-bxp-mixed-electronics',
+      sellerTier: 'bxp-mixed' as const,
+      categoryId: 'sg-electronics-selected-lifestyle',
       isPreOrder: true,
       affiliateMode: 'open' as AffiliateMode,
       affiliateRate: 10,

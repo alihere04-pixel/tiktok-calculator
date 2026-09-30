@@ -79,3 +79,44 @@ describe('SummaryCards', () => {
     expect(screen.getByText('6.6%')).toBeDefined();
   });
 });
+
+describe('SummaryCards - incomplete results (F-04)', () => {
+  const INCOMPLETE = {
+    complete: false,
+    unpricedFees: ['Commission Fee'],
+  };
+
+  it('warns that the calculation is incomplete and names the missing fee', () => {
+    renderCards(INCOMPLETE);
+    expect(screen.getByText('Incomplete calculation.')).toBeDefined();
+    expect(screen.getByText(/Commission Fee/)).toBeDefined();
+  });
+
+  it('marks the derived figures as bounds rather than final numbers', () => {
+    // A headline net profit built from a missing fee would otherwise read as
+    // the answer, when it is really the best case.
+    renderCards(INCOMPLETE);
+    expect(screen.getByText('Net profit / unit (max)')).toBeDefined();
+    expect(screen.getByText('Profit margin (max)')).toBeDefined();
+    expect(screen.getByText('Effective take rate (min)')).toBeDefined();
+    expect(screen.getByText('Break-even price (min)')).toBeDefined();
+  });
+
+  it('replaces the plain labels with the bound labels only when incomplete', () => {
+    renderCards();
+    expect(screen.getByText('Net profit / unit')).toBeDefined();
+    expect(screen.queryByText('Incomplete calculation.')).toBeNull();
+  });
+
+  it('does not warn when every fee was priced', () => {
+    renderCards({ complete: true, unpricedFees: [] });
+    expect(screen.queryByText('Incomplete calculation.')).toBeNull();
+  });
+
+  it('does not warn on a complete result that merely lists no unpriced fees', () => {
+    // Guards against treating a complete false/empty pair as incomplete: the
+    // engine sets both together, and the fee count is the honest signal.
+    renderCards({ complete: true, unpricedFees: [] });
+    expect(screen.queryByText(/not in the rate data/)).toBeNull();
+  });
+});

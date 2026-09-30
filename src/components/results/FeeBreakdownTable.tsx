@@ -98,19 +98,41 @@ export function FeeBreakdownTable({ snapshot }: { snapshot: ResultSnapshot }) {
             const key = `${index}-${fee.name}`;
             const isOpen = expanded[key] === true;
             const detailId = `fee-detail-${index}`;
+            const isUnpriced = fee.pricing === 'unpriced';
 
             return (
-              <tr key={key} className="border-b border-zinc-100 align-top dark:border-zinc-800/60">
+              <tr
+                key={key}
+                className={`border-b align-top dark:border-zinc-800/60 ${
+                  isUnpriced ? 'border-amber-300 bg-amber-50/60 dark:border-amber-800 dark:bg-amber-950/20' : 'border-zinc-100'
+                }`}
+              >
                 <th scope="row" className="py-2.5 pr-2 text-left font-medium">
                   <span className="block">{fee.name}</span>
                   <Badge level={fee.confidence} className="mt-1" />
+                  {isUnpriced ? (
+                    // F-04: an unpriced line contributes 0 to the total, so it
+                    // must never read as a fee that was genuinely charged at
+                    // that amount.
+                    <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+                      Not priced
+                    </span>
+                  ) : null}
                 </th>
                 <td className="px-2 py-2.5 text-zinc-600 dark:text-zinc-400">{fee.rate}</td>
                 <td className="px-2 py-2.5 text-right tabular-nums text-zinc-600 dark:text-zinc-400">
-                  {formatMoneyCompact(fee.base, currency)}
+                  {isUnpriced ? (
+                    <span className="text-amber-700 dark:text-amber-400">&mdash;</span>
+                  ) : (
+                    formatMoneyCompact(fee.base, currency)
+                  )}
                 </td>
                 <td className="px-2 py-2.5 text-right font-medium tabular-nums">
-                  {formatMoney(fee.amount, currency)}
+                  {isUnpriced ? (
+                    <span className="text-amber-700 dark:text-amber-400">Not charged</span>
+                  ) : (
+                    formatMoney(fee.amount, currency)
+                  )}
                 </td>
                 <td className="px-2 py-2.5 text-center">
                   <a
@@ -155,6 +177,20 @@ export function FeeBreakdownTable({ snapshot }: { snapshot: ResultSnapshot }) {
           </tr>
         </tfoot>
       </table>
+
+      {snapshot.unpricedFees.length > 0 ? (
+        // The total above is a floor, not a complete figure. Saying so here
+        // stops the table from being read as the full cost of selling.
+        <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+          <strong className="font-semibold">This total is incomplete.</strong>{' '}
+          {snapshot.unpricedFees.length === 1 ? 'One fee is' : `${snapshot.unpricedFees.length} fees are`}{' '}
+          not published in the rate data, so {snapshot.unpricedFees.length === 1 ? 'it is' : 'they are'} shown
+          as &ldquo;not priced&rdquo; and excluded from the total:{' '}
+          {snapshot.unpricedFees.join(', ')}. The real total will be higher, so treat net profit as an
+          upper bound until {snapshot.unpricedFees.length === 1 ? 'that rate is' : 'those rates are'}{' '}
+          verified in Seller Centre.
+        </p>
+      ) : null}
 
       {/*
         The expanded audit trail is rendered once, below the table, rather than as

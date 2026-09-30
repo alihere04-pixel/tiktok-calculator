@@ -93,8 +93,8 @@ describe('MiniFeeCalculator', () => {
       totalPlatformFees: 3.75,
       currency: 'MYR',
       fees: [
-        { name: 'Commission Fee', rate: '7.02%', base: 25, amount: 1.755, sourceUrl: '', effectiveDate: '', lastVerified: '', confidence: 'high' },
-        { name: 'Transaction Fee', rate: '3.78%', base: 25, amount: 0.945, sourceUrl: '', effectiveDate: '', lastVerified: '', confidence: 'high' },
+        { name: 'Commission Fee', rate: '7.02%', base: 25, amount: 1.755, pricing: 'priced', sourceUrl: '', effectiveDate: '', lastVerified: '', confidence: 'high' },
+        { name: 'Transaction Fee', rate: '3.78%', base: 25, amount: 0.945, pricing: 'priced', sourceUrl: '', effectiveDate: '', lastVerified: '', confidence: 'high' },
       ],
     });
     mockRun.mockResolvedValue({ ok: true, snapshot } as CalculationOutcome);

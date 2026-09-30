@@ -29,7 +29,6 @@ const baseInputs: CalculatorInputs = {
   cpa: 0,
   newSellerPromo: false,
   promoDaysRemaining: 0,
-  fulfillmentMethod: 'selfShip',
   isPreOrder: false,
   isShippingProgramEnrolled: false,
   isGMVMaxActive: false,
@@ -99,7 +98,11 @@ describe('calculateUKFeesSync', () => {
     expect(commission!.amount).toBe(5);
   });
 
-  it('New seller promo waives commission and is flagged for verification', () => {
+  it('New seller promo is unpriced rather than a fabricated 0%', () => {
+    // F-05: the promo is verified to exist, but its reduced rate is not
+    // published in the rate file. The old code charged 0% and printed "0%",
+    // which looked like a genuine waived commission and understated fees.
+    // An unpriced line contributes nothing but is reported as incomplete.
     const inputs = {
       ...baseInputs,
       categoryId: 'uk-new-seller-promo',
@@ -107,13 +110,15 @@ describe('calculateUKFeesSync', () => {
       promoDaysRemaining: 45,
     };
     const fees = calculateUKFeesSync(inputs, ukRates);
-    const commission = fees.find(f =>
-      f.name.includes('New Seller Promo')
-    );
-    expect(commission).toBeDefined();
-    expect(commission!.amount).toBe(0);
-    expect(commission!.rate).toBe('0%');
-    expect(commission!.confidence).toBe('needs-verification');
+    const promo = fees.find(f => f.name.includes('New Seller Promo'));
+
+    expect(promo).toBeDefined();
+    expect(promo!.pricing).toBe('unpriced');
+    expect(promo!.rate).not.toBe('0%');
+    expect(promo!.rate).toMatch(/not published/i);
+    expect(promo!.amount).toBe(0);
+    expect(promo!.confidence).toBe('needs-verification');
+    expect(promo!.notes).toMatch(/excluded from the fee total/i);
   });
 
   it('Promo does not apply once promo days are exhausted', () => {

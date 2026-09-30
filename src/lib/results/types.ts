@@ -18,11 +18,16 @@
 // Types only. This module is imported by both the server action and client
 // components, so it must stay free of runtime imports.
 
-import type { CalculatorInputs, ConfidenceLevel, MonthlyProjection } from '@/lib/calculation/types';
+import type {
+  CalculatorInputs,
+  ConfidenceLevel,
+  FeePricingState,
+  MonthlyProjection,
+} from '@/lib/calculation/types';
 
 // Re-exported so client components can take a single dependency on this
 // contract instead of reaching into the calculation module's types directly.
-export type { CalculatorInputs, ConfidenceLevel, MonthlyProjection };
+export type { CalculatorInputs, ConfidenceLevel, FeePricingState, MonthlyProjection };
 
 /** One row of the fee breakdown table, flattened from the engine's fee item. */
 export interface ResultFeeLine {
@@ -32,6 +37,12 @@ export interface ResultFeeLine {
   /** The amount the rate was applied to. */
   base: number;
   amount: number;
+  /**
+   * `unpriced` means no verified published rate existed for this fee. The line
+   * is still shown, and still shows the band or reason, but its amount is
+   * excluded from every total and the result is marked incomplete.
+   */
+  pricing: FeePricingState;
   sourceUrl: string;
   effectiveDate: string;
   lastVerified: string;
@@ -39,15 +50,15 @@ export interface ResultFeeLine {
   notes?: string;
 }
 
-/** Outputs of the engine's three reverse-calculator closures, pre-evaluated. */
+/** Outputs of the engine's reverse-calculator closures, pre-evaluated. */
 export interface ReverseValues {
   /** The target profit the user asked for, echoed back for labelling. */
   targetProfitInput: number;
-  /** Minimum price that earns `targetProfitInput`. 0 when unachievable. */
+  /** Minimum price that earns `targetProfitInput`, or 0 when unachievable. */
   targetProfitPrice: number;
   /**
-   * `calculateTargetPrice` returns 0 as its "no solution within 100x" sentinel.
-   * The panel needs to say so explicitly rather than print a $0.00 price.
+   * Whether a price exists that earns `targetProfitInput`. The engine returns
+   * this explicitly rather than using 0 as a sentinel, because 0 is a real price.
    */
   targetProfitAchievable: boolean;
   targetROAS: number;
@@ -63,7 +74,17 @@ export interface ResultSnapshot {
   /** ISO currency code from the market's rate file, e.g. "MYR". */
   currency: string;
   fees: ResultFeeLine[];
+  /** Sum of priced fees only. Excludes unpriced fees entirely. */
   totalPlatformFees: number;
+  /**
+   * False when at least one fee could not be priced from a verified rate.
+   *
+   * Every derived figure below is then a lower bound on fees and an upper bound
+   * on profit. The UI must label them as incomplete and name the missing fees.
+   */
+  complete: boolean;
+  /** Names of the fees that could not be priced. */
+  unpricedFees: string[];
   netProfit: number;
   /** Fraction of selling price, e.g. 0.25 for 25%. */
   profitMargin: number;

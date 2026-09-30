@@ -19,11 +19,16 @@ publishing something false or broken.
 | Legal pages (`/disclaimer`, `/privacy`, `/terms`) | Built, drafted, **not lawyer-reviewed** |
 | Affiliate programme | Built and tested, **switched off** |
 | Error boundary (`src/app/error.tsx`) | Working |
-| Sitemap / robots | Working, need the real domain |
+| Sitemap / robots | Working, live on `https://fynza.store` |
 | Analytics / error monitoring | **Off by default**, config in place |
-| Tests | 659 passing across 45 files |
+| Tests | 798 passing across 52 files |
 
 Supported markets: `US`, `UK`, `MY`, `SG`, `PH`.
+
+> **Status as of 2026-09-30: this site is live at `https://fynza.store`.** The
+> blockers in the next section were resolved and verified against the production
+> domain. They are kept below as the record of what had to be decided, not as a
+> list of outstanding work.
 
 ## Launch blockers
 
@@ -32,14 +37,15 @@ enforced in code, not just documented, so it cannot be forgotten silently.
 
 ### 1. No production domain
 
-`NEXT_PUBLIC_SITE_URL` is unset. Every relative canonical in the site resolves
-against it, and Next falls back to `http://localhost:3000` when it is missing.
-As built right now, the canonical tags on all nine pages point at localhost,
-and `robots.txt` omits the `Sitemap:` line to avoid advertising localhost to a
-crawler.
+**Resolved.** `NEXT_PUBLIC_SITE_URL` is set to `https://fynza.store` in the
+production environment. Verified against the live site: canonicals on all pages
+are absolute and point at the production domain, and `robots.txt` includes its
+`Sitemap:` line. The `localhost:3000` fallback below only applies to a local
+build with the variable unset.
 
-Set the variable. Verified working: with `NEXT_PUBLIC_SITE_URL=https://fees.example.com`
-the canonicals become absolute and robots.txt gains the sitemap line.
+Every relative canonical in the site resolves against `NEXT_PUBLIC_SITE_URL`, and
+Next falls back to `http://localhost:3000` when it is missing, so a build that
+omits the variable will still ship working canonicals — pointed at the wrong host.
 
 - Code: `src/lib/site/config.ts`
 - Blocker list: `siteUrlOpenItems()`
@@ -186,10 +192,51 @@ domain. Do not skip it.
 
 **Data honesty**
 
-- [ ] Every market page shows a source date and a confidence badge.
-- [ ] No rate appears that is not in the verified dataset. Missing data is
+- [x] Every market page shows a source date and a confidence badge.
+- [x] No rate appears that is not in the verified dataset. Missing data is
       shown as a disclosure card, never as a zero.
-- [ ] Affiliate commission rates are still absent, and the pages say so.
+- [x] Affiliate commission rates are still absent, and the pages say so.
+
+## Decisions taken where the data was silent
+
+Three questions came up during the audit that had no published answer. Each was
+resolved by removing the false claim rather than filling the gap, and each is
+recorded here so the next person does not "fix" it back.
+
+### Affiliate commission is user-entered, and always will be
+
+The schema supports an `affiliate` block with published ranges per market
+(`openCollabRange`, `targetedCollabRange`). **No market file populates it**,
+because TikTok does not publish a single affiliate rate: the rate is negotiated
+per creator and per campaign. The calculator therefore takes the rate from the
+seller as an input and charges exactly that, or nothing when the field is left
+at zero.
+
+A default was not added, deliberately. Any single number would be a rate TikTok
+never published, and a seller who accepted it would underprice their listing
+without knowing. If a per-market range is ever added to a rate file, it should
+be used to *validate* a seller-entered rate, not to supply one.
+
+### MY dynamic commission has been removed
+
+`additionalFees.dynamicCommission` describes a commission band that applies at
+RM 650,000 in trailing-30-day GMV. The old code could add a fee line for it, but
+only by casting an untyped property onto the inputs, and nothing in the form or
+the URL could ever set it. It was unreachable UI that looked like a feature.
+
+It has been removed rather than wired up, because triggering it correctly needs
+the seller's trailing GMV, which is not an input this calculator has. The rate
+data is left in place. If a GMV input is ever added, the line can be restored
+against the published band, and as an `unpriced` line until then.
+
+### Fulfilled by TikTok is not calculated
+
+`fulfillmentMethod`, `productWeightLb` and `dimensionsIn` were collected by the
+form and read by no engine, and no rate file carries an FBT fee. The US-only
+control implied the fee difference had been modelled. The inputs are removed and
+the section explains where to put the cost instead. See `SectionF_Fulfillment.tsx`.
+
+## Pre-launch checklist
 
 **Legal**
 
@@ -229,10 +276,10 @@ domain. Do not skip it.
 
 **Quality gates**
 
-- [ ] `npm test -- --run` passes.
-- [ ] `npx tsc --noEmit` is clean.
-- [ ] `npm run build` succeeds.
-- [ ] `npx eslint src` reports 0 errors.
+- [x] `npm test -- --run` passes.
+- [x] `npx tsc --noEmit` is clean.
+- [x] `npm run build` succeeds.
+- [x] `npx eslint src` reports 0 errors.
 - [ ] Smoke test passes in Chrome and Firefox.
 - [ ] Safari reviewed on a real device or macOS machine. It cannot be tested
       from Windows. Nothing in the code uses `:has()` or other late-Safari APIs,

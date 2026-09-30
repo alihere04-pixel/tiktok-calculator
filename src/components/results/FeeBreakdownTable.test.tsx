@@ -117,3 +117,55 @@ describe('FeeBreakdownTable', () => {
     expect(container.textContent).toContain('No platform fees apply');
   });
 });
+
+describe('FeeBreakdownTable - unpriced fees (F-04)', () => {
+  const UNPRICED_FEE = makeFee({
+    name: 'Commission Fee',
+    rate: 'not published',
+    base: 0,
+    amount: 0,
+    pricing: 'unpriced',
+    confidence: 'needs-verification',
+  });
+
+  it('marks an unpriced row instead of showing a currency amount', () => {
+    // The engine reports 0 for an unpriced fee, and rendering that as "$0.00"
+    // would read as a genuine waived commission.
+    render(
+      <FeeBreakdownTable
+        snapshot={makeSnapshot({
+          fees: [FEES[0], UNPRICED_FEE],
+          totalPlatformFees: 6,
+          complete: false,
+          unpricedFees: ['Commission Fee'],
+        })}
+      />
+    );
+    expect(screen.getByText('Not priced')).toBeDefined();
+    expect(screen.getByText('Not charged')).toBeDefined();
+  });
+
+  it('says the total is incomplete and names the missing fee', () => {
+    const { container } = render(
+      <FeeBreakdownTable
+        snapshot={makeSnapshot({
+          fees: [FEES[0], UNPRICED_FEE],
+          totalPlatformFees: 6,
+          complete: false,
+          unpricedFees: ['Commission Fee'],
+        })}
+      />
+    );
+    expect(screen.getByText('This total is incomplete.')).toBeDefined();
+    // The notice names the missing fee and states the direction of the error.
+    expect(container.textContent).toContain('Commission Fee');
+    expect(container.textContent).toMatch(/real total will be higher/i);
+    expect(container.textContent).toMatch(/excluded from the total/i);
+  });
+
+  it('shows no incomplete notice when every fee was priced', () => {
+    renderTable();
+    expect(screen.queryByText('This total is incomplete.')).toBeNull();
+    expect(screen.queryByText('Not priced')).toBeNull();
+  });
+});

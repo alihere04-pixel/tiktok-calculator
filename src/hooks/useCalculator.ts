@@ -6,6 +6,17 @@ import type { CalculatorInputs, Market } from '@/lib/calculation';
 // Imported from the type module rather than `@/lib/calculation`, whose public
 // surface is the Step 6 API (entry point, helpers, result types).
 import type { SellerTier } from '@/lib/calculation/types';
+// Pure grouping/normalisation helpers. This module deliberately does not import
+// `@/lib/rates/loader`, which reads rate files with `fs` and cannot run in a
+// browser bundle.
+import {
+  availableSellerTiers as tiersForMarket,
+  findCategoryGroup,
+  findCategoryRow,
+  groupCategories,
+  hasSellerTierChoice as marketHasTierChoice,
+  sellerTierLabel,
+} from '@/lib/rates/tiers';
 
 export type { CalculatorInputs, Market, SellerTier };
 
@@ -21,7 +32,6 @@ export interface CategoryOption {
   group?: string;
   description?: string;
 }
-
 /**
  * The money fields the user types into.
  *
@@ -55,6 +65,8 @@ export interface MarketRateSummary {
     parentCategory?: string;
     tier?: string;
     rate: number;
+    /** PH prices both seller tiers on one record. */
+    mallRate?: number;
     confidence?: string;
   }>;
 }
@@ -88,7 +100,14 @@ export interface MarketCapabilities {
   preOrder: boolean;
   /** Engine reads inputs.isShippingProgramEnrolled and charges a fee. */
   shippingProgram: boolean;
-  /** Market offers FBT (Fulfilled by TikTok). No engine implements FBT fees. */
+  /**
+   * Fulfilled by TikTok.
+   *
+   * No engine implements FBT fees, and the rate data has no verified FBT
+   * figures, so this is false for every market. It previously read true for the
+   * US, which rendered a FBT/self-ship selector whose choice changed nothing in
+   * the result. A control that cannot change the answer must not be shown.
+   */
   fulfillment: boolean;
   /**
    * GMV Max. Phase 2.
@@ -109,7 +128,7 @@ export const MARKET_CAPABILITIES: Record<Market, MarketCapabilities> = {
     newSellerPromo: true,
     preOrder: false,
     shippingProgram: false,
-    fulfillment: true,
+    fulfillment: false,
     gmvMax: false,
   },
   // PH.ts: no platformDiscount, no returnRate, no promo.
@@ -174,7 +193,6 @@ export function createDefaultInputs(market: Market = 'US'): CalculatorInputs {
     cpa: 0,
     newSellerPromo: false,
     promoDaysRemaining: 0,
-    fulfillmentMethod: 'selfShip',
     isPreOrder: false,
     isShippingProgramEnrolled: false,
     isGMVMaxActive: false,
@@ -185,18 +203,26 @@ export function createDefaultInputs(market: Market = 'US'): CalculatorInputs {
  * Seller tier is only meaningful where rate data is actually tiered.
  *
  * This is derived from the data rather than hard-coded per market, because
- * whether a market is tiered is a property of its rate file, not of the UI. As
- * of this data set: US and UK have no tiers, PH has a single `Marketplace`
- * tier (so a selector would offer no choice), and SG and MY have four each.
+ * whether a market is tiered is a property of its rate file, not of the UI.
+ * Grouping matters here: MY's six rows are two categories across four tiers,
+ * so the tier count is read from the grouped categories, and PH's single rows
+ * carry both tiers via `mallRate`.
  */
 export function hasSellerTierChoice(rates: MarketRateSummary | null | undefined): boolean {
   if (!rates) return false;
-  return new Set(rates.categories.map((c) => c.tier).filter(Boolean)).size > 1;
+  return marketHasTierChoice(rates.market, rates.categories);
 }
 
-export function availableSellerTiers(rates: MarketRateSummary | null | undefined): string[] {
+export function availableSellerTiers(
+  rates: MarketRateSummary | null | undefined
+): SellerTier[] {
   if (!rates) return [];
-  return [...new Set(rates.categories.map((c) => c.tier).filter(Boolean))] as string[];
+  return tiersForMarket(rates.market, rates.categories) as SellerTier[];
+}
+
+/** Display label for a tier token, e.g. `non-bxp-mall` -> "Non-BXP Mall". */
+export function sellerTierDisplayLabel(tier: SellerTier): string {
+  return sellerTierLabel(tier);
 }
 
 export function useCalculator(
@@ -288,20 +314,57 @@ export function useCalculator(
 
   const sellerTiers = useMemo(() => availableSellerTiers(currentRates), [currentRates]);
 
-  const categoryOptions = useMemo<CategoryOption[]>(() => {
-    if (!currentRates) return [];
-    return currentRates.categories.map((category) => ({
-      value: category.id,
-      label: category.name,
-      group: category.parentCategory,
-      description: category.tier ? `Tier: ${category.tier}` : undefined,
-    }));
-  }, [currentRates]);
-
-  const selectedCategory = useMemo(
-    () => currentRates?.categories.find((c) => c.id === inputs.categoryId) ?? null,
-    [currentRates, inputs.categoryId]
+  const categoryGroups = useMemo(
+    () => (currentRates ? groupCategories(currentRates.market, currentRates.categories) : []),
+    [currentRates]
   );
+
+  const categoryOptions = useMemo<CategoryOption[]>(() => {
+    return categoryGroups.map((group) => ({
+      value: group.id,
+      label: group.label,
+      group: group.parentCategory,
+      // A grouped category holds a rate per tier, so the selector says which
+      // tiers it can be priced at rather than repeating the category per tier.
+      description:
+        group.tiers.length > 1
+          ? `Rates available for: ${group.tiers.map(sellerTierLabel).join(', ')}`
+          : undefined,
+    }));
+  }, [categoryGroups]);
+
+  /**
+   * The rate row for the current (category, tier) selection.
+   *
+   * Read through the group + tier rather than by category id alone, so the
+   * preview in Section A shows the rate the engine will actually charge for the
+   * tier the user picked.
+   */
+  const selectedCategory = useMemo(() => {
+    if (!currentRates) return null;
+    const row = findCategoryRow(
+      currentRates.market,
+      currentRates.categories,
+      inputs.categoryId,
+      inputs.sellerTier
+    );
+    if (!row) return null;
+    const group = findCategoryGroup(
+      currentRates.market,
+      currentRates.categories,
+      inputs.categoryId
+    );
+    return {
+      ...row,
+      groupId: group?.id ?? row.id,
+      groupLabel: group?.label ?? row.name,
+      // PH prices both tiers from one record; show the rate for the chosen tier.
+      displayRate:
+        inputs.sellerTier === 'mall' && typeof row.mallRate === 'number'
+          ? row.mallRate
+          : row.rate,
+    };
+  }, [currentRates, inputs.categoryId, inputs.sellerTier]);
 
   const capabilities = MARKET_CAPABILITIES[inputs.market] ?? MARKET_CAPABILITIES.US;
 
@@ -323,9 +386,8 @@ export function useCalculator(
 
       affiliateRate: inputs.affiliateMode !== 'none',
       promoDays: inputs.newSellerPromo,
-      fbtDetails: capabilities.fulfillment && inputs.fulfillmentMethod === 'fbt',
     }),
-    [currentRates, capabilities, inputs.affiliateMode, inputs.newSellerPromo, inputs.fulfillmentMethod]
+    [currentRates, capabilities, inputs.affiliateMode, inputs.newSellerPromo]
   );
 
   return {

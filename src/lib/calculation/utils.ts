@@ -1,9 +1,19 @@
+// Rounding helpers.
+//
+// A negative input small enough to round to zero lands on -0, because
+// `Math.round(-0.004 * 100) / 100` is `-0`. That value compares equal to 0, so
+// arithmetic is unaffected, but `Object.is(-0, 0)` is false and formatting it
+// renders "-0.00" or "(0.00)" in some locales. Both helpers normalise -0 to 0.
+function normaliseZero(value: number): number {
+  return Object.is(value, -0) ? 0 : value;
+}
+
 export function roundToTwo(num: number): number {
-  return Math.round((num + Number.EPSILON) * 100) / 100;
+  return normaliseZero(Math.round((num + Number.EPSILON) * 100) / 100);
 }
 
 export function roundToFour(num: number): number {
-  return Math.round((num + Number.EPSILON) * 10000) / 10000;
+  return normaliseZero(Math.round((num + Number.EPSILON) * 10000) / 10000);
 }
 
 // Currency formatting used to read from a hand-maintained symbol table, which

@@ -67,20 +67,30 @@ function buildUKFees(
     inputs.newSellerPromo && inputs.promoDaysRemaining > 0;
 
   if (promoActive) {
-    // UK new seller promo waives commission entirely once Seller Missions
-    // are completed. The exact promo rate is not published, so 0% is used.
+    // The UK new seller promo waives commission once the required Seller
+    // Missions are completed, but the exact promo rate is not published. The
+    // previous code applied 0% anyway, which is a different claim: it said the
+    // promo costs nothing rather than saying the rate is unknown. A 0% charge
+    // would also overstate profit, so the fee is reported as unpriced and the
+    // calculation is marked incomplete. The normal published rate is shown in
+    // the notes so the seller can see what the promo is being applied against.
     fees.push({
       name: 'Platform Commission Fee (New Seller Promo)',
-      rate: '0%',
+      rate: 'not published',
       base: roundToTwo(commissionBase),
       amount: 0,
+      pricing: 'unpriced',
       sourceUrl,
       effectiveDate: sourceDate,
       lastVerified,
       confidence: 'needs-verification',
-      notes: isPromoCategory(inputs.categoryId)
-        ? '0% commission after completing required Seller Missions within 45 days of onboarding. Exact promo rate is not published on Seller University.'
-        : `New seller promo assumed to apply to ${inputs.categoryId}. Exact promo eligibility and rate are not published, so 0% is applied and flagged for verification.`,
+      notes:
+        (isPromoCategory(inputs.categoryId)
+          ? 'The new seller promo waives commission after completing the required Seller Missions within 45 days of onboarding, '
+          : `The new seller promo is assumed to apply to ${inputs.categoryId}, `) +
+        `but the exact promo rate is not published on Seller University, so no amount is calculated. ` +
+        `The standard published rate for this category is ${(categoryRate * 100).toFixed(2)}%. ` +
+        'This is excluded from the fee total, and the result is incomplete until you confirm the promo rate in Seller Centre.',
     });
   } else {
     fees.push({
@@ -88,6 +98,7 @@ function buildUKFees(
       rate: `${(categoryRate * 100).toFixed(2)}%`,
       base: roundToTwo(commissionBase),
       amount: roundToTwo(commissionBase * categoryRate),
+      pricing: 'priced',
       sourceUrl,
       effectiveDate: sourceDate,
       lastVerified,
@@ -105,9 +116,10 @@ function buildUKFees(
       rate: `${inputs.affiliateRate}%`,
       base: roundToTwo(netSales),
       amount: roundToTwo(netSales * (inputs.affiliateRate / 100)),
+      pricing: 'priced',
       sourceUrl: UK_AFFILIATE_SOURCE,
       effectiveDate: '2026-07-15',
-      lastVerified: '2026-09-26',
+      lastVerified: rates.lastVerified,
       confidence: 'high',
       notes: `Open collaboration commission on Net Sales. Mode: ${inputs.affiliateMode}. Non-refundable once the creator order is settled.`,
     });

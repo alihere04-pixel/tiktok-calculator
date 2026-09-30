@@ -66,9 +66,13 @@ describe('MARKET_CAPABILITIES', () => {
     expect(withProgram).toEqual(['PH']);
   });
 
-  it('exposes fulfillment for the US only', () => {
+  it('offers no fulfillment control for any market', () => {
+    // F-15: no engine and no rate file read fulfillmentMethod, productWeightLb
+    // or dimensionsIn. The US-only FBT controls were therefore inert UI that
+    // implied the fee difference had been modelled, so the capability is off
+    // everywhere rather than offered for a market that could not price it.
     const withFulfillment = ALL_MARKETS.filter((m) => MARKET_CAPABILITIES[m].fulfillment);
-    expect(withFulfillment).toEqual(['US']);
+    expect(withFulfillment).toEqual([]);
   });
 
   it('disables GMV Max for every market in Phase 2 (no engine reads isGMVMaxActive)', () => {
@@ -130,11 +134,14 @@ describe('createDefaultInputs', () => {
     expect(inputs.isGMVMaxActive).toBe(false);
   });
 
-  it('leaves the inert FBT fields undefined until FBT is chosen', () => {
-    const inputs = createDefaultInputs();
+  it('carries no FBT state, because no engine reads any', () => {
+    // F-15: these three inputs were collected by the form but read by no engine
+    // and by no rate file, so they were removed rather than left as dead state
+    // that every caller had to supply.
+    const inputs = createDefaultInputs() as unknown as Record<string, unknown>;
     expect(inputs.productWeightLb).toBeUndefined();
     expect(inputs.dimensionsIn).toBeUndefined();
-    expect(inputs.fulfillmentMethod).toBe('selfShip');
+    expect(inputs.fulfillmentMethod).toBeUndefined();
   });
 
   it('is independent per call, so switching market cannot leak state', () => {

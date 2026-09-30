@@ -3,6 +3,7 @@ import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/re
 import { CalculatorForm } from './CalculatorForm';
 import { runCalculation } from '@/app/actions';
 import { makeSnapshot } from '@/test/snapshot-fixture';
+import { groupCategories } from '@/lib/rates/tiers';
 import type { CalculationOutcome } from '@/lib/results/types';
 import type { MarketRateSummary } from '@/hooks/useCalculator';
 import type { Market } from '@/hooks/useCalculator';
@@ -35,6 +36,20 @@ const RATES: Partial<Record<Market, MarketRateSummary>> = {
 };
 
 const SNAPSHOT = makeSnapshot({ totalPlatformFees: 6, netProfit: 59 });
+
+/**
+ * The id the form submits for the option at `index`.
+ *
+ * The form now selects a category *group* rather than a raw rate-file row, so
+ * the submitted id is derived from the same helper the hook uses rather than
+ * hardcoded. That keeps the assertion about the contract ("the id the form
+ * sends is a resolvable group id") instead of about slug formatting.
+ */
+function groupIdAt(market: Market, index = 0): string {
+  const data = RATES[market];
+  if (!data) throw new Error(`No fixture for ${market}`);
+  return groupCategories(market, data.categories)[index].id;
+}
 
 /** Opens the category listbox and commits the option at `index`. */
 function chooseCategory(index = 0) {
@@ -133,7 +148,7 @@ describe('a category is required before calculating', () => {
 
     await waitFor(() => expect(mockRun).toHaveBeenCalledTimes(1));
     expect(mockRun.mock.calls[0][0].inputs.market).toBe('MY');
-    expect(mockRun.mock.calls[0][0].inputs.categoryId).toBe('my-cat-0');
+    expect(mockRun.mock.calls[0][0].inputs.categoryId).toBe(groupIdAt('MY'));
     expect(screen.getByText('Your result')).toBeDefined();
   });
 });
@@ -153,13 +168,18 @@ describe('changing seller tier keeps the chosen category', () => {
   it('still submits the chosen category after a tier change', async () => {
     render(<CalculatorForm ratesByMarket={RATES} />);
     selectMarket('MY');
-    chooseCategory(1);
+    // The two MY rows in the fixture differ only by tier, so they form a single
+    // logical category (F-08). Changing the tier must not disturb it.
+    chooseCategory(0);
+    const chosen = groupIdAt('MY', 0);
     chooseOption(/^Seller tier/, 'BXP Mall');
 
     fireEvent.click(calculateButton());
 
     await waitFor(() => expect(mockRun).toHaveBeenCalledTimes(1));
-    expect(mockRun.mock.calls[0][0].inputs.categoryId).toBe('my-cat-1');
+    expect(mockRun.mock.calls[0][0].inputs.categoryId).toBe(chosen);
+    // The tier is what changed, and it is submitted as a canonical token.
+    expect(mockRun.mock.calls[0][0].inputs.sellerTier).toBe('bxp-mall');
   });
 
   it('does not show the seller tier selector for a single-tier market', () => {
@@ -213,7 +233,7 @@ describe('changing market clears the previous result', () => {
     // The second call is the UK run; the first was the original US one.
     const lastCall = mockRun.mock.calls[mockRun.mock.calls.length - 1][0];
     expect(lastCall.inputs.market).toBe('UK');
-    expect(lastCall.inputs.categoryId).toBe('uk-cat-0');
+    expect(lastCall.inputs.categoryId).toBe(groupIdAt('UK'));
   });
 
   it('does not re-run the action just because the market changed', async () => {

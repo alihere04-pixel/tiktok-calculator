@@ -48,11 +48,27 @@ describe('hasSellerTierChoice', () => {
 });
 
 describe('availableSellerTiers', () => {
-  it('deduplicates tiers and preserves first-seen order', () => {
+  it('returns canonical tokens in selector order, deduplicated', () => {
+    // F-01/F-03: the hook used to hand the engine the raw rate-file label
+    // ("BXP Marketplace"), which the engine then compared against a lowercase
+    // token and never matched. It now returns canonical tokens, and the label
+    // is applied only for display.
     const tiers = availableSellerTiers(
       summary('MY', ['BXP Marketplace', 'BXP Mall', 'BXP Marketplace', 'Non-BXP Mall'])
     );
-    expect(tiers).toEqual(['BXP Marketplace', 'BXP Mall', 'Non-BXP Mall']);
+    expect(tiers).toEqual(['bxp-marketplace', 'bxp-mall', 'non-bxp-mall']);
+  });
+
+  it('orders tiers by the canonical selector order, not file order', () => {
+    const tiers = availableSellerTiers(
+      summary('MY', ['Non-BXP Mall', 'BXP Marketplace', 'Non-BXP Marketplace', 'BXP Mall'])
+    );
+    expect(tiers).toEqual([
+      'bxp-marketplace',
+      'bxp-mall',
+      'non-bxp-marketplace',
+      'non-bxp-mall',
+    ]);
   });
 
   it('returns an empty list when there are no tiers', () => {

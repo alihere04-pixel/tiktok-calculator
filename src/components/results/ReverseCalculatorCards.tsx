@@ -73,6 +73,17 @@ export function ReverseCalculatorCards({
               {formatMoney(reverse.targetProfitPrice, currency)}
             </span>{' '}
             to make {formatMoney(targetProfit, currency)} per unit.
+            {/*
+              F-04/F-11: this price is solved from the fees the engine could
+              price. With any fee missing it is a floor, not a quote, and the
+              difference is large enough to change a go/no-go decision.
+            */}
+            {snapshot.unpricedFees.length > 0 ? (
+              <span className="mt-1 block text-amber-700 dark:text-amber-400">
+                Best case: {snapshot.unpricedFees.length === 1 ? 'one fee is' : `${snapshot.unpricedFees.length} fees are`}{' '}
+                not priced, so the real price to hit this target is higher.
+              </span>
+            ) : null}
           </p>
         ) : (
           <p className="mt-2 text-sm text-amber-700 dark:text-amber-400">

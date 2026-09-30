@@ -6,6 +6,24 @@ import type { CategoryRate, MarketRateData } from '@/lib/rates/schema';
 import { roundToTwo } from '../utils';
 import { loadMarketRatesSync } from '@/lib/rates/loader';
 
+const US_SOURCES = {
+  refundAdmin:
+    'https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018',
+  affiliate:
+    'https://seller-us.tiktok.com/university/essay?knowledge_id=6077860360177451',
+};
+
+/**
+ * Effective dates that are not stored in the US rate file.
+ *
+ * Unlike the other four markets, `US-categories.json` has no `additionalFees`
+ * block, so there is no `effectiveFrom` to read. These are the verified
+ * constants the calculation has always used, named here so they are not magic
+ * values repeated across the file.
+ */
+const US_REFUND_ADMIN_DATE = '2025-05-15';
+const US_AFFILIATE_DATE = '2026-09-14';
+
 // Cache for loaded rates
 let usRatesCache: MarketRateData | null = null;
 
@@ -47,47 +65,56 @@ function calculateTieredFee(
   }
 
   for (const rule of specialRules) {
-    if (rule.type === 'tieredThreshold' && rule.threshold && rule.rateAboveThreshold !== undefined) {
+    if (
+      rule.type === 'tieredThreshold' &&
+      typeof rule.threshold === 'number' &&
+      rule.rateAboveThreshold !== undefined
+    ) {
       if (baseAmount <= rule.threshold) {
         return { fee: baseAmount * rate };
-      } else {
-        const belowThreshold = rule.threshold * rate;
-        const aboveThreshold = (baseAmount - rule.threshold) * rule.rateAboveThreshold;
-        return {
-          fee: belowThreshold + aboveThreshold,
-          notes: `Tiered: ${(rate * 100).toFixed(1)}% on first $${rule.threshold.toLocaleString()}, ${(rule.rateAboveThreshold * 100).toFixed(1)}% on amount above`,
-        };
       }
+      return {
+        fee: rule.threshold * rate + (baseAmount - rule.threshold) * rule.rateAboveThreshold,
+        notes: `Tiered: ${(rate * 100).toFixed(1)}% on first $${rule.threshold.toLocaleString()}, ${(rule.rateAboveThreshold * 100).toFixed(1)}% on amount above`,
+      };
     }
   }
   return { fee: baseAmount * rate };
 }
 
-export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBreakdownItem[]> {
+/**
+ * The single US fee implementation.
+ *
+ * `calculateUSFees` and `calculateUSFeesSync` previously carried two copies of
+ * this logic, which could drift apart. The reverse calculators re-run the engine
+ * at other prices on the hot path, so both entry points now share one builder.
+ */
+function buildUSFees(
+  inputs: CalculatorInputs,
+  rates: MarketRateData
+): FeeBreakdownItem[] {
   const fees: FeeBreakdownItem[] = [];
-  const rates = await getUSRates();
 
-  // Calculate base amounts
   const netPrice = inputs.sellingPrice - inputs.sellerDiscount;
   const customerPayment = netPrice + inputs.customerShipping;
   const commissionBase = customerPayment + inputs.platformDiscount; // Tax excluded per US policy
 
-  // Find category rate
   const category = findCategoryRate(rates, inputs.categoryId);
   const referralRate = category?.rate ?? getDefaultRate();
   const categoryConfidence = category?.confidence ?? 'needs-verification';
   const { sourceUrl, sourceDate, lastVerified } = pickMeta(category, rates);
 
-  // Apply new seller promo if active
+  // US does not tier its commission by seller, so the promo is the only rate
+  // override. The 1.8% promo rate is not published, and the existing behaviour
+  // of charging it while labelling it "NEEDS VERIFICATION" is preserved: the
+  // user opted into the promo explicitly and can see the flag on the line.
   let effectiveRate = referralRate;
   let promoNote = '';
   if (inputs.newSellerPromo && inputs.promoDaysRemaining > 0) {
-    // NEEDS VERIFICATION: Exact promo rate (1.8% or 3%)
     effectiveRate = 0.018;
     promoNote = 'New seller promo (1.8% - NEEDS VERIFICATION)';
   }
 
-  // Calculate referral fee with tiered threshold if applicable
   const tieredResult = calculateTieredFee(commissionBase, effectiveRate, category?.specialRules);
   const referralFee = roundToTwo(tieredResult.fee);
 
@@ -96,6 +123,7 @@ export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBrea
     rate: promoNote || `${(effectiveRate * 100).toFixed(1)}%`,
     base: commissionBase,
     amount: referralFee,
+    pricing: 'priced',
     sourceUrl,
     effectiveDate: sourceDate,
     lastVerified,
@@ -111,9 +139,10 @@ export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBrea
       rate: `20% of referral fee, capped $5/SKU × ${inputs.returnRate}% return rate`,
       base: referralFee,
       amount: roundToTwo(refundAdminFeePerUnit),
-      sourceUrl: 'https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018',
-      effectiveDate: '2025-05-15',
-      lastVerified: '2026-09-26',
+      pricing: 'priced',
+      sourceUrl: US_SOURCES.refundAdmin,
+      effectiveDate: US_REFUND_ADMIN_DATE,
+      lastVerified: rates.lastVerified,
       confidence: 'high',
       notes: '20% of refunded referral fee, capped at $5 per SKU (effective May 15, 2025). Modeled per unit using estimated return rate.',
     });
@@ -128,9 +157,10 @@ export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBrea
       rate: `${inputs.affiliateRate}%`,
       base: affiliateBase,
       amount: affiliateFee,
-      sourceUrl: 'https://seller-us.tiktok.com/university/essay?knowledge_id=6077860360177451',
-      effectiveDate: '2026-09-14',
-      lastVerified: '2026-09-26',
+      pricing: 'priced',
+      sourceUrl: US_SOURCES.affiliate,
+      effectiveDate: US_AFFILIATE_DATE,
+      lastVerified: rates.lastVerified,
       confidence: 'high',
       notes: `Affiliate commission on (Selling Price - Seller Discount). Mode: ${inputs.affiliateMode}.`,
     });
@@ -142,74 +172,13 @@ export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBrea
   return fees;
 }
 
-// Synchronous version for synchronous fee calculation (used by reverse calculators)
+export async function calculateUSFees(inputs: CalculatorInputs): Promise<FeeBreakdownItem[]> {
+  return buildUSFees(inputs, await getUSRates());
+}
+
 export function calculateUSFeesSync(
   inputs: CalculatorInputs,
   rates: MarketRateData
 ): FeeBreakdownItem[] {
-  const fees: FeeBreakdownItem[] = [];
-
-  const netPrice = inputs.sellingPrice - inputs.sellerDiscount;
-  const customerPayment = netPrice + inputs.customerShipping;
-  const commissionBase = customerPayment + inputs.platformDiscount;
-
-  const category = findCategoryRate(rates, inputs.categoryId);
-  const referralRate = category?.rate ?? getDefaultRate();
-  const categoryConfidence = category?.confidence ?? 'needs-verification';
-  const { sourceUrl, sourceDate, lastVerified } = pickMeta(category, rates);
-
-  let effectiveRate = referralRate;
-  let promoNote = '';
-  if (inputs.newSellerPromo && inputs.promoDaysRemaining > 0) {
-    effectiveRate = 0.018; // NEEDS VERIFICATION
-    promoNote = 'New seller promo (1.8% - NEEDS VERIFICATION)';
-  }
-
-  const tieredResult = calculateTieredFee(commissionBase, effectiveRate, category?.specialRules);
-  const referralFee = roundToTwo(tieredResult.fee);
-
-  fees.push({
-    name: 'Referral Fee',
-    rate: promoNote || `${(effectiveRate * 100).toFixed(1)}%`,
-    base: commissionBase,
-    amount: referralFee,
-    sourceUrl,
-    effectiveDate: sourceDate,
-    lastVerified,
-    confidence: categoryConfidence,
-    notes: tieredResult.notes || promoNote || 'Standard referral fee on (Customer Payment + Platform Discount - Tax)',
-  });
-
-  if (inputs.returnRate > 0) {
-    const refundAdminFeePerUnit = (inputs.returnRate / 100) * Math.min(0.20 * referralFee, 5.00);
-    fees.push({
-      name: 'Refund Admin Fee (modeled)',
-      rate: `20% of referral fee, capped $5/SKU × ${inputs.returnRate}% return rate`,
-      base: referralFee,
-      amount: roundToTwo(refundAdminFeePerUnit),
-      sourceUrl: 'https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018',
-      effectiveDate: '2025-05-15',
-      lastVerified: '2026-09-26',
-      confidence: 'high',
-      notes: '20% of refunded referral fee, capped at $5 per SKU. Modeled per unit using estimated return rate.',
-    });
-  }
-
-  if (inputs.affiliateMode !== 'none' && inputs.affiliateRate > 0) {
-    const affiliateBase = netPrice;
-    const affiliateFee = roundToTwo(affiliateBase * (inputs.affiliateRate / 100));
-    fees.push({
-      name: 'Affiliate Commission',
-      rate: `${inputs.affiliateRate}%`,
-      base: affiliateBase,
-      amount: affiliateFee,
-      sourceUrl: 'https://seller-us.tiktok.com/university/essay?knowledge_id=6077860360177451',
-      effectiveDate: '2026-09-14',
-      lastVerified: '2026-09-26',
-      confidence: 'high',
-      notes: `Affiliate commission on (Selling Price - Seller Discount). Mode: ${inputs.affiliateMode}.`,
-    });
-  }
-
-  return fees;
+  return buildUSFees(inputs, rates);
 }

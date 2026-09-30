@@ -7,6 +7,7 @@ import { Tooltip } from '@/components/ui/Tooltip';
 import { Collapsible } from '@/components/ui/Collapsible';
 import type { Market } from '@/hooks/useCalculator';
 import type { UseCalculatorReturn } from '@/hooks/useCalculator';
+import { sellerTierDisplayLabel } from '@/hooks/useCalculator';
 import type { ConfidenceLevel } from '@/components/ui/Badge';
 
 /**
@@ -57,7 +58,10 @@ export function SectionA_MarketProduct({ calculator }: { calculator: UseCalculat
           <Select
             label="Seller tier"
             value={inputs.sellerTier ?? ''}
-            options={sellerTiers.map((tier) => ({ value: tier, label: tier }))}
+            options={sellerTiers.map((tier) => ({
+              value: tier,
+              label: sellerTierDisplayLabel(tier),
+            }))}
             onChange={(value) => setSellerTier(value as typeof inputs.sellerTier)}
             placeholder="Select a tier"
             helperText="Your TikTok Shop seller tier. It changes the commission rate applied to the category."
@@ -81,10 +85,14 @@ export function SectionA_MarketProduct({ calculator }: { calculator: UseCalculat
         {selectedCategory ? (
           <div className="flex flex-wrap items-center gap-2 rounded-lg bg-zinc-50 p-3 text-sm dark:bg-zinc-800/50">
             <span className="font-medium text-zinc-900 dark:text-zinc-100">
-              {selectedCategory.name}
+              {selectedCategory.groupLabel}
             </span>
-            <Tag>{(selectedCategory.rate * 100).toFixed(2)}% commission</Tag>
-            {selectedCategory.tier ? <Tag>{selectedCategory.tier}</Tag> : null}
+            <Tag>{`${(selectedCategory.displayRate * 100).toFixed(2)}% commission`}</Tag>
+            {inputs.sellerTier ? (
+              <Tag>{sellerTierDisplayLabel(inputs.sellerTier)}</Tag>
+            ) : selectedCategory.tier ? (
+              <Tag>{selectedCategory.tier}</Tag>
+            ) : null}
             {selectedCategory.confidence ? (
               <span className="ml-auto inline-flex items-center gap-1.5">
                 <Badge level={selectedCategory.confidence as ConfidenceLevel} />

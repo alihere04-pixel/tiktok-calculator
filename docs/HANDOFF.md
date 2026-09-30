@@ -111,21 +111,20 @@ locally: `npm i @next/swc-win32-x64-msvc@<next-version>`.
 These are business decisions. The code is built to accept each one and is
 currently shipping the safe default in all four cases.
 
-### 1. `NEXT_PUBLIC_SITE_URL` — your decision
+### 1. `NEXT_PUBLIC_SITE_URL` — decided: `https://fynza.store`
 
-**Current state.** Unset. It falls back to `http://localhost:3000`, so every
-canonical tag on all 9 pages currently says `localhost`, and `robots.txt`
-deliberately omits its `Sitemap:` line rather than advertising localhost to a
-crawler.
+**Current state.** Set. The site is live at `https://fynza.store` and the
+variable resolves every relative canonical to that domain.
+
+**Verified on production:** canonical tags on all pages name `https://fynza.store`,
+and `robots.txt` carries its `Sitemap:` line.
 
 **Why it matters.** Canonical tags tell search engines which URL is the real one.
-Wrong canonicals can cost rankings for months before anyone notices.
+Wrong canonicals can cost rankings for months before anyone noticed.
 
-**What to do.** Set it. Full instructions in section D.
-
-**How to confirm it worked.** `curl https://yourdomain/privacy | grep canonical`
-shows your domain, and `curl https://yourdomain/robots.txt` contains a
-`Sitemap:` line.
+**How to confirm it worked.**
+`curl https://fynza.store/privacy | grep canonical` shows the production domain,
+and `curl https://fynza.store/robots.txt` contains a `Sitemap:` line.
 
 ### 2. Legal review — yours and your lawyer's
 

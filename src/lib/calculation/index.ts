@@ -21,7 +21,9 @@ import {
   calculateMonthlyProjection,
   calculateProfitMargin,
   calculateTargetPrice,
+  isCalculationComplete,
   sumFeeAmounts,
+  unpricedFeeNames,
 } from './engine';
 import { roundToTwo } from './utils';
 import { calculateUSFeesSync } from './markets/US';
@@ -139,13 +141,15 @@ function createErrorResult(inputs: CalculatorInputs, errors: string[]): Calculat
     inputs,
     fees: [],
     totalPlatformFees: 0,
+    complete: false,
+    unpricedFees: [],
     netProfit: 0,
     profitMargin: 0,
     effectiveTakeRate: 0,
     contributionMargin: 0,
     contributionMarginPct: 0,
     breakEvenPrice: 0,
-    targetProfitPrice: () => 0,
+    targetProfitPrice: () => ({ price: 0, achievable: false }),
     maxCPA: () => 0,
     monthlyProjection: () => ({
       units: 0,
@@ -164,9 +168,13 @@ function buildRateVersion(market: Market, rates: MarketRateData): string {
   return `${market}-${rates.lastVerified}`;
 }
 
-function sumVariableFees(fees: Array<{ name: string; amount: number }>): number {
+function sumVariableFees(fees: FeeBreakdownItem[]): number {
   return roundToTwo(
-    fees.reduce((sum, fee) => (PER_ORDER_FEES.includes(fee.name) ? sum : sum + fee.amount), 0)
+    fees.reduce(
+      (sum, fee) =>
+        PER_ORDER_FEES.includes(fee.name) || fee.pricing === 'unpriced' ? sum : sum + fee.amount,
+      0
+    )
   );
 }
 
@@ -183,6 +191,12 @@ export function calculateProfit(inputs: CalculatorInputs): CalculationResult {
   const fees = engine(inputs, rates);
   const totalPlatformFees = sumFeeAmounts(fees);
   const variableFees = sumVariableFees(fees);
+
+  // A fee that could not be priced from a published rate is excluded from the
+  // total and named, rather than counted as 0. Counting it as 0 would understate
+  // fees and overstate profit, and nothing in the UI could reveal that.
+  const complete = isCalculationComplete(fees);
+  const unpricedFees = unpricedFeeNames(fees);
 
   const netProfit = roundToTwo(
     inputs.sellingPrice - totalPlatformFees - inputs.cogs - inputs.outboundShipping - inputs.cpa
@@ -209,7 +223,7 @@ export function calculateProfit(inputs: CalculatorInputs): CalculationResult {
     feeCalculator
   );
 
-  const targetProfitPrice = (target: number): number =>
+  const targetProfitPrice = (target: number) =>
     calculateTargetPrice(target, inputs.cogs, inputs.outboundShipping, inputs.cpa, feeCalculator);
 
   const maxCPA = (targetROAS: number): number =>
@@ -228,6 +242,8 @@ export function calculateProfit(inputs: CalculatorInputs): CalculationResult {
     inputs,
     fees,
     totalPlatformFees,
+    complete,
+    unpricedFees,
     netProfit,
     profitMargin: calculateProfitMargin(netProfit, inputs.sellingPrice),
     effectiveTakeRate: calculateEffectiveRate(totalPlatformFees, inputs.sellingPrice),

@@ -45,7 +45,14 @@ describe('runCalculation', () => {
     if (!outcome.ok) return;
 
     const direct = calculateProfit(inputs);
-    expect(outcome.snapshot.reverse.targetProfitPrice).toBe(direct.targetProfitPrice(DEFAULTS.targetProfit));
+    // F-11: achievability is serialised alongside the price, so the client can
+    // tell a real quote from an unreachable target.
+    expect(outcome.snapshot.reverse.targetProfitPrice).toBe(
+      direct.targetProfitPrice(DEFAULTS.targetProfit).price
+    );
+    expect(outcome.snapshot.reverse.targetProfitAchievable).toBe(
+      direct.targetProfitPrice(DEFAULTS.targetProfit).achievable
+    );
     expect(outcome.snapshot.reverse.maxCPA).toBe(direct.maxCPA(DEFAULTS.targetROAS));
     // The panel's projection is the engine's projection plus the echoed input,
     // so each engine-owned field is compared on its own.

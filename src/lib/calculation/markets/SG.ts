@@ -1,8 +1,10 @@
 import type {
   CalculatorInputs,
   FeeBreakdownItem,
+  SellerTier,
 } from '@/lib/calculation/types';
-import type { CategoryRate, MarketRateData } from '@/lib/rates/schema';
+import type { MarketRateData } from '@/lib/rates/schema';
+import { findCategoryRow, sellerTierLabel } from '@/lib/rates/tiers';
 import { roundToTwo } from '../utils';
 import { loadMarketRatesSync } from '@/lib/rates/loader';
 
@@ -20,86 +22,35 @@ const SG_SOURCES = {
 const SG_TRANSACTION_RATE = 0.0327; // GST inclusive
 const SG_PRE_ORDER_RATE = 0.0109; // from Dec 22, 2025
 const SG_BXP_SERVICE_FEE_RATE = 0.0327; // mixed BXP orders only
-
-// The SG rate file only covers commission clusters, so the category table is
-// used to resolve the rate for whichever cluster a category falls into.
-const SG_CLUSTER_BY_CATEGORY_PREFIX: Array<[string, string]> = [
-  ['sg-electronics', 'electronics'],
-  ['sg-bxp-restricted-electronics', 'restricted'],
-  ['sg-bxp-mixed-electronics', 'mixed'],
-];
+const SG_TRANSACTION_DATE = '2026-04-01';
 
 /**
- * SG-specific switches that `CalculatorInputs` does not model. They are read
- * defensively so the engine keeps working when a caller omits them.
+ * The four SG seller programmes, in selector order.
+ *
+ * SG's published rate table is keyed by programme, not by seller: the same
+ * category is charged a different rate under Standard, BXP, BXP Restricted and
+ * BXP Mixed. The rate file stores one row per (category, programme), and
+ * `@/lib/rates/tiers` groups them so the form offers one entry per category and
+ * the programme the seller is on picks the row.
  */
-interface SGExtraInputs {
-  isBxpRestricted?: boolean;
-  isBxpMixed?: boolean;
+const SG_TIERS: readonly SellerTier[] = ['standard', 'bxp', 'bxp-restricted', 'bxp-mixed'];
+
+/** The programme charged when the seller has not chosen one. */
+const SG_DEFAULT_TIER: SellerTier = 'standard';
+
+function isSGProgram(tier: SellerTier | null): tier is SellerTier {
+  return tier !== null && SG_TIERS.includes(tier);
 }
 
-type SGInputs = CalculatorInputs & SGExtraInputs;
-
-type SGProgramStatus = 'standard' | 'bxp' | 'bxp-restricted' | 'bxp-mixed';
-
-function getExtra(inputs: CalculatorInputs): SGExtraInputs {
-  return inputs as SGInputs;
-}
-
-function isBxpSeller(sellerTier: CalculatorInputs['sellerTier']): boolean {
-  return sellerTier === 'bxp';
-}
-
-function resolveProgramStatus(inputs: CalculatorInputs): SGProgramStatus {
-  if (!isBxpSeller(inputs.sellerTier)) {
-    return 'standard';
-  }
-  const extra = getExtra(inputs);
-  // A mixed order implies the order also contains restricted products, but the
-  // mixed rate is the one that must be applied, so it is checked first.
-  if (extra.isBxpMixed) {
-    return 'bxp-mixed';
-  }
-  if (extra.isBxpRestricted) {
-    return 'bxp-restricted';
-  }
-  return 'bxp';
-}
-
-// The rate table labels each cluster by program, so a matched category is a more
-// reliable signal than the caller's optional flags.
-const STATUS_BY_CATEGORY_TIER: Record<string, SGProgramStatus> = {
-  BXP: 'bxp',
-  'BXP Mixed': 'bxp-mixed',
-  'BXP Restricted': 'bxp-restricted',
-  Standard: 'standard',
-};
-
-function resolveStatus(
-  inputs: CalculatorInputs,
-  category: CategoryRate | null
-): SGProgramStatus {
-  const flagStatus = resolveProgramStatus(inputs);
-  if (!isBxpSeller(inputs.sellerTier) || !category?.tier) {
-    return flagStatus;
-  }
-  return STATUS_BY_CATEGORY_TIER[category.tier] ?? flagStatus;
+/** The programme to price. The seller's explicit selection is authoritative. */
+function resolveTier(inputs: CalculatorInputs): SellerTier {
+  return isSGProgram(inputs.sellerTier) ? inputs.sellerTier : SG_DEFAULT_TIER;
 }
 
 function resolveCluster(categoryId: string): string {
-  for (const [prefix, cluster] of SG_CLUSTER_BY_CATEGORY_PREFIX) {
-    if (categoryId === prefix || categoryId.startsWith(`${prefix}-`)) {
-      return cluster;
-    }
-  }
+  if (categoryId.includes('electronics')) return 'electronics';
+  if (categoryId.includes('lifestyle')) return 'electronics';
   return 'other';
-}
-
-function findCategoryRate(
-  rates: MarketRateData,
-  categoryId: string
-): CategoryRate | null {
-  return rates.categories.find(c => c.id === categoryId) || null;
 }
 
 function buildSGFees(
@@ -113,17 +64,28 @@ function buildSGFees(
   // Customer Payment = Item Price - Seller Discount + Customer Shipping
   const customerPayment = netSales + inputs.customerShipping;
 
-  const exactCategory = findCategoryRate(rates, inputs.categoryId);
-  const status = resolveStatus(inputs, exactCategory);
+  // The seller's selected programme is authoritative. The category supplies the
+  // cluster; the programme supplies the rate.
+  const status = resolveTier(inputs);
+  const tierLabel = sellerTierLabel(status);
   const cluster = resolveCluster(inputs.categoryId);
   const extraFees = rates.additionalFees ?? {};
 
-  // Resolve commission: prefer an exact rate-table match, otherwise fall back to
-  // the cluster default for the seller's program status.
+  // Resolve the row for (category, programme). Because rows are grouped by
+  // category, the same category at a different programme resolves to that
+  // programme's published rate rather than the one the category was filed under.
+  const exactCategory = findCategoryRow(
+    'SG',
+    rates.categories,
+    inputs.categoryId,
+    status
+  );
+
   let commissionRate: number;
   let commissionConfidence: FeeBreakdownItem['confidence'];
   let commissionNotes: string;
   let commissionSourceUrl = rates.sourceUrl;
+  let commissionPricing: 'priced' | 'unpriced' = 'priced';
 
   if (exactCategory) {
     commissionRate = exactCategory.rate;
@@ -131,35 +93,42 @@ function buildSGFees(
     commissionSourceUrl = exactCategory.sourceUrl || rates.sourceUrl;
     commissionNotes = exactCategory.notes ?? '';
   } else {
-    const fallbackId = {
+    // No published row for this category/programme pair. Fall back to the
+    // matching "other categories" row for the programme, and if even that is
+    // missing, report the fee as unpriced. The previous code substituted 0,
+    // which understated fees and overstated profit.
+    const FALLBACK_BY_TIER: Partial<Record<SellerTier, string>> = {
       standard: 'sg-other-standard',
       bxp: 'sg-other-bxp',
       'bxp-restricted': 'sg-bxp-restricted-other',
       'bxp-mixed': 'sg-bxp-mixed-other',
-    }[status];
-    const fallback =
-      rates.categories.find(c => c.id === fallbackId) ?? null;
-    commissionRate = fallback?.rate ?? 0;
-    commissionConfidence = 'needs-verification';
-    commissionNotes = `No SG rate-table entry for "${inputs.categoryId}". Fell back to the ${
-      fallback?.name ?? status
-    } rate. SG category coverage is cluster-level only.`;
-  }
+    };
+    const fallbackId = FALLBACK_BY_TIER[status];
+    const fallback = fallbackId
+      ? rates.categories.find(c => c.id === fallbackId) ?? null
+      : null;
 
-  const tierLabel =
-    status === 'standard'
-      ? 'Standard'
-      : status === 'bxp'
-        ? 'BXP'
-        : status === 'bxp-restricted'
-          ? 'BXP Restricted'
-          : 'BXP Mixed';
+    if (fallback) {
+      commissionRate = fallback.rate;
+      commissionConfidence = 'needs-verification';
+      commissionNotes = `No SG rate-table entry for "${inputs.categoryId}" on the ${tierLabel} programme. Fell back to the ${fallback.name} rate. SG category coverage is cluster-level only.`;
+    } else {
+      commissionRate = 0;
+      commissionConfidence = 'needs-verification';
+      commissionPricing = 'unpriced';
+      commissionNotes = `No SG rate-table entry for "${inputs.categoryId}" on the ${tierLabel} programme, and no fallback rate is published for it, so the commission is not priced. This is excluded from the fee total, and the result is incomplete until you verify the rate in Seller Centre.`;
+    }
+  }
 
   fees.push({
     name: 'Commission Fee',
-    rate: `${(commissionRate * 100).toFixed(3)}%`,
+    rate:
+      commissionPricing === 'priced'
+        ? `${(commissionRate * 100).toFixed(3)}%`
+        : 'not published',
     base: roundToTwo(customerPayment),
     amount: roundToTwo(customerPayment * commissionRate),
+    pricing: commissionPricing,
     sourceUrl: commissionSourceUrl,
     effectiveDate: rates.sourceDate,
     lastVerified: rates.lastVerified,
@@ -169,7 +138,9 @@ function buildSGFees(
       `Commission on Customer Payment for the ${tierLabel} program (${cluster} cluster). GST inclusive.`,
   });
 
-  // BXP service fee: mixed BXP orders only, and never on restricted products.
+  // BXP service fee: applies to non-restricted products in a mixed BXP order,
+  // and never to restricted products. The BXP Mixed programme is what triggers
+  // it, so the rate applies whichever BXP variant the seller selected.
   if (status === 'bxp-mixed') {
     const serviceFee = extraFees.bxpServiceFee;
     const serviceRate = serviceFee?.rate ?? SG_BXP_SERVICE_FEE_RATE;
@@ -178,6 +149,7 @@ function buildSGFees(
       rate: `${(serviceRate * 100).toFixed(2)}%`,
       base: roundToTwo(customerPayment),
       amount: roundToTwo(customerPayment * serviceRate),
+      pricing: 'priced',
       sourceUrl: rates.sourceUrl,
       effectiveDate: rates.sourceDate,
       lastVerified: rates.lastVerified,
@@ -197,26 +169,29 @@ function buildSGFees(
     rate: `${(transactionRate * 100).toFixed(2)}%`,
     base: roundToTwo(transactionBase),
     amount: roundToTwo(transactionBase * transactionRate),
+    pricing: 'priced',
     sourceUrl: SG_SOURCES.transaction,
-    effectiveDate: '2026-04-01',
+    effectiveDate: transactionFee?.effectiveFrom ?? SG_TRANSACTION_DATE,
     lastVerified: rates.lastVerified,
-    confidence: 'medium',
-    notes: '3.27% on Customer Payment + Platform Discount from Apr 1, 2026. The rate is confirmed, but the base change could not be verified on the Transaction Fee page. GST inclusive.',
+    confidence: transactionFee?.confidence ?? 'medium',
+    notes: `${(transactionRate * 100).toFixed(2)}% on Customer Payment + Platform Discount. The rate is confirmed, but the base change could not be verified on the Transaction Fee page. GST inclusive.`,
   });
 
   if (inputs.isPreOrder) {
     const preOrderFee = extraFees.preOrderFee;
     const preOrderRate = preOrderFee?.rate ?? SG_PRE_ORDER_RATE;
+    const preOrderDate = preOrderFee?.effectiveFrom ?? '2025-12-22';
     fees.push({
       name: 'Pre-order Fee',
       rate: `${(preOrderRate * 100).toFixed(2)}%`,
       base: roundToTwo(netSales),
       amount: roundToTwo(netSales * preOrderRate),
+      pricing: 'priced',
       sourceUrl: SG_SOURCES.preOrder,
-      effectiveDate: '2025-12-22',
+      effectiveDate: preOrderDate,
       lastVerified: rates.lastVerified,
       confidence: preOrderFee?.confidence ?? 'high',
-      notes: '1.09% pre-order fee from Dec 22, 2025, applied to (Item Price - Seller Discount). GST inclusive.',
+      notes: `${(preOrderRate * 100).toFixed(2)}% pre-order fee from ${preOrderDate}, applied to (Item Price - Seller Discount). GST inclusive.`,
     });
   }
 
@@ -226,8 +201,9 @@ function buildSGFees(
       rate: `${inputs.affiliateRate}%`,
       base: roundToTwo(netSales),
       amount: roundToTwo(netSales * (inputs.affiliateRate / 100)),
+      pricing: 'priced',
       sourceUrl: SG_SOURCES.affiliate,
-      effectiveDate: '2026-08-17',
+      effectiveDate: rates.sourceDate,
       lastVerified: rates.lastVerified,
       confidence: 'high',
       notes: `Open collaboration commission on (Item Price - Seller Discount). Mode: ${inputs.affiliateMode}.`,

@@ -10,6 +10,8 @@ import {
   calculateMonthlyProjection,
   sumFeeAmounts,
   getFeeByName,
+  isCalculationComplete,
+  unpricedFeeNames,
 } from './engine';
 
 describe('calculateEffectiveRate', () => {
@@ -89,23 +91,28 @@ describe('calculateBreakEvenPrice', () => {
 describe('calculateTargetPrice', () => {
   it('Target profit $10: cogs=30, shipping=5, cpa=0, feeCalculator = (p) => p * 0.06 → ~47.87', () => {
     const feeCalculator = (p: number) => p * 0.06;
-    const result = calculateTargetPrice(10, 30, 5, 0, feeCalculator);
+    const { price, achievable } = calculateTargetPrice(10, 30, 5, 0, feeCalculator);
     // 0.94P = 45 → P = 47.87
-    expect(result).toBeCloseTo(47.87, 1);
+    expect(achievable).toBe(true);
+    expect(price).toBeCloseTo(47.87, 1);
   });
 
-  it('Unachievable target: fee > 100% of price → returns 0', () => {
-    // Fee calculator returns more than 100% of price - impossible to profit
+  it('Unachievable target: fee > 100% of price is reported, not priced at 0', () => {
+    // F-11: the old API returned 0 as a sentinel for "no solution", which is
+    // indistinguishable from a real 0.00 quote. Achievability is now explicit
+    // so the caller must decide how to present it.
     const feeCalculator = (p: number) => p * 1.5;
-    const result = calculateTargetPrice(1000, 30, 5, 0, feeCalculator);
-    expect(result).toBe(0);
+    const { price, achievable } = calculateTargetPrice(1000, 30, 5, 0, feeCalculator);
+    expect(achievable).toBe(false);
+    expect(price).toBe(0);
   });
 
   it('Zero target: should equal break-even price', () => {
     const feeCalculator = (p: number) => p * 0.06;
     const breakEven = calculateBreakEvenPrice(30, 5, 0, feeCalculator);
-    const targetZero = calculateTargetPrice(0, 30, 5, 0, feeCalculator);
-    expect(targetZero).toBeCloseTo(breakEven, 1);
+    const { price, achievable } = calculateTargetPrice(0, 30, 5, 0, feeCalculator);
+    expect(achievable).toBe(true);
+    expect(price).toBeCloseTo(breakEven, 1);
   });
 });
 
@@ -167,12 +174,56 @@ describe('calculateMonthlyProjection', () => {
 });
 
 describe('sumFeeAmounts', () => {
-  it('Normal case: fees=[{amount: 5}, {amount: 3}] → 8', () => {
-    expect(sumFeeAmounts([{ amount: 5 }, { amount: 3 }])).toBe(8);
+  it('Normal case: two priced fees → 8', () => {
+    expect(
+      sumFeeAmounts([
+        { amount: 5, pricing: 'priced' },
+        { amount: 3, pricing: 'priced' },
+      ])
+    ).toBe(8);
   });
 
   it('Empty array: → 0', () => {
     expect(sumFeeAmounts([])).toBe(0);
+  });
+
+  it('excludes an unpriced fee even if it carries a non-zero amount', () => {
+    // F-04: the exclusion is a guard, not an arithmetic accident. If an engine
+    // ever reports an amount on an unpriced line, it must still not reach the
+    // total, or the result would look priced while resting on a guess.
+    expect(
+      sumFeeAmounts([
+        { amount: 5, pricing: 'priced' },
+        { amount: 99, pricing: 'unpriced' },
+      ])
+    ).toBe(5);
+  });
+
+  it('counts a genuine 0% fee as priced', () => {
+    // A real published zero and an unknown rate are different facts, and only
+    // the second is excluded.
+    expect(sumFeeAmounts([{ amount: 0, pricing: 'priced' }])).toBe(0);
+    expect(isCalculationComplete([{ pricing: 'priced' }])).toBe(true);
+  });
+});
+
+describe('isCalculationComplete / unpricedFeeNames', () => {
+  it('is complete when every fee is priced', () => {
+    const fees = [
+      { name: 'Commission Fee', pricing: 'priced' as const },
+      { name: 'Transaction Fee', pricing: 'priced' as const },
+    ];
+    expect(isCalculationComplete(fees)).toBe(true);
+    expect(unpricedFeeNames(fees)).toEqual([]);
+  });
+
+  it('is incomplete and names the unpriced fee', () => {
+    const fees = [
+      { name: 'Commission Fee', pricing: 'priced' as const },
+      { name: 'Transaction Fee', pricing: 'unpriced' as const },
+    ];
+    expect(isCalculationComplete(fees)).toBe(false);
+    expect(unpricedFeeNames(fees)).toEqual(['Transaction Fee']);
   });
 });
 

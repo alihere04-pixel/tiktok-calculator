@@ -131,9 +131,11 @@ describe('SectionG_Programs - per market gating', () => {
 });
 
 describe('SectionF_Fulfillment - isolation', () => {
-  it('keeps the honest FBT banner visible for the US', () => {
+  it('keeps the honest FBT explanation visible', () => {
     const { container } = render(<CalculatorForm ratesByMarket={RATES} />);
-    expect(container.textContent).toContain('No Fulfilled by TikTok fee is currently in the rate data');
+    expect(container.textContent).toContain(
+      'Fulfilled by TikTok fees are not in the rate data for any market yet'
+    );
   });
 
   it('includes the forward-looking guidance that was requested', () => {
@@ -144,15 +146,17 @@ describe('SectionF_Fulfillment - isolation', () => {
     );
   });
 
-  it('keeps the FBT radio for the US', () => {
+  it('offers no fulfillment selector, for the US or any other market', () => {
+    // F-15: the FBT/Self-ship radio, product weight and dimensions were read
+    // by no engine and priced by no rate row, so they are removed rather than
+    // left as a control that cannot change the answer.
     render(<CalculatorForm ratesByMarket={RATES} />);
-    expect(screen.getByText('Fulfillment method')).toBeDefined();
-    expect(screen.getByLabelText(/Fulfilled by TikTok/)).toBeDefined();
+    expect(screen.queryByText('Fulfillment method')).toBeNull();
+    expect(screen.queryByLabelText(/Fulfilled by TikTok/)).toBeNull();
   });
 
-  it('tells non-US users fulfillment is US only', () => {
-    render(<SectionG_Programs calculator={stubCalculator('UK')} />);
-    // UK is not a fulfillment market, so Section F would show its fallback.
+  it('no market advertises a fulfillment capability', () => {
+    expect(MARKET_CAPABILITIES.US.fulfillment).toBe(false);
     expect(MARKET_CAPABILITIES.UK.fulfillment).toBe(false);
   });
 });

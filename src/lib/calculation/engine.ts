@@ -1,9 +1,33 @@
 // CALCULATION ENGINE
-// NOTE: This file was created during Step 2.5 cleanup.
-// These functions will be reviewed and refined in Step 3.
-// Do NOT assume they are final until Step 3 review is complete.
+//
+// Pure fee and pricing maths. Market-specific rate selection lives in
+// `markets/*.ts`; this module only knows how to combine a priced fee list.
 
 import { roundToTwo, roundToFour } from './utils';
+import type { FeePricingState, FeeBreakdownItem, TargetPriceResult } from './types';
+
+/**
+ * Whether a fee was charged from a verified published rate.
+ *
+ * The predicate is the inverse of the failure it guards against: a fee counts
+ * as priced only when it says so. Treating a missing or unexpected value as
+ * priced would let an unverified fee into a total, which is the F-04 defect.
+ */
+function isPriced(fee: { pricing: FeePricingState }): boolean {
+  return fee.pricing === 'priced';
+}
+
+/** Names of fees that could not be priced from a verified published rate. */
+export function unpricedFeeNames(fees: ReadonlyArray<Pick<FeeBreakdownItem, 'name' | 'pricing'>>): string[] {
+  return fees.filter((fee) => !isPriced(fee)).map((fee) => fee.name);
+}
+
+/** Whether every fee in the list could be priced. */
+export function isCalculationComplete(
+  fees: ReadonlyArray<Pick<FeeBreakdownItem, 'pricing'>>
+): boolean {
+  return fees.every((fee) => isPriced(fee));
+}
 
 export function calculateEffectiveRate(totalFees: number, sellingPrice: number): number {
   if (sellingPrice <= 0) return 0;
@@ -60,20 +84,36 @@ export function calculateTargetPrice(
   shipping: number,
   cpa: number,
   feeCalculator: (price: number) => number
-): number {
-  // Maximum reasonable price bound: 100x the minimum viable price
-  // If no solution within this bound, the target profit is likely unachievable.
-  const minPrice = cogs + shipping + cpa + targetProfit;
-  const MAX_PRICE_MULTIPLIER = 100;
-  const maxPrice = minPrice * MAX_PRICE_MULTIPLIER;
+): TargetPriceResult {
+  const fixedCosts = cogs + shipping + cpa;
 
-  let low = minPrice;
-  let high = maxPrice;
+  // A target of zero, or a negative one, is the break-even question, and
+  // break-even is not the sum of the fixed costs: the fees at that price still
+  // have to be covered. It is answered by the same search rather than
+  // short-circuited, so a zero target cannot silently ignore fees.
+  //
+  // Search bounds. `low` is a price at which the target is provably unmet
+  // (fixed costs plus the target, before any fees are charged), so the true
+  // answer is at or above it. `high` is 100x that floor: any fee structure that
+  // still returns to profit within that range is reachable, and anything beyond
+  // it is a target no realistic listing can serve.
+  const low0 = fixedCosts + targetProfit;
+  const MAX_PRICE_MULTIPLIER = 100;
+
+  let low = Math.max(0, low0);
+  let high = Math.max(low0, 0) * MAX_PRICE_MULTIPLIER;
+
+  // A flat zero-width interval means there is no price to search between, which
+  // happens when fees are zero and the floor is already the answer.
+  if (high <= low) {
+    return { price: roundToTwo(low), achievable: true };
+  }
+
   let solutionFound = false;
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 50; i += 1) {
     const mid = (low + high) / 2;
-    const profit = mid - feeCalculator(mid) - cogs - shipping - cpa;
+    const profit = mid - feeCalculator(mid) - fixedCosts;
 
     if (profit > targetProfit) {
       high = mid;
@@ -88,16 +128,13 @@ export function calculateTargetPrice(
     }
   }
 
-  // If no solution found within bounds, return 0 (unachievable target)
+  // Unachievable is reported explicitly rather than as a 0 price, because 0 is
+  // a real price a caller could mistake for a result.
   if (!solutionFound) {
-    return 0;
+    return { price: 0, achievable: false };
   }
 
-  return roundToTwo((low + high) / 2);
-
-  // TEST COMMENT:
-  // If targetProfit is unrealistic (e.g., 10000% margin), returns 0
-  // If feeCalculator is constant and targetProfit > possible max, returns 0
+  return { price: roundToTwo((low + high) / 2), achievable: true };
 }
 
 export function calculateMaxCPA(
@@ -161,8 +198,20 @@ export function calculateMonthlyProjection(
   // calculateMonthlyProjection(100, 10, 100, 20) => { gmv: 10000, totalFees: 2000, totalProfit: 1000 }
 }
 
-export function sumFeeAmounts(fees: Array<{ amount: number }>): number {
-  return roundToTwo(fees.reduce((sum, fee) => sum + fee.amount, 0));
+/**
+ * Sums the fees that could actually be priced.
+ *
+ * Unpriced fees are excluded rather than added as 0. Their amounts are already
+ * 0, so the arithmetic is unchanged today, but excluding them here is what keeps
+ * the total honest if a caller ever reports a non-zero amount on an unpriced
+ * line. `isCalculationComplete` is what tells the caller the total is partial.
+ */
+export function sumFeeAmounts(
+  fees: ReadonlyArray<Pick<FeeBreakdownItem, 'amount' | 'pricing'>>
+): number {
+  return roundToTwo(
+    fees.reduce((sum, fee) => (isPriced(fee) ? sum + fee.amount : sum), 0)
+  );
 }
 
 export function getFeeByName(

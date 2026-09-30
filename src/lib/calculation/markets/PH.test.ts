@@ -29,7 +29,6 @@ const baseInputs: CalculatorInputs = {
   cpa: 0,
   newSellerPromo: false,
   promoDaysRemaining: 0,
-  fulfillmentMethod: 'selfShip',
   isPreOrder: false,
   isShippingProgramEnrolled: false,
   isGMVMaxActive: false,
