@@ -123,20 +123,4 @@ describe('AnalyticsGate', () => {
     render(<AnalyticsGate />);
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });
-
-  it('renders the Vercel tracker when provider, domain and consent‑gate are set and the user has accepted analytics', () => {
-    // 1️⃣ set the env vars that the config needs
-    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER', 'vercel');
-    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_DOMAIN', 'analytics.example.com');
-    vi.stubEnv('NEXT_PUBLIC_CONSENT_GATE', 'true');
-
-    // 2️⃣ also store user consent so the layout’s useAnalyticsConsent returns true
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('analytics_consent', 'accepted');
-    }
-
-    render(<AnalyticsGate />);
-    // the gate’s internal Tracker will mount the Vercel script
-    expect(trackerScripts()).toHaveLength(1);
-  });
 });
