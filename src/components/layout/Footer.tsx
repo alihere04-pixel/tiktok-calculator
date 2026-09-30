@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CONTACT_EMAIL } from '@/lib/site/config';
 
 export function Footer() {
   return (
@@ -21,6 +22,21 @@ export function Footer() {
             Disclaimer
           </Link>
         </nav>
+        {/* Public contact address. The footer is the one place rendered on every
+            page, so this is where a visitor can always find a way to reach us.
+            A plain `mailto:` link is deliberate: it hands the message to the
+            visitor's own mail client, so the site adds no service, no script and
+            no third party to the page. */}
+        <p className="mt-3 text-zinc-600 dark:text-zinc-400">
+          Questions, corrections, or a rate that looks wrong? Email{' '}
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="underline underline-offset-2 dark:text-zinc-200"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          .
+        </p>
       </div>
     </footer>
   );

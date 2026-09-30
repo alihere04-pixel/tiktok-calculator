@@ -72,7 +72,8 @@ real tracking URL exists. See section E.
 error digest instead of a blank page. It never renders the error message, so
 stack traces and internal paths cannot leak.
 
-**Monitoring.** Config in place, everything off by default. See section F.
+**Monitoring.** Consent banner and gating infrastructure in place; everything off
+by default. See section F.
 
 **SEO.** Per-market metadata, canonicals, Open Graph, Twitter cards, `WebPage`
 and `FAQPage` structured data, a generated sitemap, and `robots.txt`.
@@ -147,16 +148,31 @@ jurisdiction. Whether a real person or company sits behind the name, and
 whether a UK or EU representative is now required (UK GDPR Art. 27), is a
 question for the lawyer.
 
-The privacy contact address is filled in as of 2026-09-28. It is a personal
-mailbox, `alihere04@gmail.com`, not a role address on a domain. That works, but
-it is a single point of failure: if access is lost, the page advertises a dead
-contact, and a privacy notice nobody can reach is unenforceable in practice.
-Move it to an address on a domain you control before relying on it commercially.
-The intended replacement is `contact@fynza.store`, deliberately not yet
-published. When you switch it, two things must change in the same commit or the
-suite goes red: the `PRIVACY_CONTACT_EMAIL` constant and the exact-set email
-assertion in `content.test.ts`, which currently matches
-`{alihere04@gmail.com}` and fails on any second address.
+The contact address is `contact@fynza.store`, a role address on the
+`fynza.store` domain, published on `/privacy` and in the site footer. Mail is
+delivered by Namecheap email forwarding, `contact@fynza.store` ->
+`alihere04@gmail.com`. That forwarding was **manually verified before the
+address was published**: a test message was sent to `contact@fynza.store` and
+confirmed to arrive at the destination inbox.
+
+This replaced a personal mailbox, `alihere04@gmail.com`, which was the privacy
+contact from 2026-09-28 until the switch. Publishing it had two problems worth
+recording, because both are the reason a domain address is the better default
+here: it put the operator's personal inbox on a public page, and it was a single
+point of failure. Losing access would leave the page advertising a dead contact,
+and a privacy notice nobody can reach is unenforceable in practice. The forwarding
+address is also deliberately **not** published anywhere on the site, so the
+destination stays private.
+
+No paid email service, mailbox, SMTP credential, or DNS change was involved. The
+site only renders a `mailto:` link, so nothing on the page sends mail.
+
+Switching the address required two changes in the same commit, or the suite goes
+red: the `PRIVACY_CONTACT_EMAIL` constant in `src/lib/legal/content.ts` and the
+exact-set email assertion in `content.test.ts`, which fails on any second
+address. That guard is deliberate — it exists to stop an unverified address being
+published, which is exactly the risk taken on here and why delivery was confirmed
+by hand first.
 
 The privacy page was restructured on 2026-09-28 into the standard ICO sequence —
 contact details, what is collected, lawful bases, the seven data subject rights,
@@ -177,14 +193,26 @@ page — which said "No analytics or tracking scripts run by default" — was wr
 while the whole suite stayed green. The test that appeared to cover this only
 asserted the sentence was present in the content file; it never checked whether
 a tracker was mounted. A string check cannot catch the thing it was standing in
-for. The tracker is now behind `AnalyticsGate`, which reads the consent gate in
-`lib/monitoring/config.ts` and withholds the script unless a provider, a
-destination domain and `NEXT_PUBLIC_CONSENT_GATE=true` are all present. None of
-those are set, so analytics is off.
+for. The tracker is now behind `AnalyticsGate`, which withholds the script unless
+two independent things are both true: the build-time configuration in
+`lib/monitoring/config.ts` reports a provider, a destination domain and
+`NEXT_PUBLIC_CONSENT_GATE=true`, **and** the visitor's own stored decision in
+`lib/consent/consent.ts` is an acceptance. Neither one implies the other. None of
+the build-time variables are set, so analytics is off.
 
-Do not set `NEXT_PUBLIC_CONSENT_GATE=true` until a real consent banner exists.
-That flag asserts a banner is implemented; it does not implement one. Until
-then it stays unset, which is what keeps the "no analytics" claim true.
+`NEXT_PUBLIC_CONSENT_GATE` was, and still is, only a claim that a consent banner
+exists in this codebase. It is not the visitor's decision and never will be.
+Treating it as consent is the exact bug the runtime gate was written to close.
+
+**That gate is now real, so the original blocker is gone.** `ConsentBanner` ships
+and records a genuine Accept/Decline answer per browser. What is missing before
+analytics could run is now only a provider and destination domain, which is a
+decision for the operator. `NEXT_PUBLIC_CONSENT_GATE` remains `false` all the
+same, so nothing about whether the tracker loads today has changed.
+
+The reason the "no analytics" claim still holds is therefore two-layered rather
+than one: no build-time configuration, **and** no stored acceptance. Supplying
+only one of the two still loads nothing.
 
 **What to do.**
 
@@ -253,12 +281,19 @@ visible "Affiliate link" label, and the rendered HTML contains
 
 ### 4. Analytics and monitoring — your decision
 
-**Current state.** Off. No analytics, no trackers, no cookies.
+**Current state.** Off, and still off by design. No analytics, no trackers, no
+cookies run. The Vercel Web Analytics integration exists and is gated, and a real
+consent banner now exists as well, but no provider or domain is configured, so
+nothing loads and the banner does not even appear.
 
 **Why.** The site serves the UK, Singapore, Malaysia, the Philippines and the
 United States. Loading an analytics or advertising tracker before consent engages
 UK GDPR and the equivalent regimes. A tracker that ships on by default is a
 compliance bug, not a missing feature.
+
+**What has changed since this was first written.** The blocker used to be that
+there was no consent mechanism at all, so enabling analytics would have meant
+shipping a tracker before asking anyone. That is resolved: see section F.
 
 **What to do.** Section F has the exact steps, including which provider to
 avoid without a consent-management platform.
@@ -572,7 +607,7 @@ your monitoring script:
 window.__errorMonitor = (error) => provider.captureException(error);
 ```
 
-### Analytics (needs a consent banner first)
+### Analytics (consent banner now exists; still needs a provider and a decision)
 
 The order matters. Doing these out of order is the mistake this config exists to
 prevent.
@@ -581,24 +616,41 @@ prevent.
 
 | Provider | Suitable here? |
 | --- | --- |
-| `plausible` | Yes. Cookieless, no personal data. |
-| `umami` | Yes. Self-hosted, cookieless. |
+| `vercel` | Yes, and it is the **only one with a tracker implemented**. This is Vercel Web Analytics. |
+| `plausible` | Not without code. Representable in the config, but `Tracker()` returns `null` for it, so it loads nothing. |
+| `umami` | Not without code. Same as `plausible`. |
 | `ga4` | **No**, unless you first add a consent-management platform. |
+
+Only `vercel` renders anything. The other three are accepted by the config so the
+choice is an explicit one, and a configured-but-unbuilt provider fails closed
+rather than falling through to some other tracker.
 
 Google Analytics sets its cookies before any banner can ask permission, which is
 precisely what UK GDPR prohibits. `analyticsBlockers()` flags this automatically.
 
-**Step 2: ship a real consent banner** that genuinely blocks the script until
-the visitor opts in. A banner that appears after the script has already fired is
-not consent.
+**Step 2: ~~ship a real consent banner~~ — done.**
+
+`src/components/analytics/ConsentBanner.tsx` ships and is mounted first in
+`<body>`. It offers **Accept analytics** and **Decline**, and the answer is stored
+per browser under `fynza.analytics-consent`. No choice, or a decline, means the
+tracker does not load. The banner only asks when analytics is actually capable of
+loading, so it does not appear today.
+
+The consent state is deliberately *not* `NEXT_PUBLIC_CONSENT_GATE`. That flag is a
+deploy-time assertion that a banner exists; the runtime answer is read from
+storage per visitor. `AnalyticsGate` requires both, so setting the flag alone
+loads nothing.
 
 **Step 3: set the variables.**
 
 | Key | Value |
 | --- | --- |
-| `NEXT_PUBLIC_ANALYTICS_PROVIDER` | `plausible` or `umami` |
+| `NEXT_PUBLIC_ANALYTICS_PROVIDER` | `vercel` |
 | `NEXT_PUBLIC_ANALYTICS_DOMAIN` | your analytics domain |
 | `NEXT_PUBLIC_CONSENT_GATE` | `true` |
+
+Note that a stored acceptance is *per browser*. Enabling this means every new
+visitor is asked once, and existing visitors are asked on their next load.
 
 **Step 4: confirm analytics is still off before consent.**
 
@@ -608,12 +660,17 @@ curl http://localhost:3000/ | grep -ci "analytics\|plausible\|umami\|gtag"
 ```
 
 Must be `0` for a fresh visitor with no consent stored. If it is not, the
-provider script is loading before the banner and the setup is wrong.
+provider script is loading before the banner and the setup is wrong. Note the
+script is injected client-side from an effect, so it was never in the generated
+HTML to begin with; this checks the served page, which is the real thing.
 
 **Step 5: confirm it turns on only when it should.**
 
 `analyticsBlockers()` must return an empty list. If it does not, the reason is
-named in the list.
+named in the list. Then check the accepted path too: accepting in the browser
+should load the tracker, and declining should not, and a decline must survive a
+page reload. `AnalyticsGate.test.tsx` covers both directions without needing a
+browser.
 
 ### Order of work
 
@@ -1086,6 +1143,8 @@ src/lib/legal/content.ts           the three legal documents
 src/lib/seo/sponsor-links.ts       affiliate links
 src/lib/seo/market-pages.ts        per-market SEO content
 src/lib/monitoring/config.ts       analytics and error monitoring
+src/lib/consent/consent.ts         runtime consent store and the permission rule
+src/components/analytics/          AnalyticsGate, ConsentBanner, useAnalyticsConsent
 src/lib/site/config.ts             NEXT_PUBLIC_SITE_URL
 src/app/[market]/tiktok-shop-fees/ the five fee pages
 src/app/{disclaimer,privacy,terms}/ the three legal pages

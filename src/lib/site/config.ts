@@ -38,6 +38,22 @@ export function siteUrlOpenItems(): string[] {
     : [];
 }
 
+/**
+ * The public contact address.
+ *
+ * Namecheap email forwarding, `contact@fynza.store` -> a Gmail inbox. Nothing
+ * here sends mail: the site only ever renders a `mailto:` link, so there is no
+ * SMTP credential, no provider SDK and no third-party script on the page.
+ *
+ * Kept as a constant rather than inlined so the footer link has one definition.
+ * The privacy notice in `src/lib/legal/content.ts` publishes the same address but
+ * is deliberately *not* wired to this constant: a legal notice has its own
+ * exact-set test, and coupling them would mean adding a footer link could
+ * silently rewrite a published legal contact. They must be changed together, on
+ * purpose, once delivery to any new address has been confirmed.
+ */
+export const CONTACT_EMAIL = 'contact@fynza.store';
+
 /** Absolute URL for an internal path. */
 export function absoluteUrl(path: string): string {
   const clean = path.startsWith('/') ? path : `/${path}`;

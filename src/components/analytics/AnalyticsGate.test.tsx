@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
+import { ANALYTICS_CONSENT_KEY } from '@/lib/consent/consent';
 import { AnalyticsGate } from './AnalyticsGate';
 
 /**
@@ -95,12 +96,45 @@ describe('AnalyticsGate', () => {
     expect(trackerScripts()).toHaveLength(0);
   });
 
-  it('injects the tracker exactly once when provider, domain and consent gate are all set', () => {
-    // The positive case, and the reason the three above are meaningful. Against a
-    // gate that simply never rendered anything they would all pass too, so this
-    // is what proves the gate is a decision rather than a permanent off switch.
+  it('injects no tracker script when provider, domain and consent gate are all set but nobody has consented', () => {
+    // The whole point of the runtime gate. All three deploy-time variables can be
+    // configured and this must still be empty, because configuring analytics is
+    // not the same as asking the visitor. Before per-user consent existed, this
+    // state loaded the tracker for every first-time visitor.
     clearEnv();
     configure('vercel');
+    render(<AnalyticsGate />);
+    expect(trackerScripts()).toHaveLength(0);
+  });
+
+  it('injects no tracker script when the visitor has declined', () => {
+    clearEnv();
+    configure('vercel');
+    localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
+    render(<AnalyticsGate />);
+    expect(trackerScripts()).toHaveLength(0);
+  });
+
+  it('does not persist an attribution identifier after a stored decline', () => {
+    // Independent of the script selector: proves the withheld tracker really did
+    // not run, rather than the assertion matching the wrong URL.
+    clearEnv();
+    configure('vercel');
+    localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
+    render(<AnalyticsGate />);
+    expect(localStorage.getItem('__va_attribution')).toBeNull();
+  });
+
+  it('injects the tracker exactly once when provider, domain, consent gate and an acceptance are all present', () => {
+    // The positive case, and the reason the ones above are meaningful. Against a
+    // gate that simply never rendered anything they would all pass too, so this
+    // is what proves the gate is a decision rather than a permanent off switch.
+    //
+    // The stored acceptance is what makes this reachable now: unlike the original
+    // version of this test, configuration alone is no longer sufficient.
+    clearEnv();
+    configure('vercel');
+    localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
     render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(1);
   });

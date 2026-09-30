@@ -257,9 +257,23 @@ out of it, and both matter more than the restructure itself:
   act on a right had nothing to act on. The ICO's published address is now
   given, so a complaint is actually actionable.
 
-The contact address is filled in. It is a personal mailbox, not a role address
-on a domain, and it is the one email the content test permits: the check is an
-exact-set match, so a second address fails the suite rather than shipping.
+The contact address is filled in. It is `contact@fynza.store`, a role address on
+the `fynza.store` domain, published on `/privacy` and in the site footer. Mail is
+delivered by Namecheap email forwarding, `contact@fynza.store` ->
+`alihere04@gmail.com`, and that forwarding was **manually verified** — a test
+message was sent and confirmed to arrive at the destination inbox — before the
+address was published. The forwarding destination is deliberately not published
+on the site, so it stays private.
+
+This replaced a personal mailbox, `alihere04@gmail.com`, which was the contact
+from 2026-09-28 until the switch. It was changed because publishing a personal
+inbox is a privacy exposure, and because it was a single point of failure: losing
+access would leave the page advertising a dead contact.
+
+It is still the one email the content test permits: the check is an exact-set
+match, so a second address fails the suite rather than shipping. That guard is
+the reason delivery was confirmed by hand first — it exists to stop an
+unverified address shipping, not to block a verified one.
 
 **Filled on 2026-09-28** — the three values that were previously `OPEN_ITEM`:
 
@@ -283,9 +297,18 @@ analytics or tracking scripts run by default" was untrue on the deployed site
 while all 689 tests passed. The test covering it asserted the sentence existed
 in the content file, which is a fact about a string and not about the running
 site. The tracker now sits behind `AnalyticsGate`, which withholds the script
-unless `lib/monitoring/config.ts` reports a provider, a destination domain and
-`NEXT_PUBLIC_CONSENT_GATE=true`. None are set, so it is off. `NEXT_PUBLIC_CONSENT_GATE`
-asserts a consent banner exists; no banner is implemented, so it stays unset.
+unless two independent things are both true: `lib/monitoring/config.ts` reports a
+provider, a destination domain and `NEXT_PUBLIC_CONSENT_GATE=true`, **and** the
+visitor's own stored decision in `lib/consent/consent.ts` is an acceptance.
+Neither implies the other.
+
+`NEXT_PUBLIC_CONSENT_GATE` is only a claim that a banner exists in this codebase;
+it is not the visitor's decision. Reading it as consent is the bug the runtime
+gate exists to close. **A real consent banner has since been built**:
+`ConsentBanner` offers Accept analytics and Decline and stores the answer per
+browser under `fynza.analytics-consent`, so no choice or a decline means nothing
+loads. No provider or domain is configured, so analytics remains off and the
+banner does not appear at all. The flag stays `false`.
 
 **The pattern worth carrying forward:** three separate guards checked text
 rather than behaviour — the analytics sentence, the `legalOpenItems()` marker
@@ -316,7 +339,7 @@ That is correct behaviour, not a bug. None should be closed without a source.
 | Legal entity name, governing jurisdiction | — | — | — | — | — | **Filled 2026-09-28.** Fynza (trading name) and Pakistan. Wording is unreviewed; a lawyer still has not seen it. |
 | Server log retention period | — | — | — | — | — | **Filled 2026-09-28** as 90 days, asserted as fact. Set at the Vercel project, so it cannot be confirmed from the code. Verify before deploy. |
 | `NEXT_PUBLIC_SITE_URL` | — | — | — | — | — | **Set on Vercel to `https://fynza.store`.** Verified against the live site: `robots.txt` carries the `Sitemap:` line and all pages serve absolute canonicals. Local builds still fall back to localhost, so check the env is present when building. |
-| Analytics and monitoring | — | — | — | — | — | **Analytics is off.** The tracker was found mounted unconditionally in the root layout; it is now behind `AnalyticsGate` and gated on `monitoring/config.ts`. `NEXT_PUBLIC_CONSENT_GATE` must stay unset until a real consent banner exists. |
+| Analytics and monitoring | — | — | — | — | — | **Analytics is off.** The tracker was found mounted unconditionally in the root layout; it is now behind `AnalyticsGate`, which requires both a build-time provider/domain/`NEXT_PUBLIC_CONSENT_GATE` configuration **and** a stored per-visitor acceptance in `src/lib/consent/consent.ts`. A real `ConsentBanner` now exists and stores Accept/Decline, so the old "no consent banner" blocker is closed. No provider or domain is set, so the banner does not appear and nothing loads; `NEXT_PUBLIC_CONSENT_GATE` stays `false`. |
 
 ### Verification baseline
 

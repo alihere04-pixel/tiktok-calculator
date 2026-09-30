@@ -66,25 +66,22 @@ export const LAST_REVIEWED = '2026-09-28';
  * has supplied, so it is a constant rather than an `OPEN_ITEM` and the privacy
  * page can actually name a way to reach us.
  *
- * It is a personal mailbox, not a role address on a domain. That is acceptable
- * for a site this size, but it is a single point of failure: if access to it is
- * lost, the page is advertising a dead contact. Move to an address on a domain
- * you control before relying on it commercially.
+ * `contact@fynza.store` is a role address on a domain this site owns, reached by
+ * Namecheap forwarding to a monitored inbox. Delivery was verified by hand before
+ * this value was published. That was the blocking condition noted while the
+ * personal mailbox was in place: a notice that names an address nobody reads is
+ * worse than one naming a mailbox somebody owns. The domain address is also no
+ * longer a single point of failure, because the zone and the forwarding rule are
+ * under the same control as the site.
  *
- * PLANNED: switch to `contact@fynza.store` once that domain is live. The value
- * below is deliberately unchanged until then. Two things must change in the
- * same commit, or the suite goes red:
+ * Two things must change in the same commit, or the suite goes red:
  *
  *   1. this constant, and
  *   2. the exact-set email assertion in `content.test.ts` ("does not invent an
- *      operator name, company number or address"), which currently matches
- *      `{alihere04@gmail.com}` and fails on any second address.
- *
- * Do not publish `contact@fynza.store` until the zone is controlled and mail
- * routes to a monitored inbox. A published address nobody reads is worse than a
- * personal one that at least somebody owns.
+ *      operator name, company number or address"), which fails on any second
+ *      address.
  */
-const PRIVACY_CONTACT_EMAIL = 'alihere04@gmail.com';
+const PRIVACY_CONTACT_EMAIL = 'contact@fynza.store';
 
 const SHARED_DISCLAIMER_SECTION: LegalSection = {
   id: 'not-affiliated',

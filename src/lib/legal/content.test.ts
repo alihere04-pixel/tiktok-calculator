@@ -212,10 +212,11 @@ describe('unfilled placeholders are surfaced, not hidden', () => {
     expect(text).not.toMatch(/\b\d{6,}\b/); // no invented company number
 
     // Exactly one email is allowed, and it is the address the operator actually
-    // supplied. Any other address would be a guess that 404s into a dead
-    // mailbox, which is the whole failure mode this test exists to prevent.
+    // supplied and has verified delivers. Any other address would be a guess
+    // that 404s into a dead mailbox, which is the whole failure mode this test
+    // exists to prevent.
     const emails = text.match(/[\w.-]+@[\w-]+\.[a-z]{2,}/g) ?? [];
-    expect(new Set(emails)).toEqual(new Set(['alihere04@gmail.com']));
+    expect(new Set(emails)).toEqual(new Set(['contact@fynza.store']));
   });
 
   it('does not invent a postal address, which stays an open item', () => {
