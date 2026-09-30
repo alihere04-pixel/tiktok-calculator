@@ -21,6 +21,13 @@ type MYTier =
   | 'Non-BXP Marketplace'
   | 'Non-BXP Mall';
 
+const MY_TIERS: readonly MYTier[] = [
+  'BXP Marketplace',
+  'BXP Mall',
+  'Non-BXP Marketplace',
+  'Non-BXP Mall',
+];
+
 /**
  * MY switches that `CalculatorInputs` does not model. The core
  * `sellerTier` union cannot express all four MY combinations (BXP vs Non-BXP
@@ -37,15 +44,30 @@ function getExtra(inputs: CalculatorInputs): MYExtraInputs {
   return inputs as CalculatorInputs & MYExtraInputs;
 }
 
+function isMYTier(value: string): value is MYTier {
+  return (MY_TIERS as readonly string[]).includes(value);
+}
+
 function resolveTier(inputs: CalculatorInputs): MYTier {
   const extra = getExtra(inputs);
   if (extra.myTier) {
     return extra.myTier;
   }
 
-  const isBxp =
-    inputs.sellerTier === 'bxp' || extra.isBxpSeller === true;
-  const isMall = inputs.sellerTier === 'mall' || extra.isMall === true;
+  // The seller-tier control is populated from the `tier` strings in the rate
+  // file, so MY stores a full tier label here ("Non-BXP Mall", "BXP Mall", …)
+  // rather than one of the shared SellerTier tokens. That label already names
+  // the band, so it has to be honoured before the legacy tokens are considered:
+  // comparing "Non-BXP Mall" against 'bxp'/'mall' silently resolved every MY
+  // seller to Non-BXP Marketplace and made the Non-BXP Mall published rates
+  // unreachable.
+  const label = inputs.sellerTier as string | null;
+  if (label && isMYTier(label)) {
+    return label;
+  }
+
+  const isBxp = label === 'bxp' || extra.isBxpSeller === true;
+  const isMall = label === 'mall' || extra.isMall === true;
 
   if (isBxp) {
     return isMall ? 'BXP Mall' : 'BXP Marketplace';
@@ -63,14 +85,22 @@ function getCategoryTier(
   return rates.categories.find((c) => c.id === inputs.categoryId)?.tier;
 }
 
-// Published ranges per tier, used as a flagged fallback when a category has no
-// exact entry. The midpoint is used rather than an invented point estimate.
-const MY_KNOWN_RANGES: Record<MYTier, [number, number]> = {
-  'BXP Marketplace': [0.0486, 0.0918],
-  'Non-BXP Marketplace': [0.1134, 0.1782],
-  'BXP Mall': [0.0891, 0.1242],
-  'Non-BXP Mall': [0.1458, 0.189],
+// The published commission band per tier, read from `knownRanges` in the rate
+// file so the calculator quotes exactly the string the fee page shows. A band is
+// a set of bounds; it is never reduced to a single point, because the midpoint
+// is a rate TikTok has never published and a seller could act on.
+const MY_RANGE_KEYS: Record<MYTier, string> = {
+  'BXP Marketplace': 'bxpMarketplace',
+  'BXP Mall': 'bxpMall',
+  'Non-BXP Marketplace': 'nonBxpMarketplace',
+  'Non-BXP Mall': 'nonBxpMall',
 };
+
+function publishedBand(rates: MarketRateData, tier: MYTier): string {
+  return (
+    rates.knownRanges?.[MY_RANGE_KEYS[tier]] ?? 'not published for this tier'
+  );
+}
 
 function findCategoryRate(
   rates: MarketRateData,
@@ -112,32 +142,41 @@ function buildMYFees(
   // commission range, not a separate fee stacked on top of commission, so it
   // is never charged as an extra line item here.
   const category = findCategoryRate(rates, inputs.categoryId, tier);
-  const [rangeLow, rangeHigh] = MY_KNOWN_RANGES[tier];
 
-  const commissionRate = category?.rate ?? (rangeLow + rangeHigh) / 2;
-  const commissionConfidence = category
-    ? category.confidence
-    : 'needs-verification';
-  const commissionNotes = category
-    ? (category.notes ?? '') +
-      ` Seller tier: ${tier}. SST inclusive.`
-    : `No MY rate-table entry for "${inputs.categoryId}" on the ${tier} tier. Fell back to the midpoint of the published ${(
-        rangeLow * 100
-      ).toFixed(2)}%-${(rangeHigh * 100).toFixed(
-        2
-      )}% range. MY category coverage is examples-only. SST inclusive.`;
-
-  fees.push({
-    name: 'Commission Fee',
-    rate: `${(commissionRate * 100).toFixed(3)}%`,
-    base: roundToTwo(netSales),
-    amount: roundToTwo(netSales * commissionRate),
-    sourceUrl: category?.sourceUrl || rates.sourceUrl,
-    effectiveDate: category?.sourceDate || rates.sourceDate,
-    lastVerified: category?.lastVerified || rates.lastVerified,
-    confidence: commissionConfidence,
-    notes: commissionNotes,
-  });
+  if (category) {
+    fees.push({
+      name: 'Commission Fee',
+      rate: `${(category.rate * 100).toFixed(3)}%`,
+      base: roundToTwo(netSales),
+      amount: roundToTwo(netSales * category.rate),
+      sourceUrl: category.sourceUrl || rates.sourceUrl,
+      effectiveDate: category.sourceDate || rates.sourceDate,
+      lastVerified: category.lastVerified || rates.lastVerified,
+      confidence: category.confidence,
+      notes: (category.notes ?? '') + ` Seller tier: ${tier}. SST inclusive.`,
+    });
+  } else {
+    // No published point rate for this category and tier, so the commission is
+    // quoted as a band and left unpriced rather than guessed. This mirrors how
+    // Dynamic Commission is handled below: an unpriced line carries amount 0,
+    // stays out of the fee total, and is flagged for verification.
+    const band = publishedBand(rates, tier);
+    fees.push({
+      name: 'Commission Fee (not calculable)',
+      rate: band,
+      base: 0,
+      amount: 0,
+      sourceUrl: rates.sourceUrl,
+      effectiveDate: rates.sourceDate,
+      lastVerified: rates.lastVerified,
+      confidence: 'needs-verification',
+      notes:
+        `No MY rate-table entry for "${inputs.categoryId}" on the ${tier} tier, so the commission is not priced. ` +
+        `The published band for this tier is ${band}; the midpoint of a band is not a published rate and is deliberately not used. ` +
+        'This is excluded from the fee total and must be verified in Seller Centre before relying on the result. ' +
+        'MY category coverage is examples-only. SST inclusive.',
+    });
+  }
 
   // Transaction fee: 3.78% on Customer Payment, SST inclusive.
   const transactionFee = extraFees.transactionFee;

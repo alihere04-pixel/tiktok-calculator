@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { calculateMYFeesSync } from './MY';
 import { loadMarketRatesSync } from '@/lib/rates/loader';
+import { roundToTwo } from '../utils';
 import type {
   AffiliateMode,
   CalculatorInputs,
@@ -37,6 +38,19 @@ const baseInputs: CalculatorInputs = {
 
 function findFee(fees: ReturnType<typeof calculateMYFeesSync>, name: string) {
   return fees.find(f => f.name === name);
+}
+
+/**
+ * The seller-tier control is populated from the `tier` strings in the rate file,
+ * so for MY it stores a full tier label ("Non-BXP Mall") rather than one of the
+ * shared SellerTier tokens. This reproduces that faithfully; the cast is the
+ * same unchecked one the UI control performs, and MY.ts has to cope with it.
+ */
+function withSellerTier(
+  inputs: CalculatorInputs,
+  tier: string
+): CalculatorInputs {
+  return { ...inputs, sellerTier: tier as CalculatorInputs['sellerTier'] };
 }
 
 describe('calculateMYFeesSync', () => {
@@ -220,52 +234,166 @@ describe('calculateMYFeesSync', () => {
     expect(affiliate!.amount).toBe(8);
   });
 
-  it('Unknown category falls back to the range midpoint and is flagged', () => {
+  // docs/PHASE2.md: "Never invent a rate... Do not fill it from the
+  // `knownRanges` midpoint." An unpriced commission is quoted as its published
+  // band and contributes nothing to the fee total.
+  const UNPRICED = 'Commission Fee (not calculable)';
+
+  function findUnpricedCommission(
+    fees: ReturnType<typeof calculateMYFeesSync>
+  ) {
+    return fees.find(f => f.name === UNPRICED);
+  }
+
+  it('an unknown category is quoted as a band and never priced', () => {
     const inputs = {
       ...baseInputs,
       categoryId: 'my-not-in-the-table',
     } as CalculatorInputs;
     const fees = calculateMYFeesSync(inputs, myRates);
-    const commission = findFee(fees, 'Commission Fee');
-    // BXP Marketplace midpoint of 4.86%-9.18% = 7.02%
-    expect(commission!.rate).toBe('7.020%');
+
+    // No "Commission Fee" line at all: nothing was guessed.
+    expect(findFee(fees, 'Commission Fee')).toBeUndefined();
+
+    const commission = findUnpricedCommission(fees);
+    expect(commission).toBeDefined();
+    expect(commission!.amount).toBe(0);
+    expect(commission!.base).toBe(0);
     expect(commission!.confidence).toBe('needs-verification');
-    expect(commission!.notes).toContain('midpoint');
+    expect(commission!.notes).toContain('excluded from the fee total');
+    expect(commission!.notes).toContain('must be verified');
   });
 
-  it('Unknown Non-BXP Mall category falls back to that range midpoint', () => {
+  it('an unpriced commission shows the published band, not a midpoint', () => {
     const inputs = {
       ...baseInputs,
-      myTier: 'Non-BXP Mall',
       categoryId: 'my-not-in-the-table',
     } as CalculatorInputs;
-    const fees = calculateMYFeesSync(inputs, myRates);
-    const commission = findFee(fees, 'Commission Fee');
-    // Midpoint of 14.58%-18.90% = 16.74%
-    expect(commission!.rate).toBe('16.740%');
+    const commission = findUnpricedCommission(
+      calculateMYFeesSync(inputs, myRates)
+    )!;
+
+    // BXP Marketplace publishes 4.86% - 9.18%. The old code rendered the
+    // midpoint 7.020%, which is a rate TikTok never published.
+    expect(commission!.rate).toBe('4.86% - 9.18%');
+    expect(commission!.rate).not.toBe('7.020%');
+    expect(commission!.rate).toMatch(/^\d+\.\d{2}% - \d+\.\d{2}%$/);
+    expect(commission!.notes).toContain('4.86% - 9.18%');
   });
 
-  it('Fallback commission stays inside the published range', () => {
-    const ranges: Record<string, [number, number]> = {
-      'BXP Marketplace': [4.86, 9.18],
-      'BXP Mall': [8.91, 12.42],
-      'Non-BXP Marketplace': [11.34, 17.82],
-      'Non-BXP Mall': [14.58, 18.9],
-    };
-    for (const [tier, [low, high]] of Object.entries(ranges)) {
-      const inputs = {
-        ...baseInputs,
-        myTier: tier,
-        categoryId: 'my-not-in-the-table',
-      } as CalculatorInputs;
-      const commission = findFee(
-        calculateMYFeesSync(inputs, myRates),
-        'Commission Fee'
+  it('all four MY tier labels resolve to their own published band', () => {
+    const cases: Array<[string, string]> = [
+      ['BXP Marketplace', '4.86% - 9.18%'],
+      ['BXP Mall', '8.91% - 12.42%'],
+      ['Non-BXP Marketplace', '11.34% - 17.82%'],
+      ['Non-BXP Mall', '14.58% - 18.90%'],
+    ];
+    for (const [tier, band] of cases) {
+      const commission = findUnpricedCommission(
+        calculateMYFeesSync(
+          {
+            ...baseInputs,
+            sellerTier: tier,
+            categoryId: 'my-not-in-the-table',
+          } as CalculatorInputs,
+          myRates
+        )
       )!;
-      const rate = Number(commission.rate.replace('%', ''));
-      expect(rate).toBeGreaterThanOrEqual(low);
-      expect(rate).toBeLessThanOrEqual(high);
+      expect(commission!.rate).toBe(band);
+      expect(commission!.notes).toContain(tier);
     }
+  });
+
+  it('no MY commission amount can come from the old midpoint calculation', () => {
+    // The midpoints the removed fallback would have charged, as percentages.
+    const oldMidpoints = [7.02, 14.58, 10.665, 16.74];
+    const tiers = [
+      'BXP Marketplace',
+      'BXP Mall',
+      'Non-BXP Marketplace',
+      'Non-BXP Mall',
+    ];
+
+    for (const tier of tiers) {
+      const fees = calculateMYFeesSync(
+        {
+          ...baseInputs,
+          sellerTier: tier,
+          categoryId: 'my-not-in-the-table',
+        } as CalculatorInputs,
+        myRates
+      );
+      const netSales = baseInputs.sellingPrice - baseInputs.sellerDiscount;
+
+      // The unpriced line contributes nothing.
+      expect(findUnpricedCommission(fees)!.amount).toBe(0);
+
+      // And no other fee line quietly carries a midpoint-derived amount.
+      for (const fee of fees) {
+        for (const midpoint of oldMidpoints) {
+          expect(fee.amount).not.toBe(roundToTwo(netSales * (midpoint / 100)));
+        }
+      }
+    }
+  });
+
+  it('a known category on a matching tier label uses its published rate', () => {
+    // The regression this guards: "Non-BXP Mall" is what the seller-tier control
+    // actually stores for MY. It used to be compared against 'bxp'/'mall', never
+    // matched, and the published 17.82% fell through to the 14.58% midpoint.
+    const inputs = withSellerTier(
+      { ...baseInputs, categoryId: 'my-toys-nonbxp-mall' },
+      'Non-BXP Mall'
+    );
+    const commission = findFee(
+      calculateMYFeesSync(inputs, myRates),
+      'Commission Fee'
+    );
+
+    expect(commission).toBeDefined();
+    expect(commission!.rate).toBe('17.820%');
+    expect(commission!.base).toBe(100);
+    expect(commission!.amount).toBe(17.82);
+    expect(commission!.confidence).toBe('high');
+    expect(commission!.notes).toContain('Non-BXP Mall');
+  });
+
+  it('every published MY category rate is reachable on its own tier', () => {
+    const published: Array<[string, string, string, number]> = [
+      ['my-electronics-bxp-mp', 'BXP Marketplace', '7.020%', 7.02],
+      ['my-electronics-bxp-mall', 'BXP Mall', '10.260%', 10.26],
+      ['my-electronics-nonbxp-mp', 'Non-BXP Marketplace', '11.340%', 11.34],
+      ['my-electronics-nonbxp-mall', 'Non-BXP Mall', '14.590%', 14.59],
+      ['my-toys-nonbxp-mp', 'Non-BXP Marketplace', '14.580%', 14.58],
+      ['my-toys-nonbxp-mall', 'Non-BXP Mall', '17.820%', 17.82],
+    ];
+
+    for (const [categoryId, tier, rate, amount] of published) {
+      const fees = calculateMYFeesSync(
+        withSellerTier({ ...baseInputs, categoryId }, tier),
+        myRates
+      );
+      const commission = findFee(fees, 'Commission Fee');
+
+      // A published rate must be charged, never replaced by the unpriced path.
+      expect(commission).toBeDefined();
+      expect(commission!.rate).toBe(rate);
+      expect(commission!.amount).toBe(amount);
+      expect(commission!.confidence).toBe('high');
+      expect(findUnpricedCommission(fees)).toBeUndefined();
+    }
+  });
+
+  it('an unpublished category on an unselected tier stays unpriced', () => {
+    // Toys has no BXP rows, so a BXP seller cannot be given a rate for it.
+    const inputs = withSellerTier(
+      { ...baseInputs, categoryId: 'my-toys-nonbxp-mp' },
+      'BXP Marketplace'
+    );
+    const fees = calculateMYFeesSync(inputs, myRates);
+
+    expect(findUnpricedCommission(fees)).toBeDefined();
+    expect(findUnpricedCommission(fees)!.amount).toBe(0);
   });
 
   it('Commission is always higher for Non-BXP than BXP on the same category', () => {
