@@ -93,8 +93,8 @@ is a number TikTok never published and a seller could act on.
 
    Do not promote while any published row is still missing. A disclosure that
    admits a gap is a working page; a wrong number is a liability.
-8. Copy the file to `src/data/rates/MY-categories.json`. Both copies must be
-   byte-identical — see the warning in `HANDOFF.md` section G.
+8. The file lives at `data/rates/MY-categories.json` and that is the only copy —
+   see `HANDOFF.md` section G.
 9. Re-check the `dynamicCommission` record. If the sub-category table turns out
    to publish real rates, `rateRange` may be superseded, but only if the source
    says so. Otherwise leave the range and the `RM 650,000` cap alone.
@@ -184,7 +184,7 @@ above or below the cluster average.
    "missingData": "none"
    ```
 
-9. Copy to `src/data/rates/SG-categories.json`, byte-identical.
+9. The file lives at `data/rates/SG-categories.json` and that is the only copy.
 10. Add row-count and uniqueness assertions to `src/lib/rates/loader.test.ts`
     and update the coverage expectations in
     `src/lib/seo/market-pages.test.ts`. Note that `sg` currently sits in the
@@ -208,10 +208,11 @@ follow from `HANDOFF.md` section H. Six touch points:
    `export type Market = 'US' | 'UK' | 'SG' | 'MY' | 'PH';`
 2. **`src/lib/rates/schema.ts`** — add it to the Zod enum. Zod will reject the
    new file until this is done, which is the intended behaviour, not a bug.
-3. **`src/lib/rates/loader.ts`** — add the entry to `MARKET_FILE_MAP`. A market
-   missing from this map is simply not loaded, with no error.
-4. **Both rate directories** — write `data/rates/<CODE>-categories.json`, then
-   copy it to `src/data/rates/`. Required at the top level: `market`, `currency`,
+3. **`src/lib/rates/loader.ts`** — add a static `import` of the new file next
+   to the existing ones and add its entry to `MARKET_MODULES`. A market missing
+   from this map is simply not loaded, with no error.
+4. **The rate directory** — write `data/rates/<CODE>-categories.json`. That is
+   the single canonical copy. Required at the top level: `market`, `currency`,
    `sourceUrl`, `sourceDate`, `lastVerified`, `coverage`, `extractionStatus`,
    `categories`. Every category needs `id`, `name`, `parentCategory`, `rate`,
    `confidence`; the rest inherit from file provenance. Set

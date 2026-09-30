@@ -634,58 +634,31 @@ US is done too, and was closed on 2026-09-28: `US-categories.json` went from 78
 to 202 categories and is marked `extractionStatus: "complete"`. See G2, which
 also records why the section's original "pagination gap" premise was wrong.
 
-### Read this first: the duplicated rate directory
+### Read this first: where rate files live
 
-**The rate files exist in two identical places:**
+**`data/rates/` is the single canonical location for rate data:**
 
 ```
 data/rates/{US,UK,MY,SG,PH}-categories.json
-src/data/rates/{US,UK,MY,SG,PH}-categories.json
 ```
 
-They are byte-for-byte identical as of this handoff (verified by SHA-256).
+**`src/lib/rates/loader.ts` imports those files with static `import`
+statements** pointing at `../../../data/rates/`. It does not touch the
+filesystem at runtime, and there is no fallback directory.
 
-**`src/lib/rates/loader.ts` reads `data/rates/` first and only falls back to
-`src/data/rates/` if the first is missing.** Both exist today, so the root copy
-is always the one that is read.
+There used to be a second copy under `src/data/rates/` behind an
+`fs`-based fallback. Both were removed when the loader moved to static
+imports. **`src/data/rates/` no longer exists and must not be recreated.**
+Nothing reads it, so a copy placed there is a trap: it looks authoritative, it
+is never read, and no test fails when it silently drifts out of step with the
+file that is actually used. Git already holds the full history, so a second
+on-disk copy protects nothing.
 
-**Always edit `data/rates/`, then copy across, then verify.**
+**Always edit `data/rates/` directly, then run the tests and rebuild.**
 
-The trap is worse than it first looks. Both the running app and
-`src/lib/rates/loader.test.ts` go through the same `resolveDataDir()`, so both
-read the root copy. **Nothing in this repository ever reads
-`src/data/rates/` while `data/rates/` exists.** That means:
+### After editing a rate file
 
-- If you edit only `src/data/rates/`, nothing changes and no test fails. The
-  tests are not weak here; they are reading a different file from the one you
-  edited, and they pass because the file they *are* reading is still correct.
-- Two green test runs, and a silent divergence in production.
-
-The sync-and-verify command below is the only thing standing between that and a
-wrong number on a live page. Use it every time.
-
-### The sync-and-verify command
-
-```bash
-# PowerShell
-Copy-Item data\rates\*.json src\data\rates\ -Force
-foreach ($f in @('US','UK','MY','SG','PH')) {
-  $a = (Get-FileHash "data\rates\$f-categories.json").Hash
-  $b = (Get-FileHash "src\data\rates\$f-categories.json").Hash
-  "{0}: {1}" -f $f, ($a -eq $b)
-}
-```
-
-```bash
-# macOS / Linux
-cp data/rates/*.json src/data/rates/
-for f in US UK MY SG PH; do
-  cmp -s "data/rates/$f-categories.json" "src/data/rates/$f-categories.json" \
-    && echo "$f: in sync" || echo "$f: OUT OF SYNC"
-done
-```
-
-Then run the tests and rebuild, because the rates are read at build time:
+The rates are read at build time, so verify with:
 
 ```bash
 npm test -- --run
@@ -798,8 +771,8 @@ Matching uses the `data-search` attribute, which holds parent and name together.
    genuinely finished and the file is no longer the source of truth.
 7. Run the tests and rebuild.
 
-Both copies of the file must stay byte-identical: `data/rates/` is what the
-loader reads at runtime, `src/data/rates/` is the fallback it falls back to.
+There is one copy of the file, in `data/rates/`, and that is the copy the loader
+imports at build time.
 
 **Rate format.** `rate` is a decimal fraction, not a percentage. `9%` is `0.09`,
 `12.5%` is `0.125`. The schema rejects anything outside 0 to 1, and it is not a
@@ -944,22 +917,23 @@ behaviour.
 `src/lib/rates/loader.ts`:
 
 ```ts
-const MARKET_FILE_MAP: Record<MarketCode, string> = {
-  US: 'US-categories.json',
-  PH: 'PH-categories.json',
-  SG: 'SG-categories.json',
-  MY: 'MY-categories.json',
-  UK: 'UK-categories.json',
-  ID: 'ID-categories.json',        // <- add
+const MARKET_MODULES: Record<MarketCode, unknown> = {
+  US: usRaw,
+  PH: phRaw,
+  SG: sgRaw,
+  MY: myRaw,
+  UK: ukRaw,
 };
 ```
 
-A market missing from this map is simply not loaded.
+Each entry is a static `import` of the matching `data/rates/<CODE>-categories.json`
+at the top of the file. Add the import alongside the existing ones. A market
+missing from this map is simply not loaded.
 
-### 4. Create the rate file, in both directories
+### 4. Create the rate file
 
-Write `data/rates/ID-categories.json`, then copy it to
-`src/data/rates/`. Both copies must match; see the warning in section G.
+Write `data/rates/ID-categories.json`. That is the only copy; see the warning in
+section G.
 
 Validate against `MarketRateDataSchema`. Required at the top level: `market`,
 `currency`, `sourceUrl`, `sourceDate`, `lastVerified`, `coverage`,
@@ -1105,7 +1079,7 @@ would let the app attempt a render for a market with no data.
 ### Where things are
 
 ```
-src/data/rates/                    rate files (canonical copy)
+data/rates/                        rate files (the only copy)
 src/lib/rates/schema.ts            Zod schemas
 src/lib/rates/loader.ts            loads and validates rate files
 src/lib/calculation/               calculation engines (do not change casually)
@@ -1125,12 +1099,12 @@ docs/HANDOFF.md                    this file
 | Symptom | Cause |
 | --- | --- |
 | `npm test` appears to hang | Missing `--run`. Use `npm test -- --run`. |
-| Edit to a rate file has no effect | Edited `src/data/rates/` instead of `data/rates/`. See section G. |
+| Edit to a rate file has no effect | Edited outside `data/rates/`, or the file is not in the `MARKET_MODULES` map. See section G. |
 | Data change not visible on the page | Dev server running, or no rebuild. Use `npm run build && npm start`. |
 | Canonical shows `localhost` | `NEXT_PUBLIC_SITE_URL` unset or not rebuilt. Section D. |
 | Affiliate links not appearing | `SPONSOR_LINKS_ENABLED` still `false`, or the URL is `''`. Section E. |
 | 7 sponsor tests failing after enabling | Expected. Section E step 3 lists them by name. |
-| New market 404s | Not added to `MARKET_FILE_MAP`. Section H. |
+| New market 404s | Not added to `MARKET_MODULES`. Section H. |
 | `Invalid Win32 application` during build | Expected. See section A. |
 
 ---
