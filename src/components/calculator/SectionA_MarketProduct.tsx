@@ -88,10 +88,16 @@ export function SectionA_MarketProduct({ calculator }: { calculator: UseCalculat
               {selectedCategory.groupLabel}
             </span>
             <Tag>{`${(selectedCategory.displayRate * 100).toFixed(2)}% commission`}</Tag>
+            {/*
+              The tag reflects the seller's selection only. Falling back to
+              `selectedCategory.tier` here would display the category's own
+              label as if the seller had chosen it, and on PH that label is
+              always "Marketplace" because it names the record's default
+              channel — so a Mall seller would be shown "Marketplace" next to
+              the tier they had just picked.
+            */}
             {inputs.sellerTier ? (
               <Tag>{sellerTierDisplayLabel(inputs.sellerTier)}</Tag>
-            ) : selectedCategory.tier ? (
-              <Tag>{selectedCategory.tier}</Tag>
             ) : null}
             {selectedCategory.confidence ? (
               <span className="ml-auto inline-flex items-center gap-1.5">

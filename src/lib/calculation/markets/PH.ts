@@ -3,7 +3,7 @@ import type {
   FeeBreakdownItem,
 } from '@/lib/calculation/types';
 import type { CategoryRate, MarketRateData } from '@/lib/rates/schema';
-import { normalizeSellerTier } from '@/lib/rates/tiers';
+import { normalizeSellerTier, findCategoryRow } from '@/lib/rates/tiers';
 import { roundToTwo } from '../utils';
 import { loadMarketRatesSync } from '@/lib/rates/loader';
 
@@ -46,24 +46,43 @@ function isMallTier(sellerTier: CalculatorInputs['sellerTier']): boolean {
 
 function findCategoryRate(
   rates: MarketRateData,
-  categoryId: string
+  categoryId: string,
+  sellerTier: CalculatorInputs['sellerTier']
 ): CategoryRate | null {
-  return rates.categories.find(c => c.id === categoryId) || null;
+  // The selector sends a *group* id, and PH's group ids are not the same string
+  // as the underlying row ids: a group is labelled by the row's own name
+  // ("Luggage & Bags" -> `ph-luggage-bags`) while the row id carries its section
+  // (`ph-fashion-luggage-bags`). 60 of PH's 62 groups differ this way, so a
+  // lookup by `category.id` alone failed to match and every such selection fell
+  // through to the file-level default, reporting 6.70% for categories whose
+  // published rates are 6.80% and 6.90%. `findCategoryRow` accepts either form.
+  return findCategoryRow(rates.market, rates.categories, categoryId, normalizeSellerTier(sellerTier));
 }
 
 /**
  * Commission rate for the selected category and seller tier.
  *
- * PH publishes both tiers on every category record, so a matched category is
- * priced directly. Only an unmatched category falls back to the file-level
- * default, which is marked `needs-verification` because it is not this
- * category's published rate.
+ * PH publishes both channels on every category record, so a matched category is
+ * priced directly. Two different things can go wrong, and they are reported
+ * differently:
+ *
+ *   - The category matched but the record has no rate for the selected channel.
+ *     The result is `unpriced`. Substituting a neighbouring rate, or the
+ *     file-level default, would state a commission the category was never
+ *     published at; a zero would be worse still, claiming the fee is free.
+ *   - The category did not match at all, so there is no record to read. The
+ *     file-level default is used and marked `needs-verification`, because it is
+ *     the best available answer rather than no answer.
  */
 function resolveCommissionRate(
   category: CategoryRate | null,
   isMall: boolean,
   rates: MarketRateData
-): { rate: number; confidence: FeeBreakdownItem['confidence']; isDefault: boolean } {
+): {
+  rate: number | null;
+  confidence: FeeBreakdownItem['confidence'];
+  isDefault: boolean;
+} {
   const defaults = rates.defaultRates?.from2025 ?? {};
 
   if (category) {
@@ -71,9 +90,10 @@ function resolveCommissionRate(
     if (typeof rate === 'number') {
       return { rate, confidence: category.confidence, isDefault: false };
     }
+    return { rate: null, confidence: 'needs-verification', isDefault: false };
   }
 
-  // No category match, or the matched record is missing this tier's rate.
+  // No category match.
   return {
     rate: isMall
       ? defaults.mall ?? FALLBACK_MALL_RATE
@@ -109,31 +129,54 @@ function buildPHFees(
   const customerPayment = netPrice + inputs.customerShipping;
 
   const isMall = isMallTier(inputs.sellerTier);
-  const category = findCategoryRate(rates, inputs.categoryId);
+  const category = findCategoryRate(rates, inputs.categoryId, inputs.sellerTier);
   const { rate: commissionRate, confidence, isDefault } = resolveCommissionRate(
     category,
     isMall,
     rates
   );
   const { sourceUrl, sourceDate, lastVerified } = pickMeta(category, rates);
+  // Named from the seller's selection, never from the category's own `tier`
+  // label. PH's rows are all labelled "Marketplace" as their default channel,
+  // so reading the label back would contradict a Mall selection and tell the
+  // seller they are on a tier they did not pick.
   const tierName = isMall ? 'Mall' : 'Marketplace';
 
-  fees.push({
-    name: 'Commission Fee',
-    rate: `${(commissionRate * 100).toFixed(2)}%`,
-    base: roundToTwo(netPrice),
-    amount: roundToTwo(netPrice * commissionRate),
-    pricing: 'priced',
-    sourceUrl,
-    effectiveDate: sourceDate,
-    lastVerified,
-    confidence,
-    notes:
-      `Commission on (Item Price - Seller Discount), excluding shipping. Seller tier: ${tierName}. VAT inclusive.` +
-      (isDefault
-        ? ` This is the file-level default ${tierName} rate, not a published rate for "${inputs.categoryId}".`
-        : ''),
-  });
+  if (commissionRate === null) {
+    // The category was found but carries no rate for the selected channel.
+    fees.push({
+      name: 'Commission Fee',
+      rate: 'not published',
+      base: roundToTwo(netPrice),
+      amount: 0,
+      pricing: 'unpriced',
+      sourceUrl,
+      effectiveDate: sourceDate,
+      lastVerified,
+      confidence: 'needs-verification',
+      notes:
+        `No ${tierName} commission rate is published for "${category?.name ?? inputs.categoryId}". ` +
+        `This fee is excluded from the totals, which are therefore a best case. ` +
+        `Switch the seller tier or pick another category to price it.`,
+    });
+  } else {
+    fees.push({
+      name: 'Commission Fee',
+      rate: `${(commissionRate * 100).toFixed(2)}%`,
+      base: roundToTwo(netPrice),
+      amount: roundToTwo(netPrice * commissionRate),
+      pricing: 'priced',
+      sourceUrl,
+      effectiveDate: sourceDate,
+      lastVerified,
+      confidence,
+      notes:
+        `Commission on (Item Price - Seller Discount), excluding shipping. Seller tier: ${tierName}. VAT inclusive.` +
+        (isDefault
+          ? ` This is the file-level default ${tierName} rate, not a published rate for "${inputs.categoryId}".`
+          : ''),
+    });
+  }
 
   fees.push({
     name: 'Transaction Fee',

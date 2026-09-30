@@ -353,28 +353,52 @@ function uniqueGroupId(
 }
 
 /**
- * The canonical tiers a group can price, in selector order.
+ * The channels a row can price, in selector order.
  *
- * A row with a published `tier` contributes that tier. A row carrying
- * `mallRate` (PH) contributes both Marketplace and Mall, because a single record
- * prices both. Rows with neither are untiered and contribute nothing, which is
- * what keeps US and UK out of the tier selector.
+ * Two shapes exist in the data and they must not be read the same way.
+ *
+ * MY and SG publish one row per (category, tier), so the row's own `tier`
+ * label is the tier and the union of a group's labels is what it can price.
+ *
+ * PH publishes one row per category and stores both of its channels on that
+ * record: `rate` is Marketplace and `mallRate` is Mall. Its `tier` label is
+ * therefore *the record's default channel*, not the set of channels it can
+ * price, and all 63 rows are labelled "Marketplace" even though every one also
+ * carries a Mall rate. Reading availability from the distinct labels yields a
+ * single tier, the market looks untiered, and the Seller tier control does not
+ * render at all. A row carrying `mallRate` is therefore read structurally and
+ * its label is deliberately not consulted.
  */
 function tiersForGroup(rows: readonly TierableCategory[]): CanonicalSellerTier[] {
   const found = new Set<CanonicalSellerTier>();
 
-  for (const row of rows) {
-    const tier = normalizeSellerTier(row.tier);
-    if (tier) found.add(tier);
-  }
-
   if (hasMallRate(rows)) {
+    // `rate` is the Marketplace channel; `hasMallRate` guarantees at least one
+    // numeric `mallRate`, so the Mall channel is available too.
     found.add('marketplace');
     found.add('mall');
+  } else {
+    for (const row of rows) {
+      const tier = normalizeSellerTier(row.tier);
+      if (tier) found.add(tier);
+    }
   }
 
   return TIER_ORDER.filter((tier) => found.has(tier));
 }
+
+/**
+ * Seller tiers a market is known to offer, declared rather than inferred.
+ *
+ * Only PH needs this. Where a market's file shape makes the channel set
+ * ambiguous, the model states it here, so a label that means "default" can
+ * never be mistaken for a single-option market. The declaration is still
+ * intersected with what the data can actually price, so it can describe the
+ * model but cannot invent a rate.
+ */
+const DECLARED_MARKET_TIERS: Readonly<Record<string, readonly CanonicalSellerTier[]>> = {
+  PH: ['marketplace', 'mall'],
+};
 
 /**
  * Every tier the market can price, across all its groups.
@@ -390,7 +414,12 @@ export function availableSellerTiers(
   for (const group of groupCategories(market, rows)) {
     for (const tier of group.tiers) found.add(tier);
   }
-  return TIER_ORDER.filter((tier) => found.has(tier));
+  const supported = TIER_ORDER.filter((tier) => found.has(tier));
+
+  const declared = DECLARED_MARKET_TIERS[market.toUpperCase()];
+  if (!declared) return supported;
+
+  return TIER_ORDER.filter((tier) => declared.includes(tier) && supported.includes(tier));
 }
 
 /** Whether the seller-tier selector should be shown for this market. */
