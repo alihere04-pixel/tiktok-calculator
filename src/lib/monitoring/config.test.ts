@@ -25,6 +25,16 @@ describe('monitoringConfig defaults', () => {
     expect(config.analytics.domain).toBeNull();
   });
 
+  it('has analytics off when process.env has no NEXT_PUBLIC_* keys (browser)', () => {
+    // Simulate browser where process.env is an empty object - no stubs at all
+    vi.unstubAllEnvs();
+    const config = monitoringConfig();
+    expect(config.analytics.enabled).toBe(false);
+    expect(config.analytics.provider).toBe('none');
+    expect(config.analytics.domain).toBeNull();
+    expect(config.analytics.consentGated).toBe(false);
+  });
+
   it('has error monitoring off by default', () => {
     clearEnv();
     expect(monitoringConfig().errorMonitoring.enabled).toBe(false);

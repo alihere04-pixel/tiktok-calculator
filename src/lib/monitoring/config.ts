@@ -48,33 +48,29 @@ export interface MonitoringConfig {
   };
 }
 
-function readEnv(name: string): string | undefined {
-  const value = process.env[name];
-  return value && value.trim() !== '' ? value.trim() : undefined;
-}
-
 /** Providers that set their own cookie before consent. Not for an EU/UK launch. */
 const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
 
 export function monitoringConfig(): MonitoringConfig {
-  const rawProvider = (readEnv('NEXT_PUBLIC_ANALYTICS_PROVIDER') ?? 'none').toLowerCase();
+  const rawProvider = (process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none').toLowerCase();
   const provider = (
     ['none', 'vercel', 'plausible', 'umami', 'ga4'] as const
   ).includes(rawProvider as AnalyticsProvider)
     ? (rawProvider as AnalyticsProvider)
     : 'none';
 
-  const dsn = readEnv('NEXT_PUBLIC_ERROR_DSN') ?? null;
-  const domain = readEnv('NEXT_PUBLIC_ANALYTICS_DOMAIN') ?? null;
+  const domain = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
+  const dsn = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
+  const consentGate = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
 
   return {
     analytics: {
       // Analytics is opt-in through the provider choice alone, then further
       // gated on a consent banner actually existing.
-      enabled: provider !== 'none' && domain !== null && readEnv('NEXT_PUBLIC_CONSENT_GATE') === 'true',
+      enabled: provider !== 'none' && domain !== null && consentGate,
       provider,
       domain,
-      consentGated: readEnv('NEXT_PUBLIC_CONSENT_GATE') === 'true',
+      consentGated: consentGate,
     },
     errorMonitoring: {
       enabled: dsn !== null,
