@@ -51,30 +51,30 @@ export interface MonitoringConfig {
 /** Providers that set their own cookie before consent. Not for an EU/UK launch. */
 const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
 
+// Module-level reads so Next.js statically inlines NEXT_PUBLIC_* into client bundle
+const RAW_PROVIDER = (process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none').toLowerCase();
+const PROVIDER = (
+  ['none', 'vercel', 'plausible', 'umami', 'ga4'] as const
+).includes(RAW_PROVIDER as AnalyticsProvider)
+  ? (RAW_PROVIDER as AnalyticsProvider)
+  : 'none';
+const DOMAIN = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
+const DSN = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
+const CONSENT_GATE = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
+
 export function monitoringConfig(): MonitoringConfig {
-  const rawProvider = (process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none').toLowerCase();
-  const provider = (
-    ['none', 'vercel', 'plausible', 'umami', 'ga4'] as const
-  ).includes(rawProvider as AnalyticsProvider)
-    ? (rawProvider as AnalyticsProvider)
-    : 'none';
-
-  const domain = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
-  const dsn = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
-  const consentGate = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
-
   return {
     analytics: {
       // Analytics is opt-in through the provider choice alone, then further
       // gated on a consent banner actually existing.
-      enabled: provider !== 'none' && domain !== null && consentGate,
-      provider,
-      domain,
-      consentGated: consentGate,
+      enabled: PROVIDER !== 'none' && DOMAIN !== null && CONSENT_GATE,
+      provider: PROVIDER,
+      domain: DOMAIN,
+      consentGated: CONSENT_GATE,
     },
     errorMonitoring: {
-      enabled: dsn !== null,
-      dsn,
+      enabled: DSN !== null,
+      dsn: DSN,
     },
   };
 }
