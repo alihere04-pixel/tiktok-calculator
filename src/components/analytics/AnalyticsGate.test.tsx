@@ -51,7 +51,7 @@ afterEach(() => {
   resetSdk();
 });
 
-async function getGate(env: Record<string, string | undefined> = {}) {
+async function renderGate(env: Record<string, string | undefined> = {}) {
   for (const [key, value] of Object.entries(env)) {
     if (value === undefined) {
       delete process.env[key];
@@ -61,7 +61,7 @@ async function getGate(env: Record<string, string | undefined> = {}) {
   }
   vi.resetModules();
   const mod = await import('./AnalyticsGate');
-  return mod.AnalyticsGate;
+  return render(<mod.AnalyticsGate />);
 }
 
 describe('AnalyticsGate', () => {
@@ -69,38 +69,35 @@ describe('AnalyticsGate', () => {
     // The default that ships. This is the assertion the privacy page's "no
     // analytics" claim depends on, and it is now a fact about the document
     // rather than a sentence in a content file.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: '',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
       NEXT_PUBLIC_CONSENT_GATE: '',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(0);
   });
 
   it('injects no tracker script when a provider is set but consent gating is off', async () => {
     // The trap the gate exists to prevent: choosing a provider and a domain and
     // assuming analytics is live. Without a real consent banner it must not load.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'false',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(0);
   });
 
   it('injects no tracker script when the provider is set but the domain is missing', async () => {
     // Events would have nowhere to go, so there is no reason to load the tracker.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(0);
   });
 
@@ -109,39 +106,38 @@ describe('AnalyticsGate', () => {
     // configured and this must still be empty, because configuring analytics is
     // not the same as asking the visitor. Before per-user consent existed, this
     // state loaded the tracker for every first-time visitor.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(0);
   });
 
   it('injects no tracker script when the visitor has declined', async () => {
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
-    render(<AnalyticsGate />);
+    await renderGate({});
     expect(trackerScripts()).toHaveLength(0);
   });
 
   it('does not persist an attribution identifier after a stored decline', async () => {
     // Independent of the script selector: proves the withheld tracker really did
     // not run, rather than the assertion matching the wrong URL.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
-    render(<AnalyticsGate />);
+    await renderGate({});
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });
 
@@ -152,14 +148,14 @@ describe('AnalyticsGate', () => {
     //
     // The stored acceptance is what makes this reachable now: unlike the original
     // version of this test, configuration alone is no longer sufficient.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
-    render(<AnalyticsGate />);
+    await renderGate({});
     expect(trackerScripts()).toHaveLength(1);
   });
 
@@ -167,13 +163,12 @@ describe('AnalyticsGate', () => {
     // `plausible` and `umami` are representable in the config but have no
     // component. A configured-but-unbuilt provider must render nothing rather
     // than falling through to some other tracker.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'plausible',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(trackerScripts()).toHaveLength(0);
   });
 
@@ -181,13 +176,12 @@ describe('AnalyticsGate', () => {
     // What the withheld script actually does: it writes `__va_attribution` to
     // localStorage. Asserting the storage key is a second, independent check
     // that does not depend on the selector above matching the right URL.
-    const AnalyticsGate = await getGate({
+    await renderGate({
       NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
       NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
       NEXT_PUBLIC_CONSENT_GATE: 'true',
       NEXT_PUBLIC_ERROR_DSN: '',
     });
-    render(<AnalyticsGate />);
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });
 });

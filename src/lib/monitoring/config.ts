@@ -48,33 +48,53 @@ export interface MonitoringConfig {
   };
 }
 
+export interface CreateMonitoringConfigEnv {
+  provider: string;
+  domain: string | null;
+  consentGate: boolean;
+  dsn: string | null;
+}
+
 /** Providers that set their own cookie before consent. Not for an EU/UK launch. */
 const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
 
-// Module-level reads so Next.js statically inlines NEXT_PUBLIC_* into client bundle
-const RAW_PROVIDER = (process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none').toLowerCase();
-const PROVIDER = (
-  ['none', 'vercel', 'plausible', 'umami', 'ga4'] as const
-).includes(RAW_PROVIDER as AnalyticsProvider)
-  ? (RAW_PROVIDER as AnalyticsProvider)
-  : 'none';
-const DOMAIN = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
-const DSN = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
-const CONSENT_GATE = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
+function normalizeProvider(raw: string): AnalyticsProvider {
+  const lower = raw.toLowerCase();
+  return (['none', 'vercel', 'plausible', 'umami', 'ga4'] as const).includes(lower as AnalyticsProvider)
+    ? (lower as AnalyticsProvider)
+    : 'none';
+}
 
-export function monitoringConfig(): MonitoringConfig {
+function normalizeDomain(domain: string | null): string | null {
+  if (domain === null) return null;
+  const trimmed = domain.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
+function normalizeDsn(dsn: string | null): string | null {
+  if (dsn === null) return null;
+  const trimmed = dsn.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
+export function createMonitoringConfig(env: CreateMonitoringConfigEnv): MonitoringConfig {
+  const provider = normalizeProvider(env.provider);
+  const domain = normalizeDomain(env.domain);
+  const dsn = normalizeDsn(env.dsn);
+  const consentGate = env.consentGate;
+
   return {
     analytics: {
       // Analytics is opt-in through the provider choice alone, then further
       // gated on a consent banner actually existing.
-      enabled: PROVIDER !== 'none' && DOMAIN !== null && CONSENT_GATE,
-      provider: PROVIDER,
-      domain: DOMAIN,
-      consentGated: CONSENT_GATE,
+      enabled: provider !== 'none' && domain !== null && consentGate,
+      provider,
+      domain,
+      consentGated: consentGate,
     },
     errorMonitoring: {
-      enabled: DSN !== null,
-      dsn: DSN,
+      enabled: dsn !== null,
+      dsn,
     },
   };
 }
@@ -85,7 +105,7 @@ export function monitoringConfig(): MonitoringConfig {
  * Returned rather than thrown so a test can assert on the exact list, and so
  * the launch checklist can print it.
  */
-export function analyticsBlockers(config: MonitoringConfig = monitoringConfig()): string[] {
+export function analyticsBlockers(config: MonitoringConfig): string[] {
   const blockers: string[] = [];
   const { analytics } = config;
 
@@ -113,7 +133,7 @@ export function analyticsBlockers(config: MonitoringConfig = monitoringConfig())
 }
 
 /** Human-readable state, for the launch checklist. */
-export function monitoringSummary(config: MonitoringConfig = monitoringConfig()): string[] {
+export function monitoringSummary(config: MonitoringConfig): string[] {
   const { analytics, errorMonitoring } = config;
   return [
     `Analytics: ${analytics.enabled ? `ON (${analytics.provider}, consent-gated)` : 'off'}`,

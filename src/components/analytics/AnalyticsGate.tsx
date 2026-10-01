@@ -5,9 +5,18 @@ import {
   analyticsPermitted,
   type AnalyticsConsent,
 } from '@/lib/consent/consent';
-import { monitoringConfig, type AnalyticsProvider } from '@/lib/monitoring/config';
+import { createMonitoringConfig, type CreateMonitoringConfigEnv, type AnalyticsProvider } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
+
+const PROVIDER = process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none';
+const DOMAIN = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
+const CONSENT_GATE = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
+const DSN = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
+
+const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: DSN };
+
+const { analytics } = createMonitoringConfig(env);
 
 /**
  * Renders the analytics tracker only when the build-time configuration and the
@@ -39,10 +48,6 @@ import { useAnalyticsConsent } from './useAnalyticsConsent';
  * an attribution identifier in localStorage under `__va_attribution` and
  * forwards a cross-origin Referer, so "off until accepted" has to be enforced by
  * the code rather than stated in a comment.
- *
- * `monitoringConfig()` is called during render rather than at module scope, so
- * the gate reflects the environment at the moment it is used and can be driven
- * from a test.
  */
 function Tracker({ provider }: { provider: AnalyticsProvider }) {
   if (provider === 'vercel') return <Analytics />;
@@ -53,7 +58,6 @@ function Tracker({ provider }: { provider: AnalyticsProvider }) {
 }
 
 export function AnalyticsGate() {
-  const { analytics } = monitoringConfig();
   const { consent } = useAnalyticsConsent();
 
   const runtimeConsent: AnalyticsConsent | null =
