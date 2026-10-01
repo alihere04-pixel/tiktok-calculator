@@ -35,10 +35,11 @@ export function ConsentBanner() {
   const { consent, decide } = useAnalyticsConsent();
 
   if (!analytics.enabled) return null;
-  // `pending` means this is the server-rendered or pre-hydration render. Asking
-  // there would bake the question into every cached page for visitors who have
-  // already answered, so it is skipped rather than rendered-then-removed.
-  if (consent.status !== 'unknown') return null;
+  // `pending` means this is the server-rendered or pre-hydration render.
+  // `unknown` means no decision stored yet. We show the banner for both
+  // so the question appears on first paint and after hydration.
+  // Only hide after an explicit accept/decline.
+  if (consent.status === 'accepted' || consent.status === 'declined') return null;
 
   return (
     <section
