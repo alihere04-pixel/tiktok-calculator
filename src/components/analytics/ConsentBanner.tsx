@@ -1,16 +1,8 @@
 'use client';
 
-import { createMonitoringConfig, type CreateMonitoringConfigEnv } from '@/lib/monitoring/config';
+import { createMonitoringConfig, getAnalyticsConfig } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
-
-interface ConsentBannerProps {
-  config?: {
-    provider?: string;
-    domain?: string;
-    consentGate?: string;
-  };
-}
 
 /**
  * Real user consent for analytics.
@@ -38,14 +30,8 @@ interface ConsentBannerProps {
  * as the first thing in `<body>` so it comes early in the tab order rather than
  * after the whole calculator.
  */
-export function ConsentBanner({ config }: ConsentBannerProps) {
-  const PROVIDER = config?.provider ?? 'none';
-  const DOMAIN = (config?.domain ?? '').trim() || null;
-  const CONSENT_GATE = config?.consentGate === 'true';
-
-  const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: null };
-
-  const { analytics } = createMonitoringConfig(env);
+export function ConsentBanner() {
+  const { analytics } = createMonitoringConfig(getAnalyticsConfig());
 
   const { consent, decide } = useAnalyticsConsent();
 

@@ -5,17 +5,9 @@ import {
   analyticsPermitted,
   type AnalyticsConsent,
 } from '@/lib/consent/consent';
-import { createMonitoringConfig, type CreateMonitoringConfigEnv, type AnalyticsProvider } from '@/lib/monitoring/config';
+import { createMonitoringConfig, getAnalyticsConfig, type AnalyticsProvider } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
-
-interface AnalyticsGateProps {
-  config?: {
-    provider?: string;
-    domain?: string;
-    consentGate?: string;
-  };
-}
 
 function Tracker({ provider }: { provider: AnalyticsProvider }) {
   if (provider === 'vercel') return <Analytics />;
@@ -25,14 +17,8 @@ function Tracker({ provider }: { provider: AnalyticsProvider }) {
   return null;
 }
 
-export function AnalyticsGate({ config }: AnalyticsGateProps) {
-  const PROVIDER = config?.provider ?? 'none';
-  const DOMAIN = (config?.domain ?? '').trim() || null;
-  const CONSENT_GATE = config?.consentGate === 'true';
-
-  const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: null };
-
-  const { analytics } = createMonitoringConfig(env);
+export function AnalyticsGate() {
+  const { analytics } = createMonitoringConfig(getAnalyticsConfig());
 
   const { consent } = useAnalyticsConsent();
 

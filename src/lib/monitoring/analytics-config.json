@@ -1,0 +1,5 @@
+{
+  "provider": "vercel",
+  "domain": "fynza.store",
+  "consentGate": "true"
+}

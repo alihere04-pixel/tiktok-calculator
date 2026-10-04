@@ -27,8 +27,22 @@ async function renderBanner(
     consentGate?: string;
   } = {}
 ) {
+  const { createMonitoringConfig } = await vi.importActual<
+    typeof import('@/lib/monitoring/config')
+  >('@/lib/monitoring/config');
+
+  vi.doMock('@/lib/monitoring/config', () => ({
+    createMonitoringConfig,
+    getAnalyticsConfig: () => ({
+      provider: config.provider ?? 'none',
+      domain: config.domain ?? null,
+      consentGate: config.consentGate === 'true',
+      dsn: null,
+    }),
+  }));
+
   const mod = await import('./ConsentBanner');
-  return render(<mod.ConsentBanner config={config} />);
+  return render(<mod.ConsentBanner />);
 }
 
 describe('while analytics is off', () => {

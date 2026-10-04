@@ -55,6 +55,16 @@ export interface CreateMonitoringConfigEnv {
   dsn: string | null;
 }
 
+interface AnalyticsConfigJson {
+  provider: string;
+  domain: string;
+  consentGate: string;
+}
+
+import analyticsConfigJson from './analytics-config.json';
+
+const analyticsConfig: AnalyticsConfigJson = analyticsConfigJson;
+
 /** Providers that set their own cookie before consent. Not for an EU/UK launch. */
 const CONSENT_HOSTILE_PROVIDERS: AnalyticsProvider[] = ['ga4'];
 
@@ -96,6 +106,15 @@ export function createMonitoringConfig(env: CreateMonitoringConfigEnv): Monitori
       enabled: dsn !== null,
       dsn,
     },
+  };
+}
+
+export function getAnalyticsConfig(): CreateMonitoringConfigEnv {
+  return {
+    provider: analyticsConfig.provider,
+    domain: analyticsConfig.domain === '' ? null : analyticsConfig.domain,
+    consentGate: analyticsConfig.consentGate === 'true',
+    dsn: null,
   };
 }
 

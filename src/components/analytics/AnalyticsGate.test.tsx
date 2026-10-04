@@ -58,8 +58,22 @@ async function renderGate(
     consentGate?: string;
   } = {}
 ) {
+  const { createMonitoringConfig } = await vi.importActual<
+    typeof import('@/lib/monitoring/config')
+  >('@/lib/monitoring/config');
+
+  vi.doMock('@/lib/monitoring/config', () => ({
+    createMonitoringConfig,
+    getAnalyticsConfig: () => ({
+      provider: config.provider ?? 'none',
+      domain: config.domain ?? null,
+      consentGate: config.consentGate === 'true',
+      dsn: null,
+    }),
+  }));
+
   const mod = await import('./AnalyticsGate');
-  return render(<mod.AnalyticsGate config={config} />);
+  return render(<mod.AnalyticsGate />);
 }
 
 describe('AnalyticsGate', () => {
