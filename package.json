@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
-    "prebuild": "node scripts/generate-runtime-config.js",
+    "build": "node scripts/generate-runtime-config.js && next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest"
