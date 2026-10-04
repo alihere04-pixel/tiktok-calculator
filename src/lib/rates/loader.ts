@@ -1,11 +1,11 @@
 import type { MarketRateData } from './schema';
 import { validateMarketRateData } from './schema';
 
-import usRaw from '../../../data/rates/US-categories.json';
-import phRaw from '../../../data/rates/PH-categories.json';
-import sgRaw from '../../../data/rates/SG-categories.json';
-import myRaw from '../../../data/rates/MY-categories.json';
-import ukRaw from '../../../data/rates/UK-categories.json';
+import usRaw from '@/data/rates/US-categories.json';
+import phRaw from '@/data/rates/PH-categories.json';
+import sgRaw from '@/data/rates/SG-categories.json';
+import myRaw from '@/data/rates/MY-categories.json';
+import ukRaw from '@/data/rates/UK-categories.json';
 
 type MarketCode = MarketRateData['market'];
 
@@ -101,5 +101,5 @@ export function getRateFilePath(market: string): string {
   if (!fileName) {
     throw new Error(`No rate file mapping for market: ${market}`);
   }
-  return `../../../data/rates/${fileName}`;
+  return `src/data/rates/${fileName}`;
 }
