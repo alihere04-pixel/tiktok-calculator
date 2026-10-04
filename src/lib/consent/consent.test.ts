@@ -5,6 +5,7 @@ import {
   analyticsPermitted,
   getAnalyticsConsentServerSnapshot,
   getAnalyticsConsentSnapshot,
+  markHydrated,
   readAnalyticsConsent,
   recordAnalyticsConsent,
   subscribeToAnalyticsConsent,
@@ -108,7 +109,11 @@ describe('permission needs build-time configuration and a real acceptance', () =
 });
 
 describe('the store React subscribes to', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    // Reset module state for each test
+    vi.resetModules();
+  });
 
   it('reports pending on the server, so no decision is ever assumed', () => {
     expect(getAnalyticsConsentServerSnapshot().status).toBe('pending');
@@ -121,15 +126,18 @@ describe('the store React subscribes to', () => {
   });
 
   it('reports unknown when nothing is stored', () => {
+    markHydrated();
     expect(getAnalyticsConsentSnapshot().status).toBe('unknown');
   });
 
   it('returns a stable snapshot while the answer does not change', () => {
+    markHydrated();
     const first = getAnalyticsConsentSnapshot();
     expect(getAnalyticsConsentSnapshot()).toBe(first);
   });
 
   it('returns a new snapshot once the answer changes', () => {
+    markHydrated();
     const before = getAnalyticsConsentSnapshot();
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
     expect(getAnalyticsConsentSnapshot()).not.toBe(before);
@@ -137,6 +145,7 @@ describe('the store React subscribes to', () => {
   });
 
   it('ignores a corrupted record rather than treating it as unknown forever', () => {
+    markHydrated();
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'nonsense');
     expect(getAnalyticsConsentSnapshot().status).toBe('unknown');
   });

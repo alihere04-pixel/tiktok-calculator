@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
 import {
   getAnalyticsConsentServerSnapshot,
   getAnalyticsConsentSnapshot,
+  markHydrated,
   recordAnalyticsConsent,
   subscribeToAnalyticsConsent,
   type AnalyticsConsent,
@@ -40,6 +41,10 @@ export function useAnalyticsConsent(): {
     getAnalyticsConsentSnapshot,
     getAnalyticsConsentServerSnapshot
   );
+
+  useEffect(() => {
+    markHydrated();
+  }, []);
 
   const decide = useCallback((choice: AnalyticsConsent) => {
     recordAnalyticsConsent(choice);

@@ -37,10 +37,12 @@ export function ConsentBanner() {
 
   if (!analytics.enabled) return null;
   // `pending` means this is the server-rendered or pre-hydration render.
-  // `unknown` means no decision stored yet. We show the banner for both
-  // so the question appears on first paint and after hydration.
+  // We return null so the consent question is never part of the server-rendered
+  // HTML. After hydration, the status becomes 'unknown' (fresh visitor) or
+  // 'accepted'/'declined' (returning visitor).
+  // `unknown` means no decision stored yet. We show the banner for this.
   // Only hide after an explicit accept/decline.
-  if (consent.status === 'accepted' || consent.status === 'declined') return null;
+  if (consent.status === 'pending' || consent.status === 'accepted' || consent.status === 'declined') return null;
 
   return (
     <section

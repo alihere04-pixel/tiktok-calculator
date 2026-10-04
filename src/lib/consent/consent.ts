@@ -123,6 +123,13 @@ const PENDING: ConsentState = Object.freeze({ status: 'pending' as const });
  */
 let cached: ConsentState | null = null;
 
+/**
+ * Tracks whether client-side hydration has completed.
+ * Before hydration, we return 'pending' to match the server snapshot and avoid
+ * a hydration mismatch. After hydration, we read from localStorage.
+ */
+let hasHydrated = false;
+
 function toConsentState(status: ConsentStatus): ConsentState {
   if (cached !== null && cached.status === status) return cached;
   cached = Object.freeze({ status });
@@ -147,8 +154,19 @@ export function getAnalyticsConsentServerSnapshot(): ConsentState {
   return PENDING;
 }
 
+/** Called once after client hydration to enable reading from localStorage. */
+export function markHydrated(): void {
+  if (hasHydrated) return;
+  hasHydrated = true;
+  cached = null;
+  for (const listener of listeners) listener();
+}
+
 /** After hydration, the real answer from this browser. */
 export function getAnalyticsConsentSnapshot(): ConsentState {
+  if (!hasHydrated) {
+    return PENDING;
+  }
   const stored = readAnalyticsConsent();
   return toConsentState(stored ?? 'unknown');
 }
