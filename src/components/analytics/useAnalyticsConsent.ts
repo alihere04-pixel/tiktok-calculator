@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useSyncExternalStore } from 'react';
+import { useCallback, useLayoutEffect, useSyncExternalStore } from 'react';
 
 import {
   getAnalyticsConsentServerSnapshot,
@@ -42,7 +42,7 @@ export function useAnalyticsConsent(): {
     getAnalyticsConsentServerSnapshot
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     markHydrated();
   }, []);
 
