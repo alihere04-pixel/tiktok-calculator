@@ -107,7 +107,7 @@ describe('analytics enablement is consent-gated', () => {
 
 describe('analyticsBlockers', () => {
   it('reports a missing provider on a fresh install', () => {
-    expect(analyticsBlockers(createMonitoringConfig(makeEnv()))).toContain('No analytics provider selected.');
+    expect(analyticsBlockers(createMonitoringConfig(makeEnv()))).toContain('No analytics provider selected in analytics-config.json.');
   });
 
   it('flags GA4 as unsuitable without a consent-management platform', () => {
@@ -127,7 +127,7 @@ describe('analyticsBlockers', () => {
       domain: null,
       consentGate: true,
     })))).toContain(
-      'NEXT_PUBLIC_ANALYTICS_DOMAIN is not set, so events would have no destination.'
+      'analytics-config.json domain is not set, so events would have no destination.'
     );
   });
 

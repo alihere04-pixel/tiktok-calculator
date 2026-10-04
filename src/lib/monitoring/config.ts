@@ -1,7 +1,7 @@
 /**
  * Monitoring and analytics configuration.
  *
- * Everything here is OFF unless an environment variable turns it on. That is not
+ * Everything here is OFF unless the static JSON config turns it on. That is not
  * timidity, it is a legal requirement for part of this audience: the site serves
  * the UK, Singapore, Malaysia, the Philippines and the United States, so loading
  * an analytics or advertising tracker without prior consent engages UK GDPR and
@@ -13,7 +13,7 @@
  *   1. Choose a consent-respecting provider. Do not use a tracker that reads
  *      anything before consent.
  *   2. Add a consent banner and block the script until the visitor opts in.
- *   3. Set the env var.
+ *   3. Set the values in `analytics-config.json`.
  *
  * Error monitoring is different and much lighter: it is a first-party request to
  * our own endpoint carrying a digest and a stack, with no cookies, no
@@ -129,12 +129,12 @@ export function analyticsBlockers(config: MonitoringConfig): string[] {
   const { analytics } = config;
 
   if (analytics.provider === 'none') {
-    blockers.push('No analytics provider selected.');
+    blockers.push('No analytics provider selected in analytics-config.json.');
   }
 
   if (analytics.enabled && !analytics.consentGated) {
     blockers.push(
-      'Analytics is enabled but NEXT_PUBLIC_CONSENT_GATE is not true. A tracker must not load before consent.'
+      'Analytics is enabled but consentGate is not true in analytics-config.json. A tracker must not load before consent.'
     );
   }
 
@@ -145,7 +145,7 @@ export function analyticsBlockers(config: MonitoringConfig): string[] {
   }
 
   if (analytics.provider !== 'none' && analytics.domain === null) {
-    blockers.push('NEXT_PUBLIC_ANALYTICS_DOMAIN is not set, so events would have no destination.');
+    blockers.push('analytics-config.json domain is not set, so events would have no destination.');
   }
 
   return blockers;
