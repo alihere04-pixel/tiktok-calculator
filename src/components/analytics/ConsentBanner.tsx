@@ -1,13 +1,19 @@
 'use client';
 
 import { createMonitoringConfig, type CreateMonitoringConfigEnv } from '@/lib/monitoring/config';
+import {
+  RUNTIME_ANALYTICS_PROVIDER,
+  RUNTIME_ANALYTICS_DOMAIN,
+  RUNTIME_CONSENT_GATE,
+  RUNTIME_ERROR_DSN,
+} from '@/lib/monitoring/runtime-config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
 
-const PROVIDER = process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none';
-const DOMAIN = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN?.trim() || null;
-const CONSENT_GATE = process.env.NEXT_PUBLIC_CONSENT_GATE === 'true';
-const DSN = process.env.NEXT_PUBLIC_ERROR_DSN?.trim() || null;
+const PROVIDER = RUNTIME_ANALYTICS_PROVIDER;
+const DOMAIN = RUNTIME_ANALYTICS_DOMAIN?.trim() || null;
+const CONSENT_GATE = RUNTIME_CONSENT_GATE === 'true';
+const DSN = RUNTIME_ERROR_DSN?.trim() || null;
 
 const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: DSN };
 

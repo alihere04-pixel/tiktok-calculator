@@ -48,18 +48,25 @@ beforeEach(resetSdk);
 afterEach(() => {
   cleanup();
   vi.unstubAllEnvs();
+  vi.resetModules();
   resetSdk();
 });
 
-async function renderGate(env: Record<string, string | undefined> = {}) {
-  for (const [key, value] of Object.entries(env)) {
-    if (value === undefined) {
-      delete process.env[key];
-    } else {
-      vi.stubEnv(key, value);
-    }
-  }
-  vi.resetModules();
+async function renderGate(
+  runtimeConfig: {
+    provider?: string;
+    domain?: string;
+    consentGate?: string;
+    errorDsn?: string;
+  } = {}
+) {
+  vi.doMock('@/lib/monitoring/runtime-config', () => ({
+    RUNTIME_ANALYTICS_PROVIDER: runtimeConfig.provider ?? 'none',
+    RUNTIME_ANALYTICS_DOMAIN: runtimeConfig.domain ?? '',
+    RUNTIME_CONSENT_GATE: runtimeConfig.consentGate ?? 'false',
+    RUNTIME_ERROR_DSN: runtimeConfig.errorDsn ?? '',
+  }));
+
   const mod = await import('./AnalyticsGate');
   return render(<mod.AnalyticsGate />);
 }
@@ -70,10 +77,10 @@ describe('AnalyticsGate', () => {
     // analytics" claim depends on, and it is now a fact about the document
     // rather than a sentence in a content file.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: '',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
-      NEXT_PUBLIC_CONSENT_GATE: '',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: '',
+      domain: '',
+      consentGate: '',
+      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -82,10 +89,10 @@ describe('AnalyticsGate', () => {
     // The trap the gate exists to prevent: choosing a provider and a domain and
     // assuming analytics is live. Without a real consent banner it must not load.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'false',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'false',
+      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -93,10 +100,10 @@ describe('AnalyticsGate', () => {
   it('injects no tracker script when the provider is set but the domain is missing', async () => {
     // Events would have nowhere to go, so there is no reason to load the tracker.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: '',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -107,20 +114,20 @@ describe('AnalyticsGate', () => {
     // not the same as asking the visitor. Before per-user consent existed, this
     // state loaded the tracker for every first-time visitor.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
 
   it('injects no tracker script when the visitor has declined', async () => {
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
     await renderGate({});
@@ -131,10 +138,10 @@ describe('AnalyticsGate', () => {
     // Independent of the script selector: proves the withheld tracker really did
     // not run, rather than the assertion matching the wrong URL.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
     await renderGate({});
@@ -149,10 +156,10 @@ describe('AnalyticsGate', () => {
     // The stored acceptance is what makes this reachable now: unlike the original
     // version of this test, configuration alone is no longer sufficient.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
     await renderGate({});
@@ -164,10 +171,10 @@ describe('AnalyticsGate', () => {
     // component. A configured-but-unbuilt provider must render nothing rather
     // than falling through to some other tracker.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'plausible',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'plausible',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -177,10 +184,10 @@ describe('AnalyticsGate', () => {
     // localStorage. Asserting the storage key is a second, independent check
     // that does not depend on the selector above matching the right URL.
     await renderGate({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });

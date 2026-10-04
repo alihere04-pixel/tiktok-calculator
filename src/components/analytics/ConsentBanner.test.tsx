@@ -18,17 +18,24 @@ beforeEach(() => localStorage.clear());
 afterEach(() => {
   cleanup();
   vi.unstubAllEnvs();
+  vi.resetModules();
 });
 
-async function renderBanner(env: Record<string, string | undefined> = {}) {
-  for (const [key, value] of Object.entries(env)) {
-    if (value === undefined) {
-      delete process.env[key];
-    } else {
-      vi.stubEnv(key, value);
-    }
-  }
-  vi.resetModules();
+async function renderBanner(
+  runtimeConfig: {
+    provider?: string;
+    domain?: string;
+    consentGate?: string;
+    errorDsn?: string;
+  } = {}
+) {
+  vi.doMock('@/lib/monitoring/runtime-config', () => ({
+    RUNTIME_ANALYTICS_PROVIDER: runtimeConfig.provider ?? 'none',
+    RUNTIME_ANALYTICS_DOMAIN: runtimeConfig.domain ?? '',
+    RUNTIME_CONSENT_GATE: runtimeConfig.consentGate ?? 'false',
+    RUNTIME_ERROR_DSN: runtimeConfig.errorDsn ?? '',
+  }));
+
   const mod = await import('./ConsentBanner');
   return render(<mod.ConsentBanner />);
 }
@@ -38,30 +45,30 @@ describe('while analytics is off', () => {
     // The shipped default. Nobody should be prompted about a tracker that is
     // switched off on this build.
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: '',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
-      NEXT_PUBLIC_CONSENT_GATE: '',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: '',
+      domain: '',
+      consentGate: '',
+      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
 
   it('asks nothing even when everything except the domain is set', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: '',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: '',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
 
   it('asks nothing when the consent gate flag is not on', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'false',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'false',
+      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -70,10 +77,10 @@ describe('while analytics is off', () => {
 describe('while analytics is configured but nobody has chosen', () => {
   it('asks once, with both answers available', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     expect(screen.getByRole('region', { name: /can we use analytics/i })).toBeTruthy();
@@ -83,10 +90,10 @@ describe('while analytics is configured but nobody has chosen', () => {
 
   it('does not presume a choice before anything is stored', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(localStorage.getItem(ANALYTICS_CONSENT_KEY)).toBeNull();
   });
@@ -94,10 +101,10 @@ describe('while analytics is configured but nobody has chosen', () => {
   it('explains what accepting means and what it does not', async () => {
     // The visitor is being asked for permission, so the cost has to be stated.
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     const region = screen.getByRole('region', { name: /can we use analytics/i });
@@ -111,10 +118,10 @@ describe('while analytics is configured but nobody has chosen', () => {
 describe('answering the question', () => {
   it('stays declined after choosing Decline', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     fireEvent.click(screen.getByRole('button', { name: /decline/i }));
@@ -125,10 +132,10 @@ describe('answering the question', () => {
 
   it('stays accepted after choosing Accept analytics', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     fireEvent.click(screen.getByRole('button', { name: /accept analytics/i }));
@@ -139,38 +146,38 @@ describe('answering the question', () => {
 
   it('remembers a decline and does not ask again on the next page load', async () => {
     const { unmount } = await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     fireEvent.click(screen.getByRole('button', { name: /decline/i }));
     unmount();
 
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
 
   it('remembers an acceptance and does not ask again on the next page load', async () => {
     const { unmount } = await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     fireEvent.click(screen.getByRole('button', { name: /accept analytics/i }));
     unmount();
 
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -178,19 +185,19 @@ describe('answering the question', () => {
   it('asks again when the stored value is not a real answer', async () => {
     // A corrupt record should not be able to silence the question permanently.
     const { unmount } = await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'not-a-choice');
     unmount();
 
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
     expect(screen.getByRole('region', { name: /can we use analytics/i })).toBeTruthy();
   });
@@ -201,10 +208,10 @@ describe('keyboard access', () => {
     // Tab order and Enter/Space activation come from the element type. A div
     // with an onClick would pass a click test and be unreachable by keyboard.
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });
@@ -218,10 +225,10 @@ describe('keyboard access', () => {
 
   it('keeps both buttons focusable and in order, with no tabindex override', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });
@@ -241,10 +248,10 @@ describe('keyboard access', () => {
 
   it('shows a visible focus ring, since a keyboard user has to see where they are', async () => {
     await renderBanner({
-      NEXT_PUBLIC_ANALYTICS_PROVIDER: 'vercel',
-      NEXT_PUBLIC_ANALYTICS_DOMAIN: 'analytics.example.com',
-      NEXT_PUBLIC_CONSENT_GATE: 'true',
-      NEXT_PUBLIC_ERROR_DSN: '',
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });
