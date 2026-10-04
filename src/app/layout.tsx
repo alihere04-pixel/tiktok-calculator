@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import { siteUrl } from "@/lib/site/config";
 import "./globals.css";
 import { AnalyticsGate } from "@/components/analytics/AnalyticsGate";
-import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
@@ -24,10 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        {/* First in the body so the consent question is reached early in the tab
-            order. Renders nothing unless analytics is configured, and asks
-            nothing until it is. */}
-        <ConsentBanner />
+        {/* Consent banner mounts here after client hydration.
+            SSR renders an empty placeholder so the DOM position is stable. */}
+        <div id="consent-banner-root" />
         {children}
         <Footer />
         <AnalyticsGate />

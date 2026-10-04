@@ -99,22 +99,16 @@ export function analyticsPermitted(
 }
 
 /**
- * The consent state as React sees it, which is one value wider than the stored
- * answer.
+ * The consent state as React sees it.
  *
- * `pending` exists so the consent question is never part of the server-rendered
- * HTML. Without it, `unknown` would be true on the server too, and the banner
- * would be baked into every page for visitors who had already answered. They
- * would see it flash before hydration removed it, which is both ugly and a
- * consent prompt that ignores the answer.
+ * `unknown` means no decision stored yet (fresh visitor). The banner shows.
+ * `accepted` / `declined` means the visitor has answered. The banner hides.
  */
-export type ConsentStatus = 'pending' | 'unknown' | AnalyticsConsent;
+export type ConsentStatus = 'unknown' | AnalyticsConsent;
 
 export interface ConsentState {
   readonly status: ConsentStatus;
 }
-
-const PENDING: ConsentState = Object.freeze({ status: 'pending' as const });
 
 /**
  * `useSyncExternalStore` compares snapshots with `Object.is`, so a freshly built
@@ -122,13 +116,6 @@ const PENDING: ConsentState = Object.freeze({ status: 'pending' as const });
  * replaced when the underlying answer actually changes.
  */
 let cached: ConsentState | null = null;
-
-/**
- * Tracks whether client-side hydration has completed.
- * Before hydration, we return 'pending' to match the server snapshot and avoid
- * a hydration mismatch. After hydration, we read from localStorage.
- */
-let hasHydrated = false;
 
 function toConsentState(status: ConsentStatus): ConsentState {
   if (cached !== null && cached.status === status) return cached;
@@ -149,24 +136,8 @@ export function subscribeToAnalyticsConsent(listener: () => void): () => void {
   };
 }
 
-/** Server render, and the first client render during hydration. Never a decision. */
-export function getAnalyticsConsentServerSnapshot(): ConsentState {
-  return PENDING;
-}
-
-/** Called once after client hydration to enable reading from localStorage. */
-export function markHydrated(): void {
-  if (hasHydrated) return;
-  hasHydrated = true;
-  cached = null;
-  for (const listener of listeners) listener();
-}
-
-/** After hydration, the real answer from this browser. */
+/** The real answer from this browser. */
 export function getAnalyticsConsentSnapshot(): ConsentState {
-  if (!hasHydrated) {
-    return PENDING;
-  }
   const stored = readAnalyticsConsent();
   return toConsentState(stored ?? 'unknown');
 }

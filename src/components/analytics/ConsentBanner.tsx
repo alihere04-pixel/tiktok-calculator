@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { createMonitoringConfig, getAnalyticsConfig } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
@@ -26,25 +28,27 @@ import { useAnalyticsConsent } from './useAnalyticsConsent';
  * than on a simulated keypress.
  *
  * This is a page region, not a modal: it does not trap focus and does not block
- * the calculator, so `role="region"` with a label is honest. It is also rendered
- * as the first thing in `<body>` so it comes early in the tab order rather than
- * after the whole calculator.
+ * the calculator, so `role="region"` with a label is honest. It renders into a
+ * placeholder at the top of `<body>` so it comes early in the tab order.
  */
 export function ConsentBanner() {
   const { analytics } = createMonitoringConfig(getAnalyticsConfig());
-
   const { consent, decide } = useAnalyticsConsent();
 
-  if (!analytics.enabled) return null;
-  // `pending` means this is the server-rendered or pre-hydration render.
-  // We return null so the consent question is never part of the server-rendered
-  // HTML. After hydration, the status becomes 'unknown' (fresh visitor) or
-  // 'accepted'/'declined' (returning visitor).
-  // `unknown` means no decision stored yet. We show the banner for this.
-  // Only hide after an explicit accept/decline.
-  if (consent.status === 'pending' || consent.status === 'accepted' || consent.status === 'declined') return null;
+  // Track client-side mount to avoid SSR mismatch and ensure banner only
+  // renders after hydration into the #consent-banner-root placeholder.
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!analytics.enabled) return null;
+  if (!mounted) return null;
+  // Only show for fresh visitors who have not made a decision.
+  if (consent.status === 'accepted' || consent.status === 'declined') return null;
+
+  const banner = (
     <section
       role="region"
       aria-labelledby="analytics-consent-heading"
@@ -86,4 +90,9 @@ export function ConsentBanner() {
       </div>
     </section>
   );
+
+  const root = typeof document !== 'undefined' ? document.getElementById('consent-banner-root') : null;
+  if (!root) return null;
+
+  return createPortal(banner, root);
 }

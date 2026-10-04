@@ -1,11 +1,9 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import {
-  getAnalyticsConsentServerSnapshot,
   getAnalyticsConsentSnapshot,
-  markHydrated,
   recordAnalyticsConsent,
   subscribeToAnalyticsConsent,
   type AnalyticsConsent,
@@ -15,11 +13,8 @@ import {
 /**
  * The visitor's analytics decision, for this browser.
  *
- * `consent.status` is `'pending'` during server rendering and on the first client
- * render, and becomes `'unknown'`, `'accepted'` or `'declined'` once the real
- * value has been read. That ordering is deliberate: it means neither the tracker
- * nor the consent question can appear in the server-rendered HTML, because at the
- * moment the HTML is produced there is no answer to read.
+ * `consent.status` is `'unknown'` for fresh visitors, `'accepted'` or `'declined'`
+ * for returning visitors who have made a choice.
  *
  * `useSyncExternalStore` is the right primitive here rather than reading storage
  * during render or setting state in an effect. Reading during render would let
@@ -39,12 +34,8 @@ export function useAnalyticsConsent(): {
   const consent = useSyncExternalStore(
     subscribeToAnalyticsConsent,
     getAnalyticsConsentSnapshot,
-    getAnalyticsConsentServerSnapshot
+    getAnalyticsConsentSnapshot
   );
-
-  useLayoutEffect(() => {
-    markHydrated();
-  }, []);
 
   const decide = useCallback((choice: AnalyticsConsent) => {
     recordAnalyticsConsent(choice);

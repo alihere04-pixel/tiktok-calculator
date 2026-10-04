@@ -3,9 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   ANALYTICS_CONSENT_KEY,
   analyticsPermitted,
-  getAnalyticsConsentServerSnapshot,
   getAnalyticsConsentSnapshot,
-  markHydrated,
   readAnalyticsConsent,
   recordAnalyticsConsent,
   subscribeToAnalyticsConsent,
@@ -115,29 +113,16 @@ describe('the store React subscribes to', () => {
     vi.resetModules();
   });
 
-  it('reports pending on the server, so no decision is ever assumed', () => {
-    expect(getAnalyticsConsentServerSnapshot().status).toBe('pending');
-  });
-
-  it('returns a stable server snapshot, which useSyncExternalStore requires', () => {
-    // A fresh object each call would compare unequal by Object.is and re-render
-    // forever.
-    expect(getAnalyticsConsentServerSnapshot()).toBe(getAnalyticsConsentServerSnapshot());
-  });
-
   it('reports unknown when nothing is stored', () => {
-    markHydrated();
     expect(getAnalyticsConsentSnapshot().status).toBe('unknown');
   });
 
   it('returns a stable snapshot while the answer does not change', () => {
-    markHydrated();
     const first = getAnalyticsConsentSnapshot();
     expect(getAnalyticsConsentSnapshot()).toBe(first);
   });
 
   it('returns a new snapshot once the answer changes', () => {
-    markHydrated();
     const before = getAnalyticsConsentSnapshot();
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
     expect(getAnalyticsConsentSnapshot()).not.toBe(before);
@@ -145,7 +130,6 @@ describe('the store React subscribes to', () => {
   });
 
   it('ignores a corrupted record rather than treating it as unknown forever', () => {
-    markHydrated();
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'nonsense');
     expect(getAnalyticsConsentSnapshot().status).toBe('unknown');
   });

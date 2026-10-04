@@ -14,10 +14,18 @@ import { ANALYTICS_CONSENT_KEY } from '@/lib/consent/consent';
  * cannot load.
  */
 
-beforeEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  // Create the portal root element that ConsentBanner mounts into.
+  const root = document.createElement('div');
+  root.id = 'consent-banner-root';
+  document.body.appendChild(root);
+});
 afterEach(() => {
   cleanup();
   vi.resetModules();
+  const root = document.getElementById('consent-banner-root');
+  if (root) root.remove();
 });
 
 async function renderBanner(
