@@ -1,23 +1,16 @@
 'use client';
 
 import { createMonitoringConfig, type CreateMonitoringConfigEnv } from '@/lib/monitoring/config';
-import {
-  RUNTIME_ANALYTICS_PROVIDER,
-  RUNTIME_ANALYTICS_DOMAIN,
-  RUNTIME_CONSENT_GATE,
-  RUNTIME_ERROR_DSN,
-} from '@/lib/monitoring/runtime-config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
 
-const PROVIDER = RUNTIME_ANALYTICS_PROVIDER;
-const DOMAIN = RUNTIME_ANALYTICS_DOMAIN?.trim() || null;
-const CONSENT_GATE = RUNTIME_CONSENT_GATE === 'true';
-const DSN = RUNTIME_ERROR_DSN?.trim() || null;
-
-const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: DSN };
-
-const { analytics } = createMonitoringConfig(env);
+interface ConsentBannerProps {
+  config?: {
+    provider?: string;
+    domain?: string;
+    consentGate?: string;
+  };
+}
 
 /**
  * Real user consent for analytics.
@@ -45,7 +38,15 @@ const { analytics } = createMonitoringConfig(env);
  * as the first thing in `<body>` so it comes early in the tab order rather than
  * after the whole calculator.
  */
-export function ConsentBanner() {
+export function ConsentBanner({ config }: ConsentBannerProps) {
+  const PROVIDER = config?.provider ?? 'none';
+  const DOMAIN = (config?.domain ?? '').trim() || null;
+  const CONSENT_GATE = config?.consentGate === 'true';
+
+  const env: CreateMonitoringConfigEnv = { provider: PROVIDER, domain: DOMAIN, consentGate: CONSENT_GATE, dsn: null };
+
+  const { analytics } = createMonitoringConfig(env);
+
   const { consent, decide } = useAnalyticsConsent();
 
   if (!analytics.enabled) return null;

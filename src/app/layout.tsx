@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   },
 };
 
+const analyticsConfig = {
+  provider: process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER ?? 'none',
+  domain: process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN ?? '',
+  consentGate: process.env.NEXT_PUBLIC_CONSENT_GATE ?? 'false',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -27,10 +33,10 @@ export default function RootLayout({
         {/* First in the body so the consent question is reached early in the tab
             order. Renders nothing unless analytics is configured, and asks
             nothing until it is. */}
-        <ConsentBanner />
+        <ConsentBanner config={analyticsConfig} />
         {children}
         <Footer />
-        <AnalyticsGate />
+        <AnalyticsGate config={analyticsConfig} />
       </body>
     </html>
   );

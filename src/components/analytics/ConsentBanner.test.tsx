@@ -17,27 +17,18 @@ import { ANALYTICS_CONSENT_KEY } from '@/lib/consent/consent';
 beforeEach(() => localStorage.clear());
 afterEach(() => {
   cleanup();
-  vi.unstubAllEnvs();
   vi.resetModules();
 });
 
 async function renderBanner(
-  runtimeConfig: {
+  config: {
     provider?: string;
     domain?: string;
     consentGate?: string;
-    errorDsn?: string;
   } = {}
 ) {
-  vi.doMock('@/lib/monitoring/runtime-config', () => ({
-    RUNTIME_ANALYTICS_PROVIDER: runtimeConfig.provider ?? 'none',
-    RUNTIME_ANALYTICS_DOMAIN: runtimeConfig.domain ?? '',
-    RUNTIME_CONSENT_GATE: runtimeConfig.consentGate ?? 'false',
-    RUNTIME_ERROR_DSN: runtimeConfig.errorDsn ?? '',
-  }));
-
   const mod = await import('./ConsentBanner');
-  return render(<mod.ConsentBanner />);
+  return render(<mod.ConsentBanner config={config} />);
 }
 
 describe('while analytics is off', () => {
@@ -48,7 +39,6 @@ describe('while analytics is off', () => {
       provider: '',
       domain: '',
       consentGate: '',
-      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -58,7 +48,6 @@ describe('while analytics is off', () => {
       provider: 'vercel',
       domain: '',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -68,7 +57,6 @@ describe('while analytics is off', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'false',
-      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -80,7 +68,6 @@ describe('while analytics is configured but nobody has chosen', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     expect(screen.getByRole('region', { name: /can we use analytics/i })).toBeTruthy();
@@ -93,7 +80,6 @@ describe('while analytics is configured but nobody has chosen', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(localStorage.getItem(ANALYTICS_CONSENT_KEY)).toBeNull();
   });
@@ -104,7 +90,6 @@ describe('while analytics is configured but nobody has chosen', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     const region = screen.getByRole('region', { name: /can we use analytics/i });
@@ -121,7 +106,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     fireEvent.click(screen.getByRole('button', { name: /decline/i }));
@@ -135,7 +119,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     fireEvent.click(screen.getByRole('button', { name: /accept analytics/i }));
@@ -149,7 +132,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     fireEvent.click(screen.getByRole('button', { name: /decline/i }));
     unmount();
@@ -158,7 +140,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -168,7 +149,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     fireEvent.click(screen.getByRole('button', { name: /accept analytics/i }));
     unmount();
@@ -177,7 +157,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(screen.queryByRole('region', { name: /can we use analytics/i })).toBeNull();
   });
@@ -188,7 +167,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'not-a-choice');
     unmount();
@@ -197,7 +175,6 @@ describe('answering the question', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(screen.getByRole('region', { name: /can we use analytics/i })).toBeTruthy();
   });
@@ -211,7 +188,6 @@ describe('keyboard access', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });
@@ -228,7 +204,6 @@ describe('keyboard access', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });
@@ -251,7 +226,6 @@ describe('keyboard access', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
 
     const accept = screen.getByRole('button', { name: /accept analytics/i });

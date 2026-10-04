@@ -47,28 +47,19 @@ function resetSdk() {
 beforeEach(resetSdk);
 afterEach(() => {
   cleanup();
-  vi.unstubAllEnvs();
   vi.resetModules();
   resetSdk();
 });
 
 async function renderGate(
-  runtimeConfig: {
+  config: {
     provider?: string;
     domain?: string;
     consentGate?: string;
-    errorDsn?: string;
   } = {}
 ) {
-  vi.doMock('@/lib/monitoring/runtime-config', () => ({
-    RUNTIME_ANALYTICS_PROVIDER: runtimeConfig.provider ?? 'none',
-    RUNTIME_ANALYTICS_DOMAIN: runtimeConfig.domain ?? '',
-    RUNTIME_CONSENT_GATE: runtimeConfig.consentGate ?? 'false',
-    RUNTIME_ERROR_DSN: runtimeConfig.errorDsn ?? '',
-  }));
-
   const mod = await import('./AnalyticsGate');
-  return render(<mod.AnalyticsGate />);
+  return render(<mod.AnalyticsGate config={config} />);
 }
 
 describe('AnalyticsGate', () => {
@@ -80,7 +71,6 @@ describe('AnalyticsGate', () => {
       provider: '',
       domain: '',
       consentGate: '',
-      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -92,7 +82,6 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'false',
-      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -103,7 +92,6 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: '',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -117,7 +105,6 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -127,10 +114,13 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
-    await renderGate({});
+    await renderGate({
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+    });
     expect(trackerScripts()).toHaveLength(0);
   });
 
@@ -141,10 +131,13 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'declined');
-    await renderGate({});
+    await renderGate({
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+    });
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });
 
@@ -159,10 +152,13 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     localStorage.setItem(ANALYTICS_CONSENT_KEY, 'accepted');
-    await renderGate({});
+    await renderGate({
+      provider: 'vercel',
+      domain: 'analytics.example.com',
+      consentGate: 'true',
+    });
     expect(trackerScripts()).toHaveLength(1);
   });
 
@@ -174,7 +170,6 @@ describe('AnalyticsGate', () => {
       provider: 'plausible',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(trackerScripts()).toHaveLength(0);
   });
@@ -187,7 +182,6 @@ describe('AnalyticsGate', () => {
       provider: 'vercel',
       domain: 'analytics.example.com',
       consentGate: 'true',
-      errorDsn: '',
     });
     expect(localStorage.getItem('__va_attribution')).toBeNull();
   });
