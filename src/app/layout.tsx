@@ -5,6 +5,7 @@ import "./globals.css";
 import { AnalyticsGate } from "@/components/analytics/AnalyticsGate";
 import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { Footer } from "@/components/layout/Footer";
+import "@/lib/force-rebuild";
 
 export default function RootLayout({
   children,
