@@ -20,13 +20,7 @@ The formula is simple. Getting every variable right is the hard part.
 
 ```
 Real Profit = Selling Price
-  − Seller Discount
-  − Platform Discount
-  − Category Commission Fee
-  − Transaction Fee
-  − Fixed/Per-Order Fees
-  − Affiliate/Creator Commission
-  − Refund Administration Fee (US only)
+  − Platform Fees (commission, transaction, fixed, affiliate)
   − Cost of Goods (COGS)
   − Outbound Shipping Cost
   − Ad Spend per Unit (CPA)
@@ -35,21 +29,32 @@ Real Profit = Selling Price
 
 Every line above is a real cost. Skip any of them, and your margin is fiction.
 
+Two things that surprise people, and that we model the way TikTok actually bills:
+
+- **Money a buyer pays for shipping is not your revenue.** You collect it and pass it to the carrier. Our calculator counts it as a cost on the commission base (in some markets) but never as income.
+- **A platform-funded discount is not your revenue either.** It reduces what the buyer pays, and TikTok funds the difference.
+
 ---
 
 ## Every Fee You Must Account For (7 Categories)
 
-| Fee Type | Who Pays | When It Applies | Typical Range |
-|----------|----------|-----------------|---------------|
-| **Category Commission** | Seller | Every sale | 3–18% depending on market & category |
-| **Transaction Fee** | Seller | Every sale | ~1.5–3% + fixed amount |
-| **Fixed/Per-Order Fees** | Seller | Every order | $0.10–$1.50 per order |
-| **Affiliate/Creator Commission** | Seller | When enabled | 5–20% of net selling price |
-| **Refund Admin Fee** | Seller | US refunds only | 20% of referral fee, capped at $5 |
-| **Seller Discount** | Seller | When you run a sale | Your choice (reduces commission base) |
-| **Platform Discount** | TikTok | Promotional vouchers | TikTok-funded (reduces their cut only) |
+| Fee Type | Who Pays | When It Applies | Actual Range (2026) |
+|----------|----------|-----------------|---------------------|
+| **Category Commission** | Seller | Every sale | 4.36% – 17.82% depending on market & category |
+| **Transaction Fee** | Seller | MY, SG, PH only | 2.24% – 3.78%. None in US or UK |
+| **Fixed / Per-Order Fees** | Seller | MY and PH only | RM 0.54/order (MY). None in US, UK, SG |
+| **Affiliate/Creator Commission** | Seller | When enabled | Rate you set in Seller Center (we allow 0–80%) |
+| **Refund Administration Fee** | Seller | US only | 20% of referral fee, capped $5/SKU |
+| **Seller Discount** | Seller | When you run a sale | Your choice (reduces the commission base) |
+| **Platform Discount** | TikTok | Promotional vouchers | TikTok-funded (not your revenue) |
 
-**Key insight:** Commission is calculated on the **net selling price** (after seller discount, before platform discount). Platform discounts lower TikTok's cut but not your cost basis—so they actually *improve* your margin.
+**Key insight:** the commission base is **not** the same in every market, and this is where manual estimates go wrong:
+
+- **US, UK** — base = (selling price − your discount) **+ customer shipping + platform discount**
+- **SG** — base = (selling price − your discount) **+ customer shipping**
+- **MY, PH** — base = selling price − your discount. Customer shipping is *excluded*.
+
+So a US or UK seller who charges a buyer $5 for shipping is charged commission on $5 more than a Malaysian or Philippine seller would be for the identical charge.
 
 ---
 
@@ -58,19 +63,19 @@ Every line above is a real cost. Skip any of them, and your margin is fiction.
 Commission isn't one number. It varies by:
 
 1. **Market** — US, UK, Malaysia, Singapore, Philippines each have different rate cards
-2. **Category** — Beauty pays 5–9%; Electronics pays 3–6%; Jewelry pays 3–5%
-3. **Seller Tier** — Malaysia & Singapore have BXP/Standard tiers with different rates
-4. **Promotions** — New seller promos can drop rates by 1–3 percentage points
+2. **Category** — in the US, 185 of 202 categories sit at 6% and 17 sit at 5% (Jewelry and Pre-Owned). In the UK, 217 categories pay 9% and 129 pay 5% (Phones & Electronics, Computers & Office, most Beauty, Pre-Owned)
+3. **Seller Tier** — Malaysia and Singapore have BXP / non-BXP and programme tiers with different rates; the Philippines has Marketplace vs Mall
+4. **Sales thresholds** — 16 US categories (Collectibles and Pre-Owned) charge the normal rate on your first $10,000 in sales, then only 3% on the portion above it
 
 ### Market Quick Reference (2026)
 
-| Market | Currency | Avg Commission Range | Rate Source |
-|--------|----------|---------------------|-------------|
-| **US** | USD | 5–6% | [Seller Center US](https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682) |
-| **UK** | GBP | 5–9% | [Seller Center UK](https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897) |
-| **Malaysia** | MYR | 7–18% (tiered) | [Seller Center MY](https://seller-my.tiktok.com/university/essay?knowledge_id=6907739532281602) |
-| **Singapore** | SGD | 4–8% (tiered) | [Seller Center SG](https://seller-sg.tiktok.com/university/essay?knowledge_id=2161524467910401) |
-| **Philippines** | PHP | 5–7.3% (tiered) | [Seller Center PH](https://seller-ph.tiktok.com/university/essay?knowledge_id=3157977859229442) |
+| Market | Currency | Commission Range | Structure | Rate Source |
+|--------|----------|------------------|-----------|-------------|
+| **US** | USD | 5.00% – 6.00% | Flat, no seller tiers | [Seller Center US](https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682) |
+| **UK** | GBP | 5.00% – 9.00% | Flat, VAT inclusive | [Seller Center UK](https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897) |
+| **Malaysia** | MYR | 7.02% – 17.82% | BXP / non-BXP × Marketplace / Mall | [Seller Center MY](https://seller-my.tiktok.com/university/essay?knowledge_id=6907739532281602) |
+| **Singapore** | SGD | 4.36% – 8.175% | standard / BXP / BXP-restricted / BXP-mixed | [Seller Center SG](https://seller-sg.tiktok.com/university/essay?knowledge_id=2161524467910401) |
+| **Philippines** | PHP | 5.00% – 7.30% Marketplace, 5.00% – 8.70% Mall | Marketplace / Mall | [Seller Center PH](https://seller-ph.tiktok.com/university/essay?knowledge_id=3157977859229442) |
 
 > **Pro tip:** Our [category rate pages](/us/tiktok-shop-fees) show every single category with verified rates, confidence levels, and source dates. Bookmark your market's page.
 
@@ -78,24 +83,32 @@ Commission isn't one number. It varies by:
 
 ## Hidden Costs Most Sellers Miss
 
-### 1. Customer Shipping ≠ Your Shipping Cost
-In **US**: Customer shipping is *excluded* from commission base.  
-In **UK, SG, MY, PH**: Customer shipping is *included* in commission base.  
-This means a £5 shipping charge in the UK adds £0.45 (9%) to your commission bill.
+### 1. Customer Shipping Changes Your Commission Base
+In **US, UK, SG**: customer shipping is **included** in the commission base.  
+In **MY, PH**: customer shipping is **excluded**.  
+A $5 shipping charge in the UK therefore adds commission on that $5. The same charge in the Philippines does not.
 
 ### 2. Affiliate Commission Compounds
-If you enable Open Collaboration at 15% and a creator sells your $50 product:
-- Commission base = $50 (or net after seller discount)
-- Affiliate fee = $7.50
-- *Then* TikTok takes their 6% commission on the *same* $50
-- You pay both. They stack.
+Affiliate commission is charged on **selling price minus your discount** — in every market. On top of that, TikTok's own commission still applies, and in US/UK/SG that commission base also includes customer shipping.
+
+If you enable Open Collaboration at 15% on a $50 product:
+- Affiliate fee = 15% × ($50 − your discount)
+- TikTok commission = its rate × (($50 − your discount) + customer shipping [+ platform discount in US/UK])
+
+You pay both. They stack. The 15% above is an example rate you choose in Seller Center, not a published TikTok rate — our calculator lets you enter 0–80%.
 
 ### 3. Refund Administration Fee (US Only)
-US sellers pay a refund admin fee: **20% of the referral fee, capped at $5 per SKU**.  
-At a 5% return rate on a $50 item with 6% commission: that's $0.30 per unit sold—whether it's returned or not.
+US sellers pay a refund admin fee: **20% of the referral fee, capped at $5 per SKU** (effective 15 May 2025).  
+At a 5% return rate on a $52.50 commission base: that's about $0.03 per unit sold — charged whether or not you keep the sale.
 
-### 4. New Seller Promo Expiry
-Promotional rates (e.g., 1.8% for 90 days) expire. Your margin *will* drop when they do. Model both promo and standard rates.
+### 4. New Seller Promotions Are Not Published Rates
+Be careful here, because this is widely misquoted:
+
+- **US** — our rate data carries a promotional rate of **1.8%**, but TikTok does not publish it, so we label it *needs verification* internally. Model it, but do not plan around it.
+- **UK** — a new seller promotion exists within **45 days of onboarding**, conditional on completing the required **Seller Missions**. The exact rate is not published. Our data holds a 0% row at medium confidence, and our calculator **deliberately does not charge 0%** — pricing a fee at zero would overstate your profit, so it shows the standard rate and flags the promotion as unpriced.
+- **MY, SG, PH** — no new seller promotion appears in our current rate data.
+
+When a promo ends, your margin drops. Model the standard rate as your real cost and treat the promo as upside.
 
 ---
 
@@ -123,29 +136,31 @@ The result panel shows:
 
 ---
 
-## Example Calculation: $50 Beauty Product (US Market)
+## Example Calculation: $50 Product (US Market, 6% Category)
 
 | Component | Amount | Notes |
 |-----------|--------|-------|
 | Selling Price | $50.00 | Listed price |
 | Seller Discount | −$5.00 | 10% off sale |
-| Platform Discount | −$3.00 | TikTok voucher |
-| **Net Commission Base** | **$45.00** | Price − Seller Discount |
-| Category Commission (6%) | −$2.70 | Beauty category |
-| Transaction Fee (1.8% + $0.30) | −$1.11 | On $47 net |
-| Fixed Fee | −$0.30 | Per-order |
+| Platform Discount | −$3.00 | TikTok-funded voucher |
+| Customer Shipping charged to buyer | $4.50 | Pass-through, not your revenue |
+| **Commission Base** | **$52.50** | ($50 − $5) + $4.50 + $3.00 |
+| Referral Fee (6%) | −$3.15 | Charged on the $52.50 base |
+| Transaction Fee | $0.00 | **The US has no separate transaction fee** |
+| Fixed / Platform Support Fee | $0.00 | **The US has no per-order platform fee** |
 | Affiliate (None) | $0.00 | |
-| Refund Admin Fee (5% return rate) | −$0.14 | 20% of $2.70 × 5% |
-| **Total Platform Fees** | **−$4.25** | |
+| Refund Admin Fee (5% return rate) | −$0.03 | 5% × (20% × $3.15) |
+| **Total Platform Fees** | **−$3.18** | |
 | COGS | −$18.00 | Landed cost |
 | Outbound Shipping | −$4.50 | Your cost to ship |
 | Ad Spend (CPA) | −$3.00 | Blended cost per sale |
-| **Total Costs** | **−$29.75** | |
-| **Net Profit** | **$20.25** | |
-| **Profit Margin** | **40.5%** | Profit ÷ Selling Price |
+| **Net Profit** | **$21.32** | |
+| **Profit Margin** | **42.6%** | Profit ÷ Selling Price |
 
-**Without the calculator**, a seller might see: $50 − $18 (COGS) − $4.50 (shipping) = $27.50 "profit."  
-**Real profit: $20.25.** That's a **26% overestimation**.
+Two things this table shows that a mental estimate never would:
+
+1. **Your effective take rate (6.36%) is higher than the headline 6%**, because customer shipping and the platform discount both sit inside the commission base.
+2. **A naive estimate overstates profit by $6.18.** Subtracting only COGS and shipping gives $27.50. Real profit is $21.32 — a **22% overestimation**.
 
 ---
 
@@ -153,11 +168,12 @@ The result panel shows:
 
 | Mistake | Impact | Fix |
 |---------|--------|-----|
-| Using headline commission only | Misses tiered rates, promos, exceptions | Check your exact category on [market fee page](/us/tiktok-shop-fees) |
-| Ignoring transaction fees | Loses 1.5–3% + fixed per sale | Always include in calculator |
-| Forgetting affiliate fees | 5–20% surprise deduction | Model affiliate *before* launching campaigns |
-| Not modeling promo expiry | Margin drops 1–3 pp unexpectedly | Calculate both promo & standard rates |
-| Treating customer shipping as free money | In 4/5 markets, it raises commission base | Enter customer shipping in calculator |
+| Using headline commission only | Misses tiered rates, thresholds, exceptions | Check your exact category on [market fee page](/us/tiktok-shop-fees) |
+| Ignoring transaction fees | Up to 3.78% extra in MY, SG, PH | Always include in calculator |
+| Assuming a fixed fee exists everywhere | Only MY (RM 0.54) and PH (PHP 5) have one | Check per market — US and UK have none |
+| Forgetting affiliate fees | Doubles your fee load when creators are on | Model affiliate *before* launching campaigns |
+| Treating a promo rate as permanent | Margin jumps the day it ends | Calculate the standard rate as your baseline |
+| Getting the shipping base backwards | Wrong commission in every market | US/UK/SG include it, MY/PH do not |
 | Using markup instead of margin | $50 cost + 50% markup = $75 price → 33% margin | Target margin, back-calculate price |
 
 ---
@@ -174,8 +190,8 @@ Stop guessing. The [TikTok Shop Profit Calculator](/)'s free, uses verified 2026
 
 ### Related Resources
 
-- [US TikTok Shop Seller Fees 2026](/us/tiktok-shop-fees) — 202 verified category rates
+- [US TikTok Shop Seller Fees 2026](/us/tiktok-shop-fees) — 202 category rates
 - [UK TikTok Shop Seller Fees 2026](/uk/tiktok-shop-fees) — 347 categories with searchable table
 - [Malaysia TikTok Shop Seller Fees 2026](/my/tiktok-shop-fees) — BXP/Non-BXP tier breakdown
-- [Singapore TikTok Shop Seller Fees 2026](/sg/tiktok-shop-fees) — 4 BXP tiers
+- [Singapore TikTok Shop Seller Fees 2026](/sg/tiktok-shop-fees) — 4 BXP programmes
 - [Philippines TikTok Shop Seller Fees 2026](/ph/tiktok-shop-fees) — Marketplace vs Mall tiers
