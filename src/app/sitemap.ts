@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site/config';
 import { SEO_MARKETS } from '@/lib/seo/market-pages';
 import { LEGAL_SLUGS } from '@/lib/legal/content';
+import { getAllBlogPosts } from '@/lib/blog';
 
 /**
  * Sitemap covering every indexable page.
@@ -17,6 +18,8 @@ import { LEGAL_SLUGS } from '@/lib/legal/content';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
+
+  const blogPosts = getAllBlogPosts();
 
   return [
     {
@@ -36,6 +39,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'yearly' as const,
       priority: 0.2,
+    })),
+    ...blogPosts.map((post) => ({
+      url: absoluteUrl(`/blog/${post.slug}`),
+      lastModified: new Date(post.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
     })),
   ];
 }

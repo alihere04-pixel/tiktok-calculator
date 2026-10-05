@@ -3,6 +3,7 @@ import sitemap from './sitemap';
 import robots from './robots';
 import { SEO_MARKETS } from '@/lib/seo/market-pages';
 import { LEGAL_SLUGS } from '@/lib/legal/content';
+import { getAllBlogPosts } from '@/lib/blog';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -24,9 +25,9 @@ describe('sitemap', () => {
 
   it('derives its entries from the route sources, so nothing can drift', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
-    // 1 home + 5 markets + 3 legal. If a market or legal page is added, this
-    // fails and the sitemap is fixed by editing the source, not the sitemap.
-    expect(sitemap()).toHaveLength(1 + SEO_MARKETS.length + LEGAL_SLUGS.length);
+    const blogPosts = getAllBlogPosts();
+    // 1 home + 5 markets + 3 legal + blog posts.
+    expect(sitemap()).toHaveLength(1 + SEO_MARKETS.length + LEGAL_SLUGS.length + blogPosts.length);
   });
 
   it('emits no duplicate URLs', () => {
