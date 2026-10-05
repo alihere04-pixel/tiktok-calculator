@@ -1,7 +1,8 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { generateMetadata } from './page';
+import { getAllBlogPosts } from '@/lib/blog';
 
-const SLUG = 'how-to-calculate-tiktok-shop-profit';
+const posts = getAllBlogPosts();
 
 async function metadataFor(slug: string) {
   return generateMetadata({ params: Promise.resolve({ slug }) });
@@ -12,30 +13,62 @@ afterEach(() => {
 });
 
 describe('blog post metadata', () => {
-  it('builds an absolute canonical URL from the configured site URL', async () => {
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
-
-    const meta = await metadataFor(SLUG);
-
-    expect(meta.alternates?.canonical).toBe(`https://fynza.store/blog/${SLUG}`);
+  it('has at least one published post to check', () => {
+    expect(posts.length).toBeGreaterThan(0);
   });
 
-  it('points openGraph and JSON-LD URLs at the configured site URL', async () => {
+  it.each(posts.map((post) => [post.slug, post.title] as const))(
+    'builds an absolute canonical URL for %s',
+    async (slug) => {
+      vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
+
+      const meta = await metadataFor(slug);
+
+      expect(meta.alternates?.canonical).toBe(`https://fynza.store/blog/${slug}`);
+    },
+  );
+
+  it.each(posts.map((post) => [post.slug] as const))(
+    'points openGraph and JSON-LD URLs at the configured site URL for %s',
+    async (slug) => {
+      vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
+
+      const meta = await metadataFor(slug);
+
+      expect(meta.openGraph?.url).toBe(`https://fynza.store/blog/${slug}`);
+    },
+  );
+
+  it.each(posts.map((post) => [post.slug] as const))(
+    'never hardcodes a domain that differs from the configured site URL in %s',
+    async (slug) => {
+      vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
+
+      const meta = await metadataFor(slug);
+      const serialised = JSON.stringify(meta);
+
+      expect(serialised).not.toContain('vercel.app');
+      expect(serialised).not.toContain('localhost');
+    },
+  );
+
+  it('uses the requested SEO title for the fee calculator post', async () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
 
-    const meta = await metadataFor(SLUG);
+    const post = posts.find((p) => p.slug === 'tiktok-shop-fee-calculator-2026');
 
-    expect(meta.openGraph?.url).toBe(`https://fynza.store/blog/${SLUG}`);
+    expect(post).toBeDefined();
+    expect(post?.title).toBe(
+      'TikTok Shop Fee Calculator 2026: Free Tool + All Market Rates',
+    );
+    expect(post?.h1).toBe('TikTok Shop Fee Calculator 2026 — All 5 Markets');
   });
 
-  it('never hardcodes a domain that differs from the configured site URL', async () => {
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fynza.store');
+  it('falls back to the title when a post has no separate h1', () => {
+    const post = posts.find((p) => p.slug === 'how-to-calculate-tiktok-shop-profit');
 
-    const meta = await metadataFor(SLUG);
-    const serialised = JSON.stringify(meta);
-
-    expect(serialised).not.toContain('vercel.app');
-    expect(serialised).not.toContain('localhost');
+    expect(post?.h1).toBeUndefined();
+    expect(post?.title).toBe('How to Calculate TikTok Shop Profit: Complete 2026 Guide');
   });
 
   it('returns empty metadata for an unknown slug', async () => {

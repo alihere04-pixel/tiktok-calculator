@@ -11,6 +11,11 @@ export interface BlogPostMeta {
   date: string;
   keywords?: string[];
   ogImage?: string;
+  /**
+   * Optional on-page heading, when it should read differently from the SEO
+   * title. Falls back to `title` so existing posts need no change.
+   */
+  h1?: string;
 }
 
 export interface BlogPost extends BlogPostMeta {
@@ -43,6 +48,7 @@ export function getBlogPostBySlug(slug: string): BlogPost | null {
     date: data.date,
     keywords: data.keywords,
     ogImage: data.ogImage,
+    h1: data.h1,
     content,
   };
 }
@@ -61,5 +67,6 @@ export function getAllBlogPosts(): BlogPostMeta[] {
     date: post.date,
     keywords: post.keywords,
     ogImage: post.ogImage,
+    h1: post.h1,
   }));
 }
