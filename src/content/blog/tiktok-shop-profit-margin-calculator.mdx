@@ -1,0 +1,249 @@
+---
+title: "TikTok Shop Profit Margin Calculator: Find Your Break-Even Price"
+description: "Calculate exact profit margins and break-even prices for TikTok Shop. Reverse calculator: enter target profit → get required price. Free tool with 2026 fee data."
+h1: "TikTok Shop Profit Margin Calculator: Reverse-Engineer Your Price"
+date: "2026-10-06"
+keywords: ["TikTok Shop profit margin calculator", "TikTok Shop break-even price", "reverse profit calculator", "TikTok Shop margin by category", "TikTok Shop ROAS target"]
+ogImage: "/og-blog-tiktok-shop-profit-margin-calculator.png"
+---
+
+Most sellers can tell you their cost and their price. Far fewer can tell you their **profit margin** — and the gap between those two numbers is where margins quietly die.
+
+A 50% markup sounds healthy. But 50% markup on a $50 cost is a $75 price and a **33.3% gross margin**. The moment TikTok's fees land on that price, 33% starts shrinking fast.
+
+This post is about flipping the question. Instead of "what will I make at this price?", ask **"what price do I need to hit my target margin?"** That is what the reverse calculator in our [TikTok Shop Profit Margin Calculator](/) does — and every number below comes from running the actual calculation engines, not from estimates.
+
+---
+
+## 1. Why Margin > Markup (And How to Calculate Both)
+
+**Markup** is measured against your cost. **Margin** is measured against your price.
+
+| Concept | Formula | $50 cost, $75 price |
+|---------|---------|--------------------|
+| Markup | (Price − Cost) ÷ Cost | **50%** |
+| Margin | (Price − Cost) ÷ Price | **33.3%** |
+
+Same deal, two flattering numbers. The one that matters is margin, because every fee on TikTok Shop is a percentage **of your price**, not of your cost. That single fact is why margin erodes faster than markup suggests.
+
+The calculator reports three separate numbers, and mixing them up is the most common modelling error:
+
+- **Effective take rate** — total platform fees ÷ selling price. What TikTok takes.
+- **Contribution margin** — price − *variable* fees − COGS − outbound shipping. Excludes ad spend, so it tells you whether a product is worth advertising at all.
+- **Profit margin** — after ad spend too. What actually lands in your account.
+
+Using the worked example below: effective take **6.36%**, contribution margin **48.6%**, profit margin **42.6%**. Three different answers to "how much am I keeping?", and only the last one is real.
+
+---
+
+## 2. The Reverse Calculator: Target Profit → Required Price
+
+Forward calculation answers "what do I make at $50?". Reverse calculation answers "what do I charge to make $5?"
+
+Most "reverse" tools just divide your target by (1 − fee rate). That is wrong on TikTok Shop, because the fee base is not always the price — in the US and UK it also includes customer shipping and any platform-funded discount.
+
+Our reverse calculator does it properly. It **re-runs the full market engine at each candidate price** and searches for the price where profit equals your target. Every fee recalculates at every step, including tiered thresholds and per-order fees.
+
+### Worked example — US, 6% category
+
+Inputs: price setup at $50, $5 seller discount, $3 platform discount, $4.50 customer shipping, $18 COGS, $4.50 outbound shipping, $3 CPA, 5% return rate.
+
+| Reverse question | Answer |
+|------------------|--------|
+| Minimum price to avoid losing money (break-even) | **$27.31** |
+| Price to make $5 per unit | **$32.63** |
+| Price to make $10 per unit | **$37.95** |
+| Price to make $20 per unit | **$48.60** |
+
+Note the shape of that table: the gap between break-even and your $5 target is **$5.32**, but between $10 and $20 it is only **$10.65**. Fixed costs get diluted by a bigger price, so the **percentage** margin improves as you charge more, even though the absolute profit climbs linearly.
+
+### Break-even is not your cost total
+
+A common shortcut is "break-even = cost + fees". Also wrong. Break-even is the price where **profit = 0 after every fee is charged at that price** — and fees at $27.31 are not the same dollar amount as fees at $50.
+
+Our engine handles this deliberately: a zero target is not short-circuited to your cost total, it is answered by the same price search as any other target. If your target is genuinely unreachable, the tool says so explicitly instead of showing a fake price.
+
+---
+
+## 3. Break-Even Analysis: When Do You Start Making Money?
+
+Break-even price is the lowest price at which a single sale does not lose you money. It is your floor — the number to check before you accept any offer, run any voucher, or enter any campaign.
+
+Here is break-even for **the identical product**: $30 price, $12 COGS, $4.50 outbound shipping, across every market and tier our rate data covers:
+
+| Market / tier | Total fees at $30 | Break-even price | Headroom at $30 |
+|---------------|------------------|------------------|-----------------|
+| UK — Electronics (5%) | $1.50 | **$17.37** | $12.63 |
+| US — standard category (6%) | $1.80 | **$17.55** | $12.45 |
+| PH — Marketplace, Pre-Owned Fashion | $2.17 | **$17.79** | $12.21 |
+| SG — BXP Electronics | $2.62 | **$18.08** | $11.92 |
+| PH — Mall, Motorcycle Accessories | $3.28 | **$18.52** | $11.48 |
+| MY — Electronics, BXP Marketplace | $3.78 | **$19.10** | $10.90 |
+| MY — Electronics, non-BXP Marketplace | $5.07 | **$20.08** | $9.92 |
+| MY — Toys, non-BXP Mall | $7.02 | **$21.73** | $8.27 |
+
+Same product, same costs, **break-even between $17.37 and $21.73** — a 25% spread decided entirely by market and seller tier.
+
+Headroom is what protects you. At $21.73 break-even you can afford roughly **$8.27 of mistakes** before a sale turns negative: a discount you did not model, a return spike, a shipping surcharge. At $17.37 you have $12.63 of cushion.
+
+**Cheap items are the fragile ones.** Break-even includes fixed per-order fees that do not shrink with price — Malaysia's RM 0.54 platform support fee is about 1.8% of a $30 order but nearly 3% of a $18 order. The same fixed cost is a much bigger share of a cheap sale.
+
+---
+
+## 4. Monthly Projection: Units × Margin = Income
+
+Per-unit profit is a hypothesis. Units sold is the variable that decides whether it matters.
+
+Our projection is deliberately simple and straight-line:
+
+```
+GMV          = units × selling price
+Total fees   = units × platform fees per unit
+Total profit = units × net profit per unit
+```
+
+Using the $50 US example above ($21.32 per unit, $3.18 in fees):
+
+| Units / month | GMV | Total fees | Total profit | Avg profit / unit |
+|---------------|-----|-----------|--------------|-------------------|
+| 500 | $25,000 | $1,590 | **$10,660** | $21.32 |
+| 1,000 | $50,000 | $3,180 | **$21,320** | $21.32 |
+| 2,500 | $125,000 | $7,950 | **$53,300** | $21.32 |
+
+Average profit per unit stays flat because nothing in the model changes with volume. That is also the limitation: this projection does **not** model seasonality, ad budget changes, stock limits, or the fact that a new seller promotion may expire mid-month. Treat it as a straight line, then stress it with the next section.
+
+The number to watch is total fees against total profit. At 500 units you are handing TikTok $1,590 to keep $10,660 — about **13% of gross revenue** before COGS, shipping, and ads.
+
+---
+
+## 5. Sensitivity Analysis: What If Fees Increase?
+
+Rates change. Competitors undercut you. Returns creep up. Your margin should survive all three.
+
+### A one-point fee rise costs exactly one point of margin
+
+When commission is charged on the selling price with no discounts and no shipping, every extra percentage point of commission removes exactly **1 percentage point of margin** — the arithmetic is identical at any price.
+
+| Commission | Margin at $30 | Margin at $50 |
+|------------|--------------|--------------|
+| US standard (6%) | 39.0% | 57.4% |
+| +1 point | 38.0% | 56.4% |
+| +2 points | 37.0% | 55.4% |
+| +3 points | 36.0% | 54.4% |
+
+A 6% category has room. Now apply the same three points to a Malaysian non-BXP Mall category at **17.82%**, where margin is already 21.6%: it falls to 20.6%, 19.6%, 18.6%. High-fee markets have no cushion, and that is where pricing discipline matters most.
+
+### Ad spend is the fastest-moving variable
+
+Each $1 of CPA removes $1 of profit — but as a *percentage*, $1 hurts a $30 item far more than a $50 item. On the $30 product, one extra dollar of CPA is **3.3 points of margin**; on the $50 product it is **2 points**.
+
+### Discounts cut both ways
+
+- A **seller discount** lowers the commission base in every market, so part of your discount is absorbed by lower fees.
+- A **platform discount** does the opposite in the US and UK: it is added *back* into the commission base, so TikTok-funded promotions slightly increase your fee.
+
+This is why running a 10% sale is not simply "price × 0.9". Model it. In our worked example the $3 platform discount plus $4.50 customer shipping pushed a $50 listing onto a **$52.50 commission base** — an effective take of 6.36% rather than 6.00%.
+
+---
+
+## 6. Category-Specific Margin Benchmarks
+
+"Should I sell this?" needs a number. Here is what the same $30 item (COGS $12, shipping $4.50) actually earns in every market and tier, straight from the engines:
+
+| Market / tier | Category | Fees at $30 | Take rate | Net margin | Break-even |
+|---------------|----------|-------------|-----------|------------|------------|
+| UK | Electronics (5%) | $1.50 | 5.00% | **40.0%** | $17.37 |
+| UK | Most categories (9%) | $2.70 | 9.00% | **36.0%** | $18.13 |
+| US | Standard categories (6%) | $1.80 | 6.00% | **39.0%** | $17.55 |
+| PH | Marketplace — Pre-Owned Fashion | $2.17 | 7.23% | **37.8%** | $17.79 |
+| PH | Mall — Motorcycle Accessories | $3.28 | 10.93% | **34.1%** | $18.52 |
+| SG | BXP — Electronics | $2.62 | 8.73% | **36.3%** | $18.08 |
+| SG | Standard — unlisted categories | $3.43 | 11.43% | **33.6%** | $18.63 |
+| MY | Electronics — BXP Marketplace | $3.78 | 12.60% | **32.4%** | $19.10 |
+| MY | Electronics — non-BXP Marketplace | $5.07 | 16.90% | **28.1%** | $20.08 |
+| MY | Toys — non-BXP Mall | $7.02 | 23.40% | **21.6%** | $21.73 |
+
+Three lessons from that table:
+
+1. **Market and tier can matter more than category.** The same Electronics category in Malaysia earns 32.4% as BXP Marketplace and 28.1% as non-BXP Marketplace — the tier alone moves margin more than most category choices do.
+2. **The full spread is 21.6% to 40.0%** — 18.4 percentage points, on an identical product. If you are comparing two markets, compare *total* take, not headline commission.
+3. **Take rate includes every fee.** The Malaysian row is 12.6% take even though commission alone is 7.02%, because the 3.78% transaction fee and RM 0.54 support fee are in there too.
+
+For your own category's exact rate, confidence level, and source date, check the [US category fee page](/us/tiktok-shop-fees) or your market's equivalent.
+
+---
+
+## 7. Advanced: ROAS Targets & Ad Spend Limits
+
+Margin tells you what a sale is worth. ROAS tells you what you can pay to get one.
+
+The relationship is exact. If you want a return of `R` on every dollar of ad spend, your cost per acquisition cannot exceed:
+
+```
+Max CPA = price ÷ R
+```
+
+But you have a second, harder limit. You cannot spend more than the profit the sale generates:
+
+```
+Profit limit = price − platform fees − COGS − outbound shipping
+```
+
+**Your real ceiling is the lower of the two.** On the $50 example (fees $3.18, COGS $18, shipping $4.50):
+
+| Target ROAS | ROAS limit (price ÷ R) | Profit limit | **Binding ceiling** |
+|-------------|------------------------|--------------|---------------------|
+| 2x | $25.00 | $24.32 | **$24.32** (profit) |
+| 3x | $16.67 | $24.32 | **$16.67** (ROAS) |
+| 4x | $12.50 | $24.32 | **$12.50** (ROAS) |
+| 5x | $10.00 | $24.32 | **$10.00** (ROAS) |
+
+Below about 2.4x ROAS you are limited by profit, not by your target. Chasing a low ROAS does not rescue an expensive product — it just spends money faster.
+
+### A realistic check
+
+$50 price, $3.00 fees, $18 COGS, $4.50 shipping, **$8 actual CPA**:
+
+- Net profit **$16.50**, margin **33.0%**, break-even **$32.45**
+- Actual ROAS = 50 ÷ 8 = **6.25x** — comfortably above a 4x target
+- Ceiling at 4x ROAS = **$12.50** — you have **$4.50 per sale** of headroom before you breach it
+
+That $4.50 is your real bidding room. When it is gone, you are one cost increase away from losing money on every order.
+
+### Affiliate fees compound the problem
+
+Add a 15% affiliate rate to that same $50 example and margin collapses from 42.6% to **29.1%** — because the affiliate fee is charged on top of TikTok's commission, not instead of it. Affiliate economics belong in the price, or they quietly consume your ad budget.
+
+---
+
+## 8. Find Your Break-Even Price Now
+
+Stop guessing and work backwards from the number you actually need.
+
+Open the [TikTok Shop Profit Margin Calculator](/), enter your real costs, and let the reverse engine tell you:
+
+- your **break-even price** — the floor below which every sale loses money
+- the **price for any target profit** you set
+- your **max CPA** at any ROAS target
+- your **monthly projection** at realistic volume
+
+Then re-run it in a higher-fee market or tier and see whether the business still works.
+
+**[Open the Profit Margin Calculator →](/)**
+
+Free, no signup, and it runs on the same verified 2026 rate data as our [fee calculator](/blog/tiktok-shop-fee-calculator-2026) and [market fee pages](/us/tiktok-shop-fees).
+
+New to margin math? Start with [how to calculate TikTok Shop profit](/blog/how-to-calculate-tiktok-shop-profit) first — it covers every fee layer in detail.
+
+---
+
+### Related Resources
+
+- [How to Calculate TikTok Shop Profit](/blog/how-to-calculate-tiktok-shop-profit) — the fee-by-fee foundation
+- [TikTok Shop Fee Calculator 2026](/blog/tiktok-shop-fee-calculator-2026) — commission, transaction, and fixed fees by market
+- [US TikTok Shop Seller Fees 2026](/us/tiktok-shop-fees) — 202 category rates with sources
+- [UK TikTok Shop Seller Fees 2026](/uk/tiktok-shop-fees) — 347 categories
+- [Malaysia TikTok Shop Seller Fees 2026](/my/tiktok-shop-fees) — BXP and non-BXP tiers
+- [Singapore TikTok Shop Seller Fees 2026](/sg/tiktok-shop-fees) — 4 BXP programmes
+- [Philippines TikTok Shop Seller Fees 2026](/ph/tiktok-shop-fees) — Marketplace vs Mall
+- [Privacy Policy](/privacy) — How we handle your data
