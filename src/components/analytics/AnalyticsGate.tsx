@@ -1,6 +1,5 @@
 'use client';
 
-import { Analytics } from '@vercel/analytics/next';
 import {
   analyticsPermitted,
   type AnalyticsConsent,
@@ -8,9 +7,10 @@ import {
 import { createMonitoringConfig, getAnalyticsConfig, type AnalyticsProvider } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
+import { VercelAnalytics } from './VercelAnalytics';
 
 function Tracker({ provider }: { provider: AnalyticsProvider }) {
-  if (provider === 'vercel') return <Analytics />;
+  if (provider === 'vercel') return <VercelAnalytics />;
   // The remaining providers are representable in the config but have no tracker
   // component wired up. Returning null is deliberate: a provider without an
   // implementation must fail closed rather than fall through to something else.
