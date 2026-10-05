@@ -98,7 +98,7 @@ const TIER_BY_FOLDED_LABEL: Readonly<Record<string, CanonicalSellerTier>> = {
  * total and must never drop or reorder characters.
  */
 function foldTierLabel(value: string): string {
-  return value.toLowerCase().replace(/[\s_\-]+/g, '');
+  return value.toLowerCase().replace(/[\s_-]+/g, '');
 }
 
 /**

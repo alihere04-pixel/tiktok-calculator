@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { loadMarketRates, loadMarketRatesSync } from '@/lib/rates/loader';
+import { loadMarketRates } from '@/lib/rates/loader';
 import {
   SEO_MARKETS,
   buildDescription,

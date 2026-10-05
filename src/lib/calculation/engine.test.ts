@@ -74,8 +74,8 @@ describe('calculateBreakEvenPrice', () => {
     expect(result).toBeCloseTo(37.23, 1);
   });
 
-  it('Zero costs: cogs=0, shipping=0, cpa=0, feeCalculator = (p) => 0 → 0', () => {
-    const feeCalculator = (p: number) => 0;
+  it('Zero costs: cogs=0, shipping=0, cpa=0, feeCalculator = () => 0 → 0', () => {
+    const feeCalculator = () => 0;
     const result = calculateBreakEvenPrice(0, 0, 0, feeCalculator);
     expect(result).toBeCloseTo(0, 1);
   });
