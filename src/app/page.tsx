@@ -1,45 +1,28 @@
-import { loadAllMarketRates } from '@/lib/rates/loader';
-import { CalculatorForm } from '@/components/calculator/CalculatorForm';
-import type { MarketRateSummary } from '@/hooks/useCalculator';
-import type { Market } from '@/hooks/useCalculator';
+"use client";
 
-/**
- * Step 9 page: the input form plus the results panel the form renders after a
- * successful calculation.
- *
- * This is a server component because `lib/rates/loader.ts` reads the rate
- * files from disk with `fs`, which cannot run in the browser. Rate data is
- * narrowed to a serialisable summary here and passed down as props, so the
- * client bundle never imports the loader. The actual calculation happens in the
- * `runCalculation` server action, not on this page.
- */
-export default async function Home() {
-  const allRates = await loadAllMarketRates();
+import { loadMarketRatesSync, getAvailableMarkets } from "@/lib/rates/loader";
+import { CalculatorForm } from "@/components/calculator/CalculatorForm";
+import type { MarketRateSummary } from "@/hooks/useCalculator";
+import type { Market } from "@/hooks/useCalculator";
 
+export default function Home() {
+  const markets = getAvailableMarkets();
   const ratesByMarket: Partial<Record<Market, MarketRateSummary>> = {};
-  for (const [key, rates] of Object.entries(allRates)) {
-    if (!rates) continue;
-    ratesByMarket[key as Market] = {
+
+  for (const market of markets) {
+    const rates = loadMarketRatesSync(market);
+    ratesByMarket[market as Market] = {
       market: rates.market,
       currency: rates.currency,
-      categories: rates.categories.map(
-        (category: MarketRateSummary['categories'][number]) => ({
-          id: category.id,
-          name: category.name,
-          parentCategory: category.parentCategory,
-          tier: category.tier,
-          rate: category.rate,
-          // PH prices both seller tiers on one record. Dropping `mallRate` here
-          // did not fail loudly: the browser still saw the row's own `tier`
-          // label ("Marketplace"), so the category selector worked and the
-          // commission preview looked right, but the market appeared to offer a
-          // single tier and the Seller tier control was never rendered. Mall
-          // was therefore unreachable from the UI, and the section under
-          // Section A could not offer it.
-          mallRate: category.mallRate,
-          confidence: category.confidence,
-        })
-      ),
+      categories: rates.categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        parentCategory: category.parentCategory,
+        tier: category.tier,
+        rate: category.rate,
+        mallRate: category.mallRate,
+        confidence: category.confidence,
+      })),
     };
   }
 

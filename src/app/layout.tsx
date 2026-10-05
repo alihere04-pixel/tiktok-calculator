@@ -1,19 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
 import { ReactNode } from "react";
-import { siteUrl } from "@/lib/site/config";
 import "./globals.css";
 import { AnalyticsGate } from "@/components/analytics/AnalyticsGate";
+import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { Footer } from "@/components/layout/Footer";
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: "TikTok Shop Profit Calculator",
-  description: "Calculate your real TikTok Shop profit after all fees",
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
 
 export default function RootLayout({
   children,
@@ -22,10 +13,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
+      <head>
+        <title>TikTok Shop Profit Calculator</title>
+        <meta name="description" content="Calculate your real TikTok Shop profit after all fees" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://tiktok-shop-calculator.vercel.app" />
+      </head>
       <body className="min-h-full flex flex-col">
-        {/* Consent banner mounts here after client hydration.
-            SSR renders an empty placeholder so the DOM position is stable. */}
-        <div id="consent-banner-root" />
+        <ConsentBanner />
         {children}
         <Footer />
         <AnalyticsGate />
