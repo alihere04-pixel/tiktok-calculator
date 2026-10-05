@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        <title>TikTok Shop Profit Calculator</title>
+        <title>TikTok Shop Profit Calculator v2</title>
         <meta name="description" content="Calculate your real TikTok Shop profit after all fees" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://tiktok-shop-calculator.vercel.app" />
