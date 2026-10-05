@@ -20,8 +20,6 @@ export default function RootLayout({
         <link rel="canonical" href="https://tiktok-shop-calculator.vercel.app" />
       </head>
       <body className="min-h-full flex flex-col">
-        {/* consent banner portal target - suppress hydration warning for createPortal */}
-        <div id="consent-banner-root" suppressHydrationWarning />
         <ConsentBanner />
         {children}
         <Footer />

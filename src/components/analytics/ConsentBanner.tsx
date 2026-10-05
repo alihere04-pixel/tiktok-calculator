@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { createMonitoringConfig, getAnalyticsConfig } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
@@ -28,15 +27,14 @@ import { useAnalyticsConsent } from './useAnalyticsConsent';
  * than on a simulated keypress.
  *
  * This is a page region, not a modal: it does not trap focus and does not block
- * the calculator, so `role="region"` with a label is honest. It renders into a
- * placeholder at the top of `<body>` so it comes early in the tab order.
+ * the calculator, so `role="region"` with a label is honest. It renders at the
+ * top of `<body>` so it comes early in the tab order.
  */
 export function ConsentBanner() {
   const { analytics } = createMonitoringConfig(getAnalyticsConfig());
   const { consent, decide } = useAnalyticsConsent();
 
-  // Track client-side mount to avoid SSR mismatch and ensure banner only
-  // renders after hydration into the #consent-banner-root placeholder.
+  // Track client-side mount to avoid SSR mismatch.
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -48,7 +46,7 @@ export function ConsentBanner() {
   // Only show for fresh visitors who have not made a decision.
   if (consent.status === 'accepted' || consent.status === 'declined') return null;
 
-  const banner = (
+  return (
     <section
       role="region"
       aria-labelledby="analytics-consent-heading"
@@ -90,9 +88,4 @@ export function ConsentBanner() {
       </div>
     </section>
   );
-
-  const root = typeof document !== 'undefined' ? document.getElementById('consent-banner-root') : null;
-  if (!root) return null;
-
-  return createPortal(banner, root);
 }
