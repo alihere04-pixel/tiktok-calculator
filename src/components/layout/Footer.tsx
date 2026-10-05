@@ -12,6 +12,9 @@ export function Footer() {
           <Link href="/" className="underline underline-offset-2 dark:text-zinc-200">
             Profit Calculator
           </Link>
+          <Link href="/blog" className="underline underline-offset-2 dark:text-zinc-200">
+            Blog
+          </Link>
           <Link href="/privacy" className="underline underline-offset-2 dark:text-zinc-200">
             Privacy Policy
           </Link>
