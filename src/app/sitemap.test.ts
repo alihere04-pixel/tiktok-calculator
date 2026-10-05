@@ -85,4 +85,10 @@ describe('robots', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
     expect(robots().sitemap).toBeUndefined();
   });
+
+  it('omits the sitemap when the site URL is explicitly localhost', () => {
+    // A leftover localhost value is worse than an empty one: it looks configured.
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'http://localhost:3000');
+    expect(robots().sitemap).toBeUndefined();
+  });
 });

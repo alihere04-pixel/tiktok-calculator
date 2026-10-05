@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug, getBlogPostSlugs } from "@/lib/blog";
 import { markdownToHtml } from "@/lib/blog/markdown";
+import { siteUrl } from "@/lib/site/config";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,13 +22,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
 
-  const siteUrl = "https://tiktok-shop-calculator.vercel.app";
-  const postUrl = `${siteUrl}/blog/${slug}`;
+  const baseUrl = siteUrl();
+  const postUrl = `${baseUrl}/blog/${slug}`;
 
   return {
     title: `${post.title} - TikTok Shop Profit Calculator`,
     description: post.description,
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: { canonical: postUrl },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -38,13 +39,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       tags: post.keywords,
       images: post.ogImage
         ? [{ url: post.ogImage }]
-        : [{ url: `${siteUrl}/og-blog-default.png` }],
+        : [{ url: `${baseUrl}/og-blog-default.png` }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: post.ogImage ? [post.ogImage] : [`${siteUrl}/og-blog-default.png`],
+      images: post.ogImage ? [post.ogImage] : [`${baseUrl}/og-blog-default.png`],
     },
     other: {
       "article:published_time": post.date,
@@ -72,8 +73,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  const siteUrl = "https://tiktok-shop-calculator.vercel.app";
-  const postUrl = `${siteUrl}/blog/${slug}`;
+  const baseUrl = siteUrl();
+  const postUrl = `${baseUrl}/blog/${slug}`;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -86,14 +87,14 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       "@type": "Organization",
       name: "Fynza",
-      url: siteUrl,
+      url: baseUrl,
     },
     publisher: {
       "@type": "Organization",
       name: "TikTok Shop Profit Calculator",
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/favicon.ico`,
+        url: `${baseUrl}/favicon.ico`,
       },
     },
     mainEntityOfPage: {
