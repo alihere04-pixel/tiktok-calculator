@@ -5,13 +5,15 @@ import { findCategoryRow, groupCategories } from '@/lib/rates/tiers';
 import type { CalculatorInputs, Market, SellerTier } from '@/lib/calculation/types';
 
 /**
- * The US category-group id fix must not move any other market.
+ * The US and UK category-group id fixes must not move any other market.
  *
- * The fix is confined to `markets/US.ts`, but it changes which id shape the
- * engines accept, so the other four are pinned here rather than assumed. The
- * published rates below are the ones already asserted in `cross-market.test.ts`;
- * they are re-asserted through this path so a change to the shared resolver
- * cannot quietly reprice a market that was not being worked on.
+ * Both fixes are confined to the untiered engines that were resolving a
+ * category with a raw row-id comparison, but they change which id shape those
+ * engines accept, so the remaining markets are pinned here rather than assumed.
+ * The published rates below are the ones already asserted in
+ * `cross-market.test.ts`; they are re-asserted through this path so a change to
+ * the shared resolver cannot quietly reprice a market that was not being worked
+ * on.
  */
 
 function inputsFor(
@@ -137,36 +139,35 @@ describe('other markets keep their published rates', () => {
 });
 
 /**
- * A pre-existing defect in the same family, deliberately left in place.
+ * A pre-existing defect in the same family, since fixed.
  *
- * `markets/UK.ts` resolves its category with a raw row-id comparison, exactly as
- * `markets/US.ts` did, so a UK group id also misses the lookup and falls back to
- * the 9% standard rate. This misprices 129 published UK categories, which are
- * published at 5%, and it is larger than the US defect that was fixed.
+ * `markets/UK.ts` resolved its category with a raw row-id comparison, exactly as
+ * `markets/US.ts` did, so a UK group id missed the lookup and fell back to the 9%
+ * standard rate. This mispriced 129 published UK categories, which are published
+ * at 5%, and it was larger than the US defect.
  *
- * The UK engine was left untouched because this change is scoped to the US bug
- * and repricing UK is a separate decision: it moves real numbers for 129
- * categories. The assertion below pins today's behaviour so the fix is visible
- * if it lands, at which point this test should be replaced with the published
- * 5% expectation.
+ * This block was originally a characterization test pinning that broken
+ * behaviour, so the fix would be visible when it landed. UK is fixed now, so it
+ * asserts the corrected result instead. `UK.category-id.test.ts` carries the
+ * full 129-category coverage.
  */
-describe('UK known defect: group ids still miss the row lookup', () => {
-  it('charges the 9% fallback for a group id published at 5%', () => {
+describe('UK: the same defect, now fixed', () => {
+  it('charges the published 5% for a group id, matching the row id', () => {
     const rates = loadMarketRatesSync('UK');
     const group = groupCategories('UK', rates.categories).find(
       (g) => g.rows.some((r) => r.id === 'uk-beauty-personal-care')
     )!;
     const row = group.rows[0];
     expect(row.rate).toBe(0.05);
+    // The two id shapes are genuinely different, which is why this needed fixing.
+    expect(group.id).not.toBe(row.id);
 
     const viaGroup = commissionFor('UK', group.id, null);
     const viaRow = commissionFor('UK', row.id, null);
 
-    expect(viaGroup.rate).toBe('9.00%');
-    expect(viaGroup.confidence).toBe('needs-verification');
-    // The published rate is reachable by row id, which is what shows the lookup
-    // is the problem and not the data.
-    expect(viaRow.rate).toBe('5.00%');
-    expect(viaRow.confidence).toBe(row.confidence);
+    expect(viaGroup.rate).toBe('5.00%');
+    expect(viaGroup.confidence).toBe(row.confidence);
+    expect(viaGroup.rate).toBe(viaRow.rate);
+    expect(viaGroup.confidence).toBe(viaRow.confidence);
   });
 });
