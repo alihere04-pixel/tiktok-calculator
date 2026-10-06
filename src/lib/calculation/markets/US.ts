@@ -5,6 +5,7 @@ import type {
 import type { CategoryRate, MarketRateData } from '@/lib/rates/schema';
 import { roundToTwo } from '../utils';
 import { loadMarketRatesSync } from '@/lib/rates/loader';
+import { findCategoryRow } from '@/lib/rates/tiers';
 
 const US_SOURCES = {
   refundAdmin:
@@ -34,8 +35,37 @@ async function getUSRates(): Promise<MarketRateData> {
   return usRatesCache!;
 }
 
+/**
+ * Resolves `inputs.categoryId` to a US rate row.
+ *
+ * `categoryId` is a category-group id, the contract documented on
+ * `CalculatorInputs` and the value the form actually sends: the selector's
+ * options are built from `groupCategories`, so the browser submits `group.id`.
+ * This used to compare `categoryId` against raw rate-row ids only, which never
+ * matches: every US group id is derived from the category *name*
+ * (`us-diamond`), while the row id is derived from the section plus the name
+ * (`us-jewelry-diamond`). All 202 US categories therefore missed the lookup and
+ * fell back to `getDefaultRate()`. That was invisible for the 185 categories
+ * whose published rate is the same 6%, but the 17 categories published at 5%
+ * (Jewelry: Diamond, Gold, Jade, Platinum/Carat Gold, Ruby/Sapphire/Emerald;
+ * Pre-Owned: Bags, Collectible Trading Cards, Luggage & Travel, Watches,
+ * Footwear, Refurbished Phones & Electronics, Fashion Accessories, Menswear,
+ * Womenswear, Collectible Coins and Paper Money, Collectible Figures,
+ * Collectible Comic Books) were charged 6% instead of 5%.
+ *
+ * Resolution goes through the shared `findCategoryRow`, which accepts a group id
+ * and still accepts a raw row id for saved links and tests. That is the same
+ * helper PH, MY and SG already use, so the engines can no longer disagree
+ * about how a category id is read.
+ *
+ * `null` is passed for the tier deliberately. US does not tier its commission
+ * rates, so there is no tier to disambiguate and each group holds exactly one
+ * row. Forwarding `inputs.sellerTier` would be actively wrong: US rows carry no
+ * `tier` field, so a tier lookup would match nothing and reintroduce the same
+ * silent fallback to the default rate.
+ */
 function findCategoryRate(rates: MarketRateData, categoryId: string): CategoryRate | null {
-  return rates.categories.find(c => c.id === categoryId) || null;
+  return findCategoryRow(rates.market, rates.categories, categoryId, null);
 }
 
 function getDefaultRate(): number {
