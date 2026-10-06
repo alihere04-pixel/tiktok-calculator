@@ -16,10 +16,15 @@
  */
 
 const LOCAL_FALLBACK = 'http://localhost:3000';
+const PRODUCTION_FALLBACK = 'https://fynza.store';
+
+function isProduction(): boolean {
+  return process.env.NODE_ENV === 'production';
+}
 
 export function siteUrl(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!configured) return LOCAL_FALLBACK;
+  if (!configured) return isProduction() ? PRODUCTION_FALLBACK : LOCAL_FALLBACK;
   // A trailing slash produces a double slash in every canonical and sitemap URL.
   return configured.replace(/\/+$/, '');
 }
@@ -27,7 +32,8 @@ export function siteUrl(): string {
 /** True when no real domain has been supplied yet. Blocks launch. */
 export function SITE_URL_OPEN_ITEM(): boolean {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  return !configured || configured === LOCAL_FALLBACK;
+  const fallback = isProduction() ? PRODUCTION_FALLBACK : LOCAL_FALLBACK;
+  return !configured || configured === fallback;
 }
 
 export function siteUrlOpenItems(): string[] {

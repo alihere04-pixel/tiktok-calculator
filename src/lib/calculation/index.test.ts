@@ -197,8 +197,8 @@ describe('calculateProfit - per market dispatch', () => {
     );
   });
 
-  it('computes netProfit from price minus fees and costs', () => {
-    const inputs = makeInputs('US');
+  it('computes netProfit from price minus fees and costs (no discount)', () => {
+    const inputs = makeInputs('US', { sellerDiscount: 0 });
     const result = calculateProfit(inputs);
     const expected =
       inputs.sellingPrice -
@@ -207,6 +207,24 @@ describe('calculateProfit - per market dispatch', () => {
       inputs.outboundShipping -
       inputs.cpa;
     expect(result.netProfit).toBeCloseTo(Math.round(expected * 100) / 100, 2);
+  });
+
+  it('computes netProfit using discounted price when sellerDiscount is applied', () => {
+    const inputs = makeInputs('US', { sellingPrice: 100, sellerDiscount: 20, cogs: 30, outboundShipping: 5, cpa: 0 });
+    const result = calculateProfit(inputs);
+    // netPrice = 100 - 20 = 80
+    // netProfit = 80 - totalPlatformFees - 30 - 5 - 0
+    const expectedNetPrice = inputs.sellingPrice - inputs.sellerDiscount;
+    const expected = expectedNetPrice - result.totalPlatformFees - inputs.cogs - inputs.outboundShipping - inputs.cpa;
+    expect(result.netProfit).toBeCloseTo(Math.round(expected * 100) / 100, 2);
+  });
+
+  it('computes profitMargin and effectiveTakeRate using original sellingPrice as denominator even with sellerDiscount', () => {
+    const inputs = makeInputs('US', { sellingPrice: 100, sellerDiscount: 20, cogs: 30, outboundShipping: 5, cpa: 0 });
+    const result = calculateProfit(inputs);
+    // effectiveTakeRate and profitMargin use original sellingPrice as denominator (standard business practice)
+    expect(result.effectiveTakeRate).toBeCloseTo(result.totalPlatformFees / inputs.sellingPrice, 2);
+    expect(result.profitMargin).toBeCloseTo(result.netProfit / inputs.sellingPrice, 2);
   });
 
   it('computes effectiveTakeRate and profitMargin as ratios of selling price', () => {

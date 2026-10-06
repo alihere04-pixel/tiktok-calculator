@@ -6,13 +6,21 @@ afterEach(() => {
 });
 
 describe('siteUrl', () => {
-  it('falls back to localhost when nothing is configured', () => {
+  it('falls back to localhost in development when nothing is configured', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+    vi.stubEnv('NODE_ENV', 'development');
     expect(siteUrl()).toBe('http://localhost:3000');
   });
 
-  it('uses the configured origin', () => {
+  it('falls back to production domain in production when nothing is configured', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+    vi.stubEnv('NODE_ENV', 'production');
+    expect(siteUrl()).toBe('https://fynza.store');
+  });
+
+  it('uses the configured origin regardless of environment', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
+    vi.stubEnv('NODE_ENV', 'development');
     expect(siteUrl()).toBe('https://fees.example.com');
   });
 
@@ -46,17 +54,34 @@ describe('absoluteUrl', () => {
 });
 
 describe('open item reporting', () => {
-  it('flags the missing domain as a launch blocker', () => {
+  it('flags the missing domain as a launch blocker in development', () => {
     // Without this, canonical tags and the sitemap point at localhost and the
     // mistake is invisible in review.
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+    vi.stubEnv('NODE_ENV', 'development');
     expect(SITE_URL_OPEN_ITEM()).toBe(true);
     expect(siteUrlOpenItems()).toHaveLength(1);
     expect(siteUrlOpenItems()[0]).toMatch(/NEXT_PUBLIC_SITE_URL/);
   });
 
-  it('clears the blocker once a real domain is set', () => {
+  it('flags the missing domain as a launch blocker in production', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+    vi.stubEnv('NODE_ENV', 'production');
+    expect(SITE_URL_OPEN_ITEM()).toBe(true);
+    expect(siteUrlOpenItems()).toHaveLength(1);
+    expect(siteUrlOpenItems()[0]).toMatch(/NEXT_PUBLIC_SITE_URL/);
+  });
+
+  it('clears the blocker once a real domain is set in development', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
+    vi.stubEnv('NODE_ENV', 'development');
+    expect(SITE_URL_OPEN_ITEM()).toBe(false);
+    expect(siteUrlOpenItems()).toEqual([]);
+  });
+
+  it('clears the blocker once a real domain is set in production', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
+    vi.stubEnv('NODE_ENV', 'production');
     expect(SITE_URL_OPEN_ITEM()).toBe(false);
     expect(siteUrlOpenItems()).toEqual([]);
   });

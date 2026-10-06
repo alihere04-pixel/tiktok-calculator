@@ -198,8 +198,10 @@ export function calculateProfit(inputs: CalculatorInputs): CalculationResult {
   const complete = isCalculationComplete(fees);
   const unpricedFees = unpricedFeeNames(fees);
 
+  const netPrice = inputs.sellingPrice - inputs.sellerDiscount;
+
   const netProfit = roundToTwo(
-    inputs.sellingPrice - totalPlatformFees - inputs.cogs - inputs.outboundShipping - inputs.cpa
+    netPrice - totalPlatformFees - inputs.cogs - inputs.outboundShipping - inputs.cpa
   );
 
   const contributionMargin = calculateContributionMargin(
