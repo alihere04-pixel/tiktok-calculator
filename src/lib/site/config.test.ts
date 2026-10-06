@@ -27,7 +27,7 @@ describe('siteUrl', () => {
   it('strips a trailing slash, so canonicals never double up', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com/');
     expect(siteUrl()).toBe('https://fees.example.com');
-    expect(absoluteUrl('/disclaimer')).toBe('https://fees.example.com/disclaimer');
+    expect(absoluteUrl('/disclaimer')).toBe('https://fees.example.com/tiktok/disclaimer');
   });
 
   it('handles several trailing slashes', () => {
@@ -44,12 +44,12 @@ describe('siteUrl', () => {
 describe('absoluteUrl', () => {
   it('adds the leading slash when it is missing', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
-    expect(absoluteUrl('privacy')).toBe('https://fees.example.com/privacy');
+    expect(absoluteUrl('privacy')).toBe('https://fees.example.com/tiktok/privacy');
   });
 
   it('does not double the slash when it is already there', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
-    expect(absoluteUrl('/privacy')).toBe('https://fees.example.com/privacy');
+    expect(absoluteUrl('/privacy')).toBe('https://fees.example.com/tiktok/privacy');
   });
 });
 

@@ -18,7 +18,7 @@ describe('/disclaimer', () => {
   it('exports metadata with a canonical URL and no robots block', () => {
     const meta = disclaimerMeta();
     expect(meta.title).toContain('Disclaimer');
-    expect(meta.alternates?.canonical).toBe('/disclaimer');
+    expect(meta.alternates?.canonical).toBe('/tiktok/disclaimer');
     expect((meta as { robots?: unknown }).robots).toBeUndefined();
   });
 });

@@ -24,7 +24,7 @@ describe('blog post metadata', () => {
 
       const meta = await metadataFor(slug);
 
-      expect(meta.alternates?.canonical).toBe(`https://fynza.store/blog/${slug}`);
+      expect(meta.alternates?.canonical).toBe(`https://fynza.store/tiktok/blog/${slug}`);
     },
   );
 
@@ -35,7 +35,7 @@ describe('blog post metadata', () => {
 
       const meta = await metadataFor(slug);
 
-      expect(meta.openGraph?.url).toBe(`https://fynza.store/blog/${slug}`);
+      expect(meta.openGraph?.url).toBe(`https://fynza.store/tiktok/blog/${slug}`);
     },
   );
 

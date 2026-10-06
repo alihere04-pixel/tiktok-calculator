@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   return {
     title: `${document.title} - TikTok Shop Profit Calculator`,
     description: document.metaDescription,
-    alternates: { canonical: '/terms' },
+    alternates: { canonical: '/tiktok/terms' },
   };
 }
 

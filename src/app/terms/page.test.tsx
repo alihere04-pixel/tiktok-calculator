@@ -18,6 +18,6 @@ describe('/terms', () => {
   it('exports metadata with a canonical URL', () => {
     const meta = termsMeta();
     expect(meta.title).toContain('Terms of Use');
-    expect(meta.alternates?.canonical).toBe('/terms');
+    expect(meta.alternates?.canonical).toBe('/tiktok/terms');
   });
 });

@@ -37,7 +37,7 @@ describe('generateMetadata', () => {
       expect(meta.title).toMatch(/TikTok Shop .* Seller Fees \(2026\)/);
       expect(String(meta.description).length).toBeGreaterThan(50);
       expect(String(meta.description).length).toBeLessThanOrEqual(165);
-      expect(meta.alternates?.canonical).toBe(`/${slug}/tiktok-shop-fees`);
+      expect(meta.alternates?.canonical).toBe(`/tiktok/${slug}/tiktok-shop-fees`);
       expect(meta.openGraph?.title).toBeTruthy();
       expect(meta.openGraph?.description).toBe(meta.description);
       // `Metadata['twitter']` is a union, so the card field is narrowed here

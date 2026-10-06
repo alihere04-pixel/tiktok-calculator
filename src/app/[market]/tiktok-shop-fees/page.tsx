@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const data = await loadMarketRates(meta.market);
   const model = buildMarketPageModel(data, meta);
   const description = buildDescription(model);
-  const url = `/${meta.slug}/tiktok-shop-fees`;
+  const url = `/tiktok/${meta.slug}/tiktok-shop-fees`;
 
   return {
     title: meta.title,

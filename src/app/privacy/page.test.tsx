@@ -24,6 +24,6 @@ describe('/privacy', () => {
     expect(meta.description).toMatch(/no cookies/i);
     expect(meta.description).toMatch(/server log/i);
     expect(meta.description).not.toMatch(/store nothing about you/i);
-    expect(meta.alternates?.canonical).toBe('/privacy');
+    expect(meta.alternates?.canonical).toBe('/tiktok/privacy');
   });
 });

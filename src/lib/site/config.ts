@@ -18,6 +18,8 @@
 const LOCAL_FALLBACK = 'http://localhost:3000';
 const PRODUCTION_FALLBACK = 'https://fynza.store';
 
+export const BASE_PATH = '/tiktok';
+
 function isProduction(): boolean {
   return process.env.NODE_ENV === 'production';
 }
@@ -60,8 +62,8 @@ export function siteUrlOpenItems(): string[] {
  */
 export const CONTACT_EMAIL = 'contact@fynza.store';
 
-/** Absolute URL for an internal path. */
+/** Absolute URL for an internal path, including the app basePath. */
 export function absoluteUrl(path: string): string {
   const clean = path.startsWith('/') ? path : `/${path}`;
-  return `${siteUrl()}${clean}`;
+  return `${siteUrl()}${BASE_PATH}${clean}`;
 }

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = siteUrl();
-  const postUrl = `${baseUrl}/blog/${slug}`;
+  const postUrl = `${baseUrl}/tiktok/blog/${slug}`;
 
   return {
     title: `${post.title} - TikTok Shop Profit Calculator`,
@@ -38,14 +38,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       publishedTime: post.date,
       tags: post.keywords,
       images: post.ogImage
-        ? [{ url: post.ogImage }]
-        : [{ url: `${baseUrl}/og-blog-default.png` }],
+        ? [{ url: `${baseUrl}/tiktok${post.ogImage}` }]
+        : [{ url: `${baseUrl}/tiktok/og-blog-default.png` }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: post.ogImage ? [post.ogImage] : [`${baseUrl}/og-blog-default.png`],
+      images: post.ogImage
+        ? [`${baseUrl}/tiktok${post.ogImage}`]
+        : [`${baseUrl}/tiktok/og-blog-default.png`],
     },
     other: {
       "article:published_time": post.date,
@@ -74,7 +76,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const baseUrl = siteUrl();
-  const postUrl = `${baseUrl}/blog/${slug}`;
+  const postUrl = `${baseUrl}/tiktok/blog/${slug}`;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -94,7 +96,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       name: "TikTok Shop Profit Calculator",
       logo: {
         "@type": "ImageObject",
-        url: `${baseUrl}/favicon.ico`,
+        url: `${baseUrl}/tiktok/favicon.ico`,
       },
     },
     mainEntityOfPage: {

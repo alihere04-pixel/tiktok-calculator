@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "TikTok Shop Profit Calculator",
   description: "Calculate your real TikTok Shop profit after all fees",
   robots: "index, follow",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/tiktok" },
 };
 
 export default function RootLayout({

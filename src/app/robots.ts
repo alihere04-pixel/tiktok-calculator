@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: '/_next/static/',
+        disallow: '/tiktok/_next/static/',
       },
     ],
     ...(SITE_URL_OPEN_ITEM() ? {} : { sitemap: absoluteUrl('/sitemap.xml') }),

@@ -14,12 +14,12 @@ describe('sitemap', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
     const entries = sitemap();
     const urls = entries.map((e) => e.url);
-    expect(urls).toContain('https://fees.example.com/');
+    expect(urls).toContain('https://fees.example.com/tiktok/');
     for (const market of SEO_MARKETS) {
-      expect(urls).toContain(`https://fees.example.com/${market.slug}/tiktok-shop-fees`);
+      expect(urls).toContain(`https://fees.example.com/tiktok/${market.slug}/tiktok-shop-fees`);
     }
     for (const slug of LEGAL_SLUGS) {
-      expect(urls).toContain(`https://fees.example.com/${slug}`);
+      expect(urls).toContain(`https://fees.example.com/tiktok/${slug}`);
     }
   });
 
@@ -46,9 +46,9 @@ describe('sitemap', () => {
   it('ranks the calculator above the fee pages and the fee pages above legal', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
     const byUrl = Object.fromEntries(sitemap().map((e) => [e.url, e.priority]));
-    expect(byUrl['https://fees.example.com/']).toBe(1);
-    expect(byUrl['https://fees.example.com/us/tiktok-shop-fees']).toBe(0.8);
-    expect(byUrl['https://fees.example.com/privacy']).toBe(0.2);
+    expect(byUrl['https://fees.example.com/tiktok/']).toBe(1);
+    expect(byUrl['https://fees.example.com/tiktok/us/tiktok-shop-fees']).toBe(0.8);
+    expect(byUrl['https://fees.example.com/tiktok/privacy']).toBe(0.2);
   });
 
   it('gives every entry a lastModified and a changeFrequency', () => {
@@ -66,7 +66,7 @@ describe('robots', () => {
     expect(rules).toHaveLength(1);
     expect(rules[0].userAgent).toBe('*');
     expect(rules[0].allow).toBe('/');
-    expect(rules[0].disallow).toBe('/_next/static/');
+    expect(rules[0].disallow).toBe('/tiktok/_next/static/');
   });
 
   it('does not block the calculator or the fee pages', () => {
@@ -77,7 +77,7 @@ describe('robots', () => {
 
   it('advertises the sitemap once the real domain is known', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
-    expect(robots().sitemap).toBe('https://fees.example.com/sitemap.xml');
+    expect(robots().sitemap).toBe('https://fees.example.com/tiktok/sitemap.xml');
   });
 
   it('omits the sitemap rather than advertising localhost', () => {

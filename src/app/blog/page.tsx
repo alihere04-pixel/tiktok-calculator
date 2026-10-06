@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Fynza Blog - TikTok Shop Seller Guides & Fee Analysis",
   description:
     "Expert guides on TikTok Shop fees, profit calculation, and seller strategies. Learn to maximize your margins with our free calculator and market-specific fee data.",
-  alternates: { canonical: "/blog" },
+  alternates: { canonical: "/tiktok/blog" },
   openGraph: {
     title: "Fynza Blog - TikTok Shop Seller Guides & Fee Analysis",
     description:
