@@ -64,6 +64,19 @@ describe('blog post metadata', () => {
     expect(post?.h1).toBe('TikTok Shop Fee Calculator 2026 — All 5 Markets');
   });
 
+  it('keeps the SEO title and the on-page h1 distinct for the platform comparison post', () => {
+    // The comparison post is the only one whose h1 is not merely a restatement
+    // of the title: the title is written for the SERP, the h1 for the reader.
+    const post = posts.find((p) => p.slug === 'tiktok-shop-vs-amazon-fees');
+
+    expect(post).toBeDefined();
+    expect(post?.title).toBe('TikTok Shop vs Amazon Fees 2026: Which Platform Pays More?');
+    expect(post?.h1).toBe('TikTok Shop vs Amazon Fees 2026: Complete Cost Comparison');
+    expect(post?.h1).not.toBe(post?.title);
+    expect(post?.description).toContain('TikTok Shop vs Amazon');
+    expect(post?.keywords).toContain('TikTok Shop vs Amazon fees');
+  });
+
   it('falls back to the title when a post has no separate h1', () => {
     const post = posts.find((p) => p.slug === 'how-to-calculate-tiktok-shop-profit');
 
