@@ -114,6 +114,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
+          <a
+            href="https://fynza.store"
+            className="mb-2 block text-sm font-medium text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+          >
+            Fynza
+          </a>
           <nav aria-label="Breadcrumb" className="mb-4 text-sm">
             <ol className="flex list-none items-center gap-2 p-0 text-zinc-500 dark:text-zinc-400">
               <li>

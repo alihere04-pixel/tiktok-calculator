@@ -9,6 +9,12 @@ export function Footer() {
           An independent tool. Not affiliated with TikTok.
         </p>
         <nav aria-label="Site navigation" className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+          <a
+            href="https://fynza.store"
+            className="underline underline-offset-2 dark:text-zinc-200"
+          >
+            Fynza
+          </a>
           <Link href="/" className="underline underline-offset-2 dark:text-zinc-200">
             Profit Calculator
           </Link>

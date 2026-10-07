@@ -30,6 +30,12 @@ export default function BlogIndex() {
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
       <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
+          <a
+            href="https://fynza.store"
+            className="mb-1.5 block text-sm font-medium text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+          >
+            Fynza
+          </a>
           <h1 className="text-2xl font-semibold text-zinc-900 sm:text-3xl dark:text-zinc-50">
             Fynza Blog
           </h1>
