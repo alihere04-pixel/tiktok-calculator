@@ -4,7 +4,8 @@ import { markdownToHtml } from "./markdown";
 describe("markdownToHtml basePath links", () => {
   it("prefixes root-relative hrefs with the app basePath", async () => {
     const html = await markdownToHtml("[Calculator](/)");
-    expect(html).toContain('href="/tiktok/"');
+    expect(html).toContain('href="/tiktok"');
+    expect(html).not.toContain('href="/tiktok/"');
   });
 
   it("prefixes nested internal links", async () => {

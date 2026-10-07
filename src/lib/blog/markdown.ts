@@ -18,7 +18,7 @@ function rehypeBasePathLinks() {
       if (typeof href !== "string") return;
       if (!href.startsWith("/") || href.startsWith("//")) return;
       if (href === BASE_PATH || href.startsWith(`${BASE_PATH}/`)) return;
-      node.properties.href = `${BASE_PATH}${href}`;
+      node.properties.href = href === "/" ? BASE_PATH : `${BASE_PATH}${href}`;
     });
   };
 }
