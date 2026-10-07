@@ -14,7 +14,7 @@ describe('sitemap', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
     const entries = sitemap();
     const urls = entries.map((e) => e.url);
-    expect(urls).toContain('https://fees.example.com/tiktok/');
+    expect(urls).toContain('https://fees.example.com/tiktok');
     for (const market of SEO_MARKETS) {
       expect(urls).toContain(`https://fees.example.com/tiktok/${market.slug}/tiktok-shop-fees`);
     }
@@ -36,6 +36,15 @@ describe('sitemap', () => {
     expect(new Set(urls).size).toBe(urls.length);
   });
 
+  it('emits no URL with a trailing slash', () => {
+    // `/tiktok/` 308-redirects to `/tiktok`; a sitemap should only list URLs
+    // that answer 200 directly.
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
+    for (const entry of sitemap()) {
+      expect(entry.url.endsWith('/')).toBe(false);
+    }
+  });
+
   it('emits no URL with a double slash', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com/');
     for (const entry of sitemap()) {
@@ -46,7 +55,7 @@ describe('sitemap', () => {
   it('ranks the calculator above the fee pages and the fee pages above legal', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
     const byUrl = Object.fromEntries(sitemap().map((e) => [e.url, e.priority]));
-    expect(byUrl['https://fees.example.com/tiktok/']).toBe(1);
+    expect(byUrl['https://fees.example.com/tiktok']).toBe(1);
     expect(byUrl['https://fees.example.com/tiktok/us/tiktok-shop-fees']).toBe(0.8);
     expect(byUrl['https://fees.example.com/tiktok/privacy']).toBe(0.2);
   });

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { absoluteUrl } from '@/lib/site/config';
+import { absoluteUrl, siteUrl, BASE_PATH } from '@/lib/site/config';
 import { SEO_MARKETS } from '@/lib/seo/market-pages';
 import { LEGAL_SLUGS } from '@/lib/legal/content';
 import { getAllBlogPosts } from '@/lib/blog';
@@ -23,7 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     {
-      url: absoluteUrl('/'),
+      // No trailing slash: `/tiktok/` answers a 308 redirect to `/tiktok`, and a
+      // sitemap URL that never resolves 200 wastes every crawl of the home page.
+      url: `${siteUrl()}${BASE_PATH}`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 1,
