@@ -115,7 +115,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
           <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-            <ol className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+            <ol className="flex list-none items-center gap-2 p-0 text-zinc-500 dark:text-zinc-400">
               <li>
                 <Link href="/" className="hover:underline">
                   Home

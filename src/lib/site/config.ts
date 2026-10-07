@@ -34,8 +34,8 @@ export function siteUrl(): string {
 /** True when no real domain has been supplied yet. Blocks launch. */
 export function SITE_URL_OPEN_ITEM(): boolean {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const fallback = isProduction() ? PRODUCTION_FALLBACK : LOCAL_FALLBACK;
-  return !configured || configured === fallback;
+  if (!configured) return true;
+  return configured === LOCAL_FALLBACK;
 }
 
 export function siteUrlOpenItems(): string[] {

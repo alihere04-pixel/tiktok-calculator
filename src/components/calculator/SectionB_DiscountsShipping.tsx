@@ -69,7 +69,7 @@ export function SectionB_DiscountsShipping({ calculator }: { calculator: UseCalc
         label="Customer shipping"
         labelSuffix={
           <Tooltip
-            content="What the buyer pays for delivery. It is added to your commission base in the Philippines, Singapore, Malaysia and the UK, and excluded in the US."
+            content="What the buyer pays for delivery. It is added to your commission base in the US, UK and Singapore, and excluded in Malaysia and the Philippines."
             label="About customer shipping"
           />
         }

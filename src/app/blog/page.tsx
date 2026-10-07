@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Fynza Blog - TikTok Shop Seller Guides & Fee Analysis",
     description:
       "Expert guides on TikTok Shop fees, profit calculation, and seller strategies.",
-    url: "/blog",
+    url: "/tiktok/blog",
     siteName: "TikTok Shop Profit Calculator",
     type: "website",
   },
