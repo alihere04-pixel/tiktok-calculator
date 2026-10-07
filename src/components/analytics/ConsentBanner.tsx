@@ -64,7 +64,7 @@ export function ConsentBanner() {
         id="analytics-consent-heading"
         className="text-base font-semibold text-zinc-900 dark:text-zinc-50"
       >
-        Can we use analytics?
+        Can we use analytics and advertising?
       </h2>
 
       <p

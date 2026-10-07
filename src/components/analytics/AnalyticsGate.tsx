@@ -7,6 +7,7 @@ import {
 import { createMonitoringConfig, getAnalyticsConfig, type AnalyticsProvider } from '@/lib/monitoring/config';
 
 import { useAnalyticsConsent } from './useAnalyticsConsent';
+import { GA4 } from './GA4';
 import { VercelAnalytics } from './VercelAnalytics';
 
 function Tracker({ provider }: { provider: AnalyticsProvider }) {
@@ -26,5 +27,10 @@ export function AnalyticsGate() {
     consent.status === 'accepted' || consent.status === 'declined' ? consent.status : null;
 
   if (!analyticsPermitted(analytics.enabled, runtimeConsent)) return null;
-  return <Tracker provider={analytics.provider} />;
+  return (
+    <>
+      <Tracker provider={analytics.provider} />
+      <GA4 />
+    </>
+  );
 }
