@@ -18,6 +18,7 @@ describe('sitemap', () => {
     for (const market of SEO_MARKETS) {
       expect(urls).toContain(`https://fees.example.com/tiktok/${market.slug}/tiktok-shop-fees`);
     }
+    expect(urls).toContain('https://fees.example.com/tiktok/blog');
     for (const slug of LEGAL_SLUGS) {
       expect(urls).toContain(`https://fees.example.com/tiktok/${slug}`);
     }
@@ -26,8 +27,10 @@ describe('sitemap', () => {
   it('derives its entries from the route sources, so nothing can drift', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://fees.example.com');
     const blogPosts = getAllBlogPosts();
-    // 1 home + 5 markets + 3 legal + blog posts.
-    expect(sitemap()).toHaveLength(1 + SEO_MARKETS.length + LEGAL_SLUGS.length + blogPosts.length);
+    // 1 home + 5 markets + blog index + 3 legal + blog posts.
+    expect(sitemap()).toHaveLength(
+      1 + SEO_MARKETS.length + 1 + LEGAL_SLUGS.length + blogPosts.length
+    );
   });
 
   it('emits no duplicate URLs', () => {
@@ -57,6 +60,7 @@ describe('sitemap', () => {
     const byUrl = Object.fromEntries(sitemap().map((e) => [e.url, e.priority]));
     expect(byUrl['https://fees.example.com/tiktok']).toBe(1);
     expect(byUrl['https://fees.example.com/tiktok/us/tiktok-shop-fees']).toBe(0.8);
+    expect(byUrl['https://fees.example.com/tiktok/blog']).toBe(0.7);
     expect(byUrl['https://fees.example.com/tiktok/privacy']).toBe(0.2);
   });
 
