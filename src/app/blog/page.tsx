@@ -46,6 +46,19 @@ export default function BlogIndex() {
       </header>
 
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-8 px-4 py-8 sm:px-6">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Blog",
+              name: "Fynza Blog",
+              url: "https://fynza.store/tiktok/blog",
+              description:
+                "Expert guides on TikTok Shop fees, profit calculation, and seller strategies.",
+            }),
+          }}
+        />
         {posts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">
