@@ -131,6 +131,13 @@ describe('validateInputs', () => {
 });
 
 describe('calculateProfit - per market dispatch', () => {
+  const LAST_VERIFIED: Record<Market, string> = {
+    US: '2026-09-26',
+    PH: '2026-09-26',
+    SG: '2026-10-07',
+    MY: '2026-09-26',
+    UK: '2026-09-26',
+  };
   for (const market of MARKETS) {
     it(`produces a complete CalculationResult for ${market}`, () => {
       const inputs = makeInputs(market);
@@ -139,7 +146,7 @@ describe('calculateProfit - per market dispatch', () => {
       expect(result.inputs).toBe(inputs);
       expect(result.calculatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(Number.isNaN(Date.parse(result.calculatedAt))).toBe(false);
-      expect(result.rateVersion).toBe(`${market}-2026-09-26`);
+      expect(result.rateVersion).toBe(`${market}-${LAST_VERIFIED[market]}`);
 
       // Structural completeness
       expect(Array.isArray(result.fees)).toBe(true);

@@ -39,13 +39,13 @@ function findFee(fees: ReturnType<typeof calculateSGFeesSync>, name: string) {
 }
 
 describe('calculateSGFeesSync', () => {
-  it('Standard non-electronics commission is 8.175%', () => {
+  it('Standard non-electronics commission is 9.810%', () => {
     const fees = calculateSGFeesSync(baseInputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
     expect(commission).toBeDefined();
-    expect(commission!.rate).toBe('8.175%');
+    expect(commission!.rate).toBe('9.810%');
     expect(commission!.base).toBe(100);
-    expect(commission!.amount).toBe(8.18); // 8.175 -> 8.18
+    expect(commission!.amount).toBe(9.81); // 9.810 -> 9.81
   });
 
   it('BXP non-electronics commission is 7.085%', () => {
@@ -60,7 +60,7 @@ describe('calculateSGFeesSync', () => {
     expect(commission!.amount).toBe(7.09);
   });
 
-  it('BXP electronics commission is 5.45%', () => {
+  it('BXP electronics commission is 7.085%', () => {
     const inputs = {
       ...baseInputs,
       sellerTier: 'bxp' as const,
@@ -68,33 +68,33 @@ describe('calculateSGFeesSync', () => {
     };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
-    expect(commission!.rate).toBe('5.450%');
-    expect(commission!.amount).toBe(5.45);
+    expect(commission!.rate).toBe('7.085%');
+    expect(commission!.amount).toBe(7.09);
   });
 
-  it('Standard electronics commission is 7.085%', () => {
+  it('Standard electronics commission is 9.810%', () => {
     const inputs = { ...baseInputs, categoryId: 'sg-electronics-standard' };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
-    expect(commission!.rate).toBe('7.085%');
+    expect(commission!.rate).toBe('9.810%');
   });
 
   it('Commission base is customer payment including shipping', () => {
     const inputs = { ...baseInputs, customerShipping: 20 };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
-    // Base = 100 + 20 = 120, fee = 9.81
+    // Base = 100 + 20 = 120, fee = 11.77 (120 * 0.0981 = 11.772)
     expect(commission!.base).toBe(120);
-    expect(commission!.amount).toBe(9.81);
+    expect(commission!.amount).toBe(11.77);
   });
 
   it('Seller discount reduces the commission base', () => {
     const inputs = { ...baseInputs, sellerDiscount: 40 };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
-    // Base = 60, fee = 4.91 (60 * 0.08175 = 4.905 -> 4.91)
+    // Base = 60, fee = 5.89 (60 * 0.0981 = 5.886 -> 5.89)
     expect(commission!.base).toBe(60);
-    expect(commission!.amount).toBe(4.91);
+    expect(commission!.amount).toBe(5.89);
   });
 
   it('Transaction fee is 3.27% and includes the platform discount', () => {
@@ -167,7 +167,7 @@ describe('calculateSGFeesSync', () => {
   it('the same category prices differently per selected programme', () => {
     // F-03 regression: one category, four programmes, four published rates.
     const cases: Array<[NonNullable<CalculatorInputs['sellerTier']>, string]> = [
-      ['standard', '8.175%'],
+      ['standard', '9.810%'],
       ['bxp', '7.085%'],
       ['bxp-mixed', '5.995%'],
     ];
@@ -219,7 +219,7 @@ describe('calculateSGFeesSync', () => {
     const inputs = { ...baseInputs, categoryId: 'sg-not-in-the-table' };
     const fees = calculateSGFeesSync(inputs, sgRates);
     const commission = findFee(fees, 'Commission Fee');
-    expect(commission!.rate).toBe('8.175%');
+    expect(commission!.rate).toBe('9.810%');
     expect(commission!.confidence).toBe('needs-verification');
     expect(commission!.notes).toContain('cluster-level only');
   });

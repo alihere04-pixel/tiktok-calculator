@@ -109,7 +109,14 @@ describe.each(SEO_SLUGS)('%s page', (slug) => {
 
   it('shows the last verified date', async () => {
     await renderPage(slug);
-    expect(screen.getAllByText('September 26, 2026').length).toBeGreaterThan(0);
+    const lastVerified: Record<string, string> = {
+      us: 'September 26, 2026',
+      uk: 'September 26, 2026',
+      my: 'September 26, 2026',
+      sg: 'October 7, 2026',
+      ph: 'September 26, 2026',
+    };
+    expect(screen.getAllByText(lastVerified[slug]).length).toBeGreaterThan(0);
   });
 
   it('links back to the main calculator', async () => {
