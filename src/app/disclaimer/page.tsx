@@ -27,7 +27,7 @@ export function generateMetadata(): Metadata {
       type: 'website',
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title,
       description,
     },
