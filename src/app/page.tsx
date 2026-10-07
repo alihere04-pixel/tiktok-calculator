@@ -1,47 +1,46 @@
-"use client";
+import type { Metadata } from "next";
+import HomePage from "@/components/HomePage";
 
-import { loadMarketRatesSync, getAvailableMarkets } from "@/lib/rates/loader";
-import { CalculatorForm } from "@/components/calculator/CalculatorForm";
-import type { MarketRateSummary } from "@/hooks/useCalculator";
-import type { Market } from "@/hooks/useCalculator";
+const DESCRIPTION =
+  "Free TikTok Shop profit calculator. See your real profit after every platform fee. Supports US, UK, MY, SG, PH markets.";
+
+export const metadata: Metadata = {
+  title: "TikTok Shop Profit Calculator (2026)",
+  description: DESCRIPTION,
+  alternates: { canonical: "/tiktok" },
+  openGraph: {
+    title: "TikTok Shop Profit Calculator (2026)",
+    description: DESCRIPTION,
+    url: "https://fynza.store/tiktok",
+    siteName: "TikTok Shop Profit Calculator",
+    type: "website",
+    images: [{ url: "/tiktok/og-blog-default.png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TikTok Shop Profit Calculator (2026)",
+    description: DESCRIPTION,
+    images: ["/tiktok/og-blog-default.png"],
+  },
+};
 
 export default function Home() {
-  const markets = getAvailableMarkets();
-  const ratesByMarket: Partial<Record<Market, MarketRateSummary>> = {};
-
-  for (const market of markets) {
-    const rates = loadMarketRatesSync(market);
-    ratesByMarket[market as Market] = {
-      market: rates.market,
-      currency: rates.currency,
-      categories: rates.categories.map((category) => ({
-        id: category.id,
-        name: category.name,
-        parentCategory: category.parentCategory,
-        tier: category.tier,
-        rate: category.rate,
-        mallRate: category.mallRate,
-        confidence: category.confidence,
-      })),
-    };
-  }
-
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
-      <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto w-full max-w-3xl px-4 py-4 sm:px-6">
-          <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl dark:text-zinc-50">
-            TikTok Shop Profit Calculator
-          </h1>
-          <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
-            See your real profit after every platform fee.
-          </p>
-        </div>
-      </header>
-
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-3 px-4 py-6 sm:px-6">
-        <CalculatorForm ratesByMarket={ratesByMarket} />
-      </main>
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "TikTok Shop Profit Calculator (2026)",
+            url: "https://fynza.store/tiktok",
+            description: DESCRIPTION,
+            applicationCategory: "FinanceApplication",
+          }),
+        }}
+      />
+      <HomePage />
+    </>
   );
 }
