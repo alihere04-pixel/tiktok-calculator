@@ -51,7 +51,10 @@ export type MoneyFieldKey =
   | 'customerShipping'
   | 'cogs'
   | 'outboundShipping'
-  | 'cpa';
+  | 'cpa'
+  | 'affiliateRate'
+  | 'returnRate'
+  | 'promoDaysRemaining';
 
 
 /** Minimal shape the hook needs from rate data. Avoids importing the loader

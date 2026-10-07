@@ -24,6 +24,11 @@ function clickEstimate() {
   fireEvent.click(screen.getByRole('button', { name: /Estimate platform fees/ }));
 }
 
+/** The price field starts empty; tests that expect a calculation type a price first. */
+function fillPrice(value = '25') {
+  fireEvent.change(screen.getByLabelText(/Selling price/), { target: { value } });
+}
+
 function lastRequest(): CalculationRequest {
   expect(mockRun).toHaveBeenCalled();
   return mockRun.mock.calls[mockRun.mock.calls.length - 1][0];
@@ -46,6 +51,7 @@ describe('MiniFeeCalculator', () => {
   it('calls the shared server action rather than computing fees itself', async () => {
     mockRun.mockResolvedValue({ ok: true, snapshot: makeSnapshot() });
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     await waitFor(() => expect(mockRun).toHaveBeenCalledTimes(1));
@@ -54,6 +60,7 @@ describe('MiniFeeCalculator', () => {
   it('sends the market, price and category through, and pins cost inputs to zero', async () => {
     mockRun.mockResolvedValue({ ok: true, snapshot: makeSnapshot() });
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     await waitFor(() => expect(mockRun).toHaveBeenCalled());
@@ -81,6 +88,7 @@ describe('MiniFeeCalculator', () => {
     });
     mockRun.mockResolvedValue({ ok: true, snapshot } as CalculationOutcome);
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     expect(await screen.findByText('Estimated platform fees')).toBeTruthy();
@@ -99,6 +107,7 @@ describe('MiniFeeCalculator', () => {
     });
     mockRun.mockResolvedValue({ ok: true, snapshot } as CalculationOutcome);
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     expect(await screen.findByText('Commission Fee')).toBeTruthy();
@@ -109,6 +118,7 @@ describe('MiniFeeCalculator', () => {
   it('says the figure is not a profit estimate', async () => {
     mockRun.mockResolvedValue({ ok: true, snapshot: makeSnapshot({ currency: 'MYR' }) } as CalculationOutcome);
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     expect(await screen.findByText(/This is not a profit estimate/)).toBeTruthy();
@@ -141,6 +151,7 @@ describe('MiniFeeCalculator', () => {
   it('surfaces server-side validation errors in an alert', async () => {
     mockRun.mockResolvedValue({ ok: false, errors: ['categoryId is required'] });
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
 
     const alert = await screen.findByRole('alert');
@@ -150,6 +161,7 @@ describe('MiniFeeCalculator', () => {
   it('clears a previous result when a new request fails', async () => {
     mockRun.mockResolvedValue({ ok: true, snapshot: makeSnapshot({ totalPlatformFees: 3.75, currency: 'MYR' }) } as CalculationOutcome);
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     clickEstimate();
     expect(await screen.findByText('Estimated platform fees')).toBeTruthy();
 
@@ -185,6 +197,7 @@ describe('MiniFeeCalculator', () => {
     mockRun.mockReturnValue(new Promise<CalculationOutcome>((r) => { resolve = r; }));
 
     render(<MiniFeeCalculator rates={RATES} />);
+    fillPrice();
     const button = screen.getByRole('button', { name: /Estimate platform fees/ }) as HTMLButtonElement;
     fireEvent.click(button);
 

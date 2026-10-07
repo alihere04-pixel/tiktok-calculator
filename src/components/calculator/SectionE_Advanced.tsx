@@ -8,7 +8,7 @@ import type { UseCalculatorReturn } from '@/hooks/useCalculator';
 
 /** Time-limited rate promotions. */
 export function SectionE_Advanced({ calculator }: { calculator: UseCalculatorReturn }) {
-  const { inputs, update, conditional } = calculator;
+  const { inputs, update, money, conditional } = calculator;
 
   if (!conditional.newSellerPromo) {
     return (
@@ -54,16 +54,15 @@ export function SectionE_Advanced({ calculator }: { calculator: UseCalculatorRet
           max={90}
           step={1}
           required
-          value={inputs.promoDaysRemaining}
-          onChange={(event) =>
-            update('promoDaysRemaining', event.target.value === '' ? 0 : Number(event.target.value))
-          }
+          value={money.value('promoDaysRemaining')}
+          onChange={money.onChange('promoDaysRemaining')}
           error={
             inputs.promoDaysRemaining < 1 || inputs.promoDaysRemaining > 90
               ? 'Must be between 1 and 90 days'
               : undefined
           }
           suffix="days"
+          placeholder="30"
           helperText="1 to 90. A promo with no days left is treated as inactive."
         />
       ) : null}

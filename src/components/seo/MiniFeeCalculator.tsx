@@ -29,7 +29,7 @@ import type { ResultSnapshot } from '@/lib/results/types';
  */
 export function MiniFeeCalculator({ rates }: { rates: MarketRateSummary }) {
   const priceId = useId();
-  const [price, setPrice] = useState('25');
+  const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState(rates.categories[0]?.id ?? '');
   const [snapshot, setSnapshot] = useState<ResultSnapshot | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -113,6 +113,7 @@ export function MiniFeeCalculator({ rates }: { rates: MarketRateSummary }) {
           step="0.01"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+          placeholder="0.00"
           helperText="What the buyer pays, before any seller discount."
         />
 

@@ -16,8 +16,7 @@ const AFFILIATE_MODES: Array<{ value: AffiliateMode; label: string; description:
 
 /** Affiliate commission, return rate and ad spend. */
 export function SectionD_AffiliateMarketing({ calculator }: { calculator: UseCalculatorReturn }) {
-  const { inputs, update, money, conditional, marketOptions } = calculator;
-  const currency = marketOptions.find((m) => m.value === inputs.market)?.currency ?? '';
+  const { inputs, update, money, conditional, marketOptions } = calculator;  const currency = marketOptions.find((m) => m.value === inputs.market)?.currency ?? '';
 
   const affiliateRateError =
     inputs.affiliateRate < 0 || inputs.affiliateRate > 80
@@ -53,10 +52,8 @@ export function SectionD_AffiliateMarketing({ calculator }: { calculator: UseCal
           min={0}
           max={80}
           step="0.1"
-          value={inputs.affiliateRate}
-          onChange={(event) =>
-            update('affiliateRate', event.target.value === '' ? 0 : Number(event.target.value))
-          }
+          value={money.value('affiliateRate')}
+          onChange={money.onChange('affiliateRate')}
           error={affiliateRateError}
           suffix="%"
           placeholder="0.0"
@@ -78,12 +75,11 @@ export function SectionD_AffiliateMarketing({ calculator }: { calculator: UseCal
           min={0}
           max={100}
           step="0.1"
-          value={inputs.returnRate}
-          onChange={(event) =>
-            update('returnRate', event.target.value === '' ? 0 : Number(event.target.value))
-          }
+          value={money.value('returnRate')}
+          onChange={money.onChange('returnRate')}
           error={inputs.returnRate < 0 || inputs.returnRate > 100 ? 'Must be between 0 and 100' : undefined}
           suffix="%"
+          placeholder="5"
           helperText="United States only. Default 5 percent."
         />
       ) : null}
