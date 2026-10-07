@@ -2,8 +2,8 @@
   "market": "SG",
   "currency": "SGD",
   "sourceUrl": "https://seller-sg.tiktok.com/university/essay?knowledge_id=2161524467910401",
-  "sourceDate": "2026-04-01",
-  "lastVerified": "2026-09-26",
+  "sourceDate": "2026-09-01",
+  "lastVerified": "2026-10-07",
   "extractionStatus": "partial",
   "coverage": "cluster-level-only",
   "missingData": "sub-categories in 3 PDFs (Oct 2025, Apr 2026, Jul 2026)",
@@ -13,9 +13,9 @@
       "name": "Default Rate (Standard Sellers)",
       "parentCategory": "All Unlisted Categories",
       "tier": "Standard",
-      "rate": 0.08175,
+      "rate": 0.0981,
       "confidence": "high",
-      "notes": "GST inclusive. Applies to categories outside specified tables."
+      "notes": "GST inclusive. Uniform standard rate for all categories, effective Sep 1, 2026."
     },
     {
       "id": "sg-bxp-default",
@@ -24,25 +24,25 @@
       "tier": "BXP",
       "rate": 0.07085,
       "confidence": "high",
-      "notes": "GST inclusive. Applies to categories outside specified tables."
+      "notes": "GST inclusive. Uniform BXP rate for all categories, effective Sep 1, 2026."
     },
     {
       "id": "sg-electronics-bxp",
       "name": "Electronics & Selected Lifestyle",
       "parentCategory": "Electronics / Selected Lifestyle",
       "tier": "BXP",
-      "rate": 0.0545,
+      "rate": 0.07085,
       "confidence": "high",
-      "notes": "GST inclusive. Discounted BXP rate for electronics cluster and selected lifestyle products."
+      "notes": "GST inclusive. Uniform BXP rate for the electronics cluster (matches BXP default), effective Sep 1, 2026."
     },
     {
       "id": "sg-electronics-standard",
       "name": "Electronics & Selected Lifestyle",
       "parentCategory": "Electronics / Selected Lifestyle",
       "tier": "Standard",
-      "rate": 0.07085,
+      "rate": 0.0981,
       "confidence": "high",
-      "notes": "GST inclusive. Standard rate for electronics cluster and selected lifestyle products (matches BXP default)."
+      "notes": "GST inclusive. Uniform standard rate for the electronics cluster (matches standard default), effective Sep 1, 2026."
     },
     {
       "id": "sg-other-bxp",
@@ -51,16 +51,16 @@
       "tier": "BXP",
       "rate": 0.07085,
       "confidence": "high",
-      "notes": "GST inclusive. BXP rate for non-electronics clusters."
+      "notes": "GST inclusive. Uniform BXP rate for non-electronics clusters, effective Sep 1, 2026."
     },
     {
       "id": "sg-other-standard",
       "name": "Other Categories (Fashion, FMCG, etc.)",
       "parentCategory": "Fashion, FMCG, Lifestyle, etc.",
       "tier": "Standard",
-      "rate": 0.08175,
+      "rate": 0.0981,
       "confidence": "high",
-      "notes": "GST inclusive. Standard rate for non-electronics clusters."
+      "notes": "GST inclusive. Uniform standard rate for non-electronics clusters, effective Sep 1, 2026."
     },
     {
       "id": "sg-bxp-restricted-electronics",
@@ -86,8 +86,8 @@
       "parentCategory": "Electronics/Selected Lifestyle",
       "tier": "BXP Mixed",
       "rate": 0.0436,
-      "confidence": "high",
-      "notes": "Discounted rate (4.36%) for non-restricted items in mixed orders. Additional 3.27% BXP service fee on non-restricted items."
+      "confidence": "medium",
+      "notes": "Illustrative worked-example figure (4.36%) from the Apr 2026 policy notice, not a real rate tier under the Sep 1, 2026 uniform table. Shown for reference only. Non-restricted items in mixed BXP orders incur the 3.27% BXP service fee."
     },
     {
       "id": "sg-bxp-mixed-other",
@@ -95,8 +95,8 @@
       "parentCategory": "Fashion, FMCG, Lifestyle, etc.",
       "tier": "BXP Mixed",
       "rate": 0.05995,
-      "confidence": "high",
-      "notes": "Discounted rate (5.995%) for non-restricted items in mixed orders. Additional 3.27% BXP service fee on non-restricted items."
+      "confidence": "medium",
+      "notes": "Illustrative worked-example figure (5.995%) from the Apr 2026 policy notice, not a real rate tier under the Sep 1, 2026 uniform table. Shown for reference only. Non-restricted items in mixed BXP orders incur the 3.27% BXP service fee."
     }
   ],
   "additionalFees": {
@@ -138,7 +138,7 @@
     {
       "name": "Platform Commission Rates from 27 July 2026.pdf",
       "size": "1.6 MB",
-      "description": "Latest rate table effective Jul 27, 2026"
+      "description": "Rate table effective Jul 27, 2026. Superseded by the uniform standard 9.810% / BXP 7.085% structure effective Sep 1, 2026."
     }
   ],
   "clusterStructure": {
