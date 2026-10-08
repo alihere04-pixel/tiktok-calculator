@@ -26,6 +26,18 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <main className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-20 text-center">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "404 — Page Not Found",
+            url: "https://fynza.store/tiktok",
+            description: "Page not found",
+          }),
+        }}
+      />
       <h1 className="text-4xl font-bold text-gray-900">404 — Page not found</h1>
       <p className="mt-4 max-w-md text-gray-600">
         {"The page you're looking for doesn't exist."}
