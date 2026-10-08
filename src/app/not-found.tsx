@@ -1,8 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const DESCRIPTION =
+  "The page you're looking for doesn't exist. Try the TikTok Shop Profit Calculator or the blog instead.";
+
 export const metadata: Metadata = {
   title: "404 — TikTok Shop Calculator",
+  description: DESCRIPTION,
+  robots: { index: false, follow: false },
+  alternates: { canonical: "/tiktok" },
+  openGraph: {
+    title: "404 — TikTok Shop Calculator",
+    description: DESCRIPTION,
+    url: "https://fynza.store/tiktok",
+    siteName: "TikTok Shop Profit Calculator",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "404 — TikTok Shop Calculator",
+    description: DESCRIPTION,
+  },
 };
 
 export default function NotFound() {
