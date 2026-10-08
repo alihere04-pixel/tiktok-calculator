@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: "404 — TikTok Shop Calculator",
   description: DESCRIPTION,
   robots: { index: false, follow: false },
-  alternates: { canonical: "/tiktok" },
   openGraph: {
     title: "404 — TikTok Shop Calculator",
     description: DESCRIPTION,
