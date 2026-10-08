@@ -111,7 +111,7 @@ describe.each(SEO_SLUGS)('%s page', (slug) => {
     await renderPage(slug);
     const lastVerified: Record<string, string> = {
       us: 'September 26, 2026',
-      uk: 'September 26, 2026',
+      uk: 'October 8, 2026',
       my: 'September 26, 2026',
       sg: 'October 7, 2026',
       ph: 'September 26, 2026',
@@ -190,6 +190,15 @@ describe('UK page specifics', () => {
   it('offers a category search box above the table', async () => {
     await renderPage('uk');
     expect(screen.getByPlaceholderText('Search categories...')).toBeTruthy();
+  });
+
+  it('shows the £0.50 self-ship fee in the fixed and per-order fees section', async () => {
+    await renderPage('uk');
+    const table = screen.getByText(/Fixed and per-order fees in GBP/);
+    const section = table.closest('section');
+    expect(section?.textContent).toContain('£0.50 per order');
+    expect(section?.textContent).not.toContain('Not in our verified dataset');
+    expect(section?.textContent).toContain('Applies to self-shipped orders. Since July 15, 2025.');
   });
 
   it('keeps all 347 rows in the HTML, so search engines and no-JS readers see them', async () => {

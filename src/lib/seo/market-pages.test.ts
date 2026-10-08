@@ -244,9 +244,19 @@ describe('fee sections', () => {
   });
 
   it('discloses fixed fees for markets that publish none', () => {
-    for (const slug of ['us', 'uk', 'ph']) {
+    for (const slug of ['us', 'ph']) {
       expect(modelFor(slug).fixedFees.status).toBe('unverified');
     }
+  });
+
+  it('shows the UK self-ship fee as a GBP amount per order', () => {
+    const uk = modelFor('uk');
+    if (uk.fixedFees.status !== 'available') throw new Error('expected available');
+
+    const selfShip = uk.fixedFees.data.lines.find((l) => /self-ship/i.test(l.label));
+    expect(selfShip).toBeDefined();
+    expect(describeFeeRate(selfShip!.value)).toBe('£0.50 per order');
+    expect(selfShip!.notes).toMatch(/Since July 15, 2025/);
   });
 });
 

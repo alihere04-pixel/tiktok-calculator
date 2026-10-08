@@ -3,10 +3,21 @@
   "currency": "GBP",
   "sourceUrl": "https://seller-uk.tiktok.com/university/essay?knowledge_id=3315312175236897",
   "sourceDate": "2025-09-18",
-  "lastVerified": "2026-09-26",
+  "lastVerified": "2026-10-08",
   "extractionStatus": "complete",
   "coverage": "complete",
   "missingData": "none",
+  "fixedFees": {
+    "Self-Ship Fee": {
+      "rate": 0.5,
+      "currency": "GBP",
+      "perOrder": true,
+      "appliesTo": "Self-shipped orders",
+      "effectiveFrom": "2025-07-15",
+      "confidence": "high",
+      "notes": "Applies to self-shipped orders. Since July 15, 2025."
+    }
+  },
   "categories": [
     {
       "id": "uk-standard",

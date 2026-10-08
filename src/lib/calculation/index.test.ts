@@ -136,7 +136,7 @@ describe('calculateProfit - per market dispatch', () => {
     PH: '2026-09-26',
     SG: '2026-10-07',
     MY: '2026-09-26',
-    UK: '2026-09-26',
+    UK: '2026-10-08',
   };
   for (const market of MARKETS) {
     it(`produces a complete CalculationResult for ${market}`, () => {
