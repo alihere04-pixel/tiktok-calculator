@@ -15,13 +15,14 @@ describe('formatRate', () => {
     expect(formatRate(0)).toBe('0%');
   });
 
-  it('keeps the precision the rate files actually publish', () => {
-    // These are the least precise rates in the dataset. Rounding them to fewer
-    // places would misstate them; padding to more would be noise.
-    expect(formatRate(0.0545)).toBe('5.45%');
-    expect(formatRate(0.0436)).toBe('4.36%');
+  it('renders fractional rates with a fixed three decimals', () => {
+    // 9.810% must read like the published rate and the calculator output,
+    // sitting next to 7.085% on the same page.
+    expect(formatRate(0.0545)).toBe('5.450%');
+    expect(formatRate(0.0436)).toBe('4.360%');
     expect(formatRate(0.05995)).toBe('5.995%');
     expect(formatRate(0.08175)).toBe('8.175%');
+    expect(formatRate(0.0981)).toBe('9.810%');
   });
 
   it('does not leak binary floating point noise', () => {
@@ -57,7 +58,7 @@ describe('formatFeeAmount', () => {
 
 describe('describeFeeRate', () => {
   it('renders a percentage', () => {
-    expect(describeFeeRate({ kind: 'percentage', rate: 0.0327 })).toBe('3.27%');
+    expect(describeFeeRate({ kind: 'percentage', rate: 0.0327 })).toBe('3.270%');
   });
 
   it('renders a per-order amount as an amount, not a percentage', () => {

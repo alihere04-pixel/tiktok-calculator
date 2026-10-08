@@ -51,15 +51,16 @@ export interface FeeLine {
  * Renders a fraction as a percentage.
  *
  * `rate * 100` is not exact in binary floating point (0.0545 * 100 is
- * 5.450000000000001), so the value is rounded to 4 decimal places before the
- * percent sign is appended. 4 is deliberate: the least precise rate in the data
- * is SG's 0.0436 / 0.05995 pair, and 4 places keeps them exact without padding
- * every rate with noise.
+ * 5.450000000000001), so the value is rounded to 4 decimal places first.
+ * Whole percentages stay bare (6%, 9%) while fractional rates keep a fixed
+ * three decimals: 0.0981 renders as 9.810% to match the published rate and
+ * the calculator, sitting next to 7.085% on the same page.
  */
 export function formatRate(rate: number): string {
   if (!Number.isFinite(rate)) return '—';
   const percent = Number((rate * 100).toFixed(4));
-  return `${percent}%`;
+  if (Number.isInteger(percent)) return `${percent}%`;
+  return `${percent.toFixed(3)}%`;
 }
 
 /**

@@ -9,7 +9,7 @@ import {
   buildWebPageJsonLd,
   metaForSlug,
 } from './market-pages';
-import { describeFeeRate } from './format';
+import { describeFeeRate, formatRate } from './format';
 
 function modelFor(slug: string) {
   const meta = metaForSlug(slug);
@@ -82,8 +82,8 @@ describe('every market page', () => {
       const min = Math.min(...rates);
       const max = Math.max(...rates);
 
-      expect(model.rateRangeNote).toContain(`${min}%`);
-      expect(model.rateRangeNote).toContain(`${max}%`);
+      expect(model.rateRangeNote).toContain(formatRate(min / 100));
+      expect(model.rateRangeNote).toContain(formatRate(max / 100));
 
       // A promotional zero rate must not drag the headline range down to 0%.
       if (promo.length > 0) {
@@ -100,7 +100,7 @@ describe('every market page', () => {
       for (const row of model.categoryRates) {
         const source = byId.get(row.id);
         expect(source).toBeDefined();
-        expect(row.rateLabel).toBe(`${Number((source!.rate * 100).toFixed(4))}%`);
+        expect(row.rateLabel).toBe(formatRate(source!.rate));
       }
     }
   });

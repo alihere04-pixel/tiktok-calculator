@@ -133,7 +133,7 @@ describe('FeeLineTable', () => {
     render(<FeeLineTable lines={LINES} caption="Fees in MYR." />);
     expect(screen.getByText('RM 0.54 per order')).toBeTruthy();
     expect(screen.getByText('4.00% - 6.00%')).toBeTruthy();
-    expect(screen.getByText('3.78%')).toBeTruthy();
+    expect(screen.getByText('3.780%')).toBeTruthy();
     // Nothing here should read as "54%".
     expect(screen.queryByText('54%')).toBeNull();
   });
