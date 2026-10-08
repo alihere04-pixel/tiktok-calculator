@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const postUrl = `${baseUrl}/tiktok/blog/${slug}`;
 
   return {
-    title: `${post.title} - TikTok Shop Profit Calculator`,
+    title: post.title,
     description: post.description,
     alternates: { canonical: postUrl },
     openGraph: {

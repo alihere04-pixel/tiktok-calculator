@@ -147,7 +147,7 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     slug: 'privacy',
     title: 'Privacy Policy',
     metaDescription:
-      'How this TikTok Shop fee calculator handles your data: no cookies, no accounts, and the one category of server log data it does receive; plus Vercel Web Analytics for traffic measurement.',
+      'How this TikTok Shop fee calculator handles your data: no cookies or accounts, just server logs and cookieless Vercel Web Analytics.',
     summary:
       'The short version: no cookies, no accounts, and the only personal data we receive is the ordinary server log entry our host records for every request; plus cookieless Vercel Web Analytics for traffic measurement.',
     updated: LAST_REVIEWED,

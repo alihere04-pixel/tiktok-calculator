@@ -59,7 +59,7 @@ describe('blog post metadata', () => {
 
     expect(post).toBeDefined();
     expect(post?.title).toBe(
-      'TikTok Shop Fee Calculator 2026: Free Tool + All Market Rates',
+      'TikTok Shop Fee Calculator 2026: Free Tool & Market Rates',
     );
     expect(post?.h1).toBe('TikTok Shop Fee Calculator 2026 — All 5 Markets');
   });
