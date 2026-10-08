@@ -5,18 +5,13 @@ import { Input } from '@/components/ui/Input';
 import type { ReactNode } from 'react';
 
 /**
- * Client-side filter for a server-rendered category table.
+ * Client-side filter for the category table.
  *
- * The table itself is a server component and is passed in as `children`, so
- * every row is already in the prerendered HTML. This component only adds a text
- * box that hides and shows those rows, which is what keeps the arrangement safe
- * for search engines: they read the full table from the HTML and never see a
- * filtered subset.
- *
- * It is also progressive enhancement. The rows carry their searchable text in a
- * `data-search` attribute, and nothing is hidden at build time, so with
- * JavaScript disabled the input never appears and all rows stay visible. There
- * is no server round-trip: filtering reads the DOM that is already loaded.
+ * The table arrives as `children` from `CategoryRateTableLazy`, which renders
+ * it on the client only, so this component and the table hydrate together. The
+ * filter still works by reading the DOM rather than React state: the rows carry
+ * their searchable text in a `data-search` attribute and nothing is hidden
+ * until the reader actually types.
  *
  * Matching is a case-insensitive substring test against the parent category and
  * the sub-category name together, so "beauty" finds every sub-category under

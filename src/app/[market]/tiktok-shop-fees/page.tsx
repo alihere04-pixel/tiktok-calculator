@@ -14,13 +14,12 @@ import { formatIsoDate } from '@/lib/seo/format';
 import { DataDisclosureCard } from '@/components/seo/DataDisclosureCard';
 import {
   CategoryExceptionList,
-  CategoryRateTable,
   FeeLineTable,
   KnownRangeList,
   TierNotes,
 } from '@/components/seo/FeeBreakdownTables';
 import { AffiliateGuide } from '@/components/seo/AffiliateGuide';
-import { CategoryTableFilter } from '@/components/seo/CategoryTableFilter';
+import { CategoryRateTableLazy } from '@/components/seo/CategoryRateTableLazy';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { MiniFeeCalculator } from '@/components/seo/MiniFeeCalculator';
 import { SellerCenterCta } from '@/components/seo/SellerCenterCta';
@@ -175,25 +174,18 @@ export default async function MarketFeesPage({ params }: PageProps) {
             </div>
           ) : null}
           {/* UK's Excel lists 343 sub-categories, so the table gets a search
-              box. UK only: the other four markets top out at 63 rows and stay
-              a plain static table. The rows are still server-rendered, so all
-              347 are in the HTML for search engines and for readers without
-              JavaScript. */}
-          {meta.market === 'UK' ? (
-            <div className="mt-4">
-              <CategoryTableFilter>
-                <CategoryRateTable
-                  rows={model.categoryRates}
-                  currency={model.currency}
-                  showParentLabel
-                />
-              </CategoryTableFilter>
-            </div>
-          ) : (
-            <div className="mt-4">
-              <CategoryRateTable rows={model.categoryRates} currency={model.currency} />
-            </div>
-          )}
+              box. The table renders on the client only: shipping 347 rows of
+              server HTML made this page 805 KB, so the rows now arrive as data
+              with the RSC payload and paint after hydration instead of sitting
+              in the prerendered markup. */}
+          <div className="mt-4">
+            <CategoryRateTableLazy
+              rows={model.categoryRates}
+              currency={model.currency}
+              showParentLabel={meta.market === 'UK'}
+              searchable={meta.market === 'UK'}
+            />
+          </div>
         </section>
 
         {/* 2. Transaction fees */}

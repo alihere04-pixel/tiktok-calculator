@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import MarketFeesPage, {
   dynamicParams,
   generateMetadata,
@@ -87,7 +87,9 @@ describe.each(SEO_SLUGS)('%s page', (slug) => {
 
   it('renders a category rate table with a caption', async () => {
     await renderPage(slug);
-    expect(screen.getByText(/Commission rate by category, in/)).toBeTruthy();
+    // The table is client-only (`ssr: false`), so the caption appears once the
+    // lazy chunk has loaded rather than synchronously with the server shell.
+    expect(await screen.findByText(/Commission rate by category, in/)).toBeTruthy();
   });
 
   it('shows the refund administration section only on the US page', async () => {
@@ -201,13 +203,17 @@ describe('UK page specifics', () => {
     expect(section?.textContent).toContain('Applies to self-shipped orders. Since July 15, 2025.');
   });
 
-  it('keeps all 347 rows in the HTML, so search engines and no-JS readers see them', async () => {
+  it('renders all 347 rows once the client-only table has loaded', async () => {
     const { container } = await renderPage('uk');
 
-    // 4 policy records + 343 Excel rows. Nothing is filtered at build time.
+    // 4 policy records + 343 Excel rows. The rows are no longer in the
+    // prerendered HTML (that was 252 KB of the page's 805 KB), but every one of
+    // them still renders from the data passed to the client component.
+    await waitFor(() => {
+      expect(container.querySelectorAll('tr[data-search]')).toHaveLength(347);
+    });
+    // Not one row renders hidden, so a reader without a filter sees the lot.
     const rows = container.querySelectorAll('tr[data-search]');
-    expect(rows).toHaveLength(347);
-    // Not one row starts hidden, so a reader without JavaScript sees the lot.
     expect(Array.from(rows).every((row) => !row.hasAttribute('hidden'))).toBe(true);
   });
 
@@ -216,7 +222,7 @@ describe('UK page specifics', () => {
 
     // UK lists 116 sub-categories under Beauty & Personal Care, so a bare name
     // like "Curlers & Straighteners" does not identify a category on its own.
-    const row = screen.getByRole('row', { name: /Curlers & Straighteners/ });
+    const row = await screen.findByRole('row', { name: /Curlers & Straighteners/ });
     expect(row.textContent).toContain('Beauty & Personal Care');
   });
 });
@@ -235,9 +241,12 @@ describe('the category search box is UK only', () => {
       cleanup();
       const { container } = await renderPage(slug);
       // The attribute still exists so the markup is uniform, but no row gains a
-      // second line it did not have before.
+      // second line it did not have before. The table itself is client-only, so
+      // the rows arrive after the lazy chunk loads.
+      await waitFor(() => {
+        expect(container.querySelectorAll('tr[data-search]').length).toBeGreaterThan(0);
+      });
       const rows = container.querySelectorAll('tr[data-search]');
-      expect(rows.length).toBeGreaterThan(0);
       expect(Array.from(rows).every((row) => !row.hasAttribute('hidden'))).toBe(true);
     }
   });
